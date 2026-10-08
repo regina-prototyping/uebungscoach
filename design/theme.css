@@ -1,0 +1,21 @@
+/* Übungscoach – zentrale Farben und Formen für alle Artboards der Variante A.
+   Werte entsprechen dem Design-System „Übungscoach“ (tokens.json). */
+:root {
+  --primary: #921A5B;
+  --primary-soft: #F7E8F0;
+  --rest: #A65A0A;
+  --rest-soft: #FCEFDC;
+  --ink: #22181F;
+  --muted: #6B5F67;
+  --line: #ECE6EA;
+  --surface: #FFFFFF;
+  --ground: #FFFFFF;
+  --tint: #F6F4F6;
+  --font-sans: "Figtree", "Segoe UI", system-ui, sans-serif;
+  --radius-md: 16px;
+  --radius-lg: 28px;
+  --radius-pill: 999px;
+  --shadow-soft: 0 1px 2px #22181F0A, 0 8px 24px #22181F0F;
+  /* Seitenhintergrund: reines Weiß */
+  --ground-wash: #FFFFFF;
+}

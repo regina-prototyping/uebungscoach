@@ -1,0 +1,526 @@
+<title>Übungscoach</title>
+<meta name="theme-color" content="#1E6B52">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap">
+<style>
+/* Layout: eine Spalte, Handy zuerst. Trainingsansicht = eine große Phasen-Fläche mit Riesenzahl, Steuerung am Daumen. */
+:root {
+  --bg: #EDF0EE;
+  --surface: #FFFFFF;
+  --ink: #16201C;
+  --muted: #5B6863;
+  --line: #D3DBD7;
+  --go: #1E6B52;      /* aktiv: Wiederholung, Halten */
+  --go-ink: #FFFFFF;
+  --rest: #A85F0E;    /* Vorbereitung, Pause, Absenken */
+  --rest-ink: #FFFFFF;
+  --done: #2A4C8C;
+  --done-ink: #FFFFFF;
+  --font-num: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --font-body: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1513; --surface: #18201D; --ink: #E6EDEA; --muted: #93A29C; --line: #2A3531;
+    --go: #2E9A75; --go-ink: #04110C; --rest: #D88A2C; --rest-ink: #170C00; --done: #5B86D6; --done-ink: #050B18;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1513; --surface: #18201D; --ink: #E6EDEA; --muted: #93A29C; --line: #2A3531;
+  --go: #2E9A75; --go-ink: #04110C; --rest: #D88A2C; --rest-ink: #170C00; --done: #5B86D6; --done-ink: #050B18;
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-body); font-size: 17px; line-height: 1.45;
+  padding-inline: 16px; box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+*, *::before, *::after { box-sizing: border-box; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible, input:focus-visible { outline: 3px solid var(--go); outline-offset: 2px; }
+h1, h2, h3 { margin: 0; text-wrap: balance; }
+p { margin: 0; }
+
+.screen { max-width: 560px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; padding-block: 20px 28px; }
+.screen.full { height: 100%; padding-block: 12px 16px; gap: 14px; }
+
+/* Start */
+.brand { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.brand h1 { font-family: var(--font-num); font-weight: 700; font-size: 2.1rem; letter-spacing: .01em; text-transform: uppercase; }
+.linkbtn { background: none; border: 0; padding: 8px 0; color: var(--muted); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+
+.program { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+.program-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.program-head h2 { font-family: var(--font-num); font-size: 1.8rem; font-weight: 700; }
+.meta { color: var(--muted); font-size: .92rem; font-variant-numeric: tabular-nums; }
+.eyebrow { font-size: .78rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; }
+.exlist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.exlist li { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; padding-block: 11px; border-top: 1px solid var(--line); }
+.exlist li:first-child { border-top: 0; }
+.exname { font-weight: 600; }
+.exhint { grid-column: 1; color: var(--muted); font-size: .92rem; }
+.exdose { grid-row: 1 / span 2; grid-column: 2; align-self: center; font-family: var(--font-num); font-weight: 600; font-size: 1.15rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.primary {
+  border: 0; border-radius: 14px; padding: 18px 20px; background: var(--go); color: var(--go-ink);
+  font-family: var(--font-num); font-size: 1.6rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+}
+.note { color: var(--muted); font-size: .9rem; }
+
+/* Einstellungen */
+.fields { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 4px 20px; }
+.field { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px; padding-block: 14px; border-top: 1px solid var(--line); }
+.field:first-child { border-top: 0; }
+.field label { font-weight: 600; }
+.field small { display: block; color: var(--muted); font-weight: 400; font-size: .86rem; }
+.stepper { display: flex; align-items: center; gap: 6px; }
+.stepper button { width: 44px; height: 44px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); font-size: 1.4rem; line-height: 1; }
+.stepper output { min-width: 3.4ch; text-align: center; font-family: var(--font-num); font-size: 1.4rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.secondary { border: 1px solid var(--line); background: var(--surface); border-radius: 14px; padding: 14px 18px; font-weight: 600; }
+
+/* Training */
+.topbar { display: flex; align-items: center; gap: 12px; }
+.topbar .title { flex: 1; min-width: 0; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.track { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; }
+.track > i { display: block; height: 100%; width: 0; background: var(--ink); opacity: .55; }
+
+.stage {
+  --phase: var(--rest); --phase-ink: var(--rest-ink);
+  flex: 1; min-height: 0; border-radius: 22px; padding: 20px;
+  background: var(--phase); color: var(--phase-ink);
+  display: flex; flex-direction: column; gap: 6px; transition: background-color .35s ease;
+}
+.stage[data-phase="go"] { --phase: var(--go); --phase-ink: var(--go-ink); }
+.stage[data-phase="done"] { --phase: var(--done); --phase-ink: var(--done-ink); }
+.stage .exname-big { font-family: var(--font-num); font-weight: 700; font-size: clamp(1.8rem, 8vw, 2.6rem); line-height: 1.05; }
+.stage .hint { opacity: .85; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.chip { border: 1.5px solid currentColor; border-radius: 999px; padding: 3px 12px; font-weight: 600; font-size: .9rem; font-variant-numeric: tabular-nums; }
+.center { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 0; }
+.phase { font-size: .9rem; text-transform: uppercase; letter-spacing: .12em; font-weight: 600; }
+.bignum { font-family: var(--font-num); font-weight: 700; font-size: clamp(7rem, 42vw, 14rem); line-height: .9; font-variant-numeric: tabular-nums; }
+.bignum.word { font-size: clamp(3.5rem, 18vw, 6.5rem); line-height: 1; }
+.sub { font-weight: 600; font-size: 1.1rem; font-variant-numeric: tabular-nums; min-height: 1.5em; }
+.segbar { height: 8px; border-radius: 4px; background: color-mix(in srgb, currentColor 22%, transparent); overflow: hidden; }
+.segbar > i { display: block; height: 100%; width: 0; background: currentColor; }
+.nextup { color: var(--muted); font-size: .95rem; }
+.nextup b { color: var(--ink); }
+
+.controls { display: grid; grid-template-columns: 1fr 1.5fr 1fr; gap: 10px; }
+.ctl { border: 1px solid var(--line); background: var(--surface); border-radius: 16px; min-height: 72px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-weight: 600; font-size: .85rem; }
+.ctl svg { width: 28px; height: 28px; }
+.ctl.main { background: var(--ink); color: var(--bg); border-color: var(--ink); font-size: .95rem; }
+.ctl.main svg { width: 34px; height: 34px; }
+
+.confirm { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.confirm p { flex: 1 1 160px; font-weight: 600; }
+.confirm button { border-radius: 12px; padding: 10px 14px; border: 1px solid var(--line); background: var(--bg); font-weight: 600; }
+.confirm .danger { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+@media (prefers-reduced-motion: reduce) { .stage { transition: none; } }
+</style>
+
+<!-- Startbildschirm -->
+<section id="home" class="screen">
+  <div class="brand">
+    <h1>Übungscoach</h1>
+    <button class="linkbtn" id="openSettings" type="button">Einstellungen</button>
+  </div>
+  <div id="programs"></div>
+  <p class="note">Ton laut stellen und Stummschalter aus. Der Bildschirm bleibt während des Trainings an.</p>
+</section>
+
+<!-- Einstellungen -->
+<section id="settings" class="screen" hidden>
+  <div class="brand">
+    <h1>Einstellungen</h1>
+    <button class="linkbtn" id="closeSettings" type="button">Fertig</button>
+  </div>
+  <div class="fields" id="fields"></div>
+  <p class="note">Gilt für alle Übungen, außer eine Übung hat einen eigenen Wert.</p>
+  <button class="secondary" id="testVoice" type="button">Stimme testen</button>
+  <p class="note" id="voiceInfo"></p>
+</section>
+
+<!-- Training -->
+<section id="player" class="screen full" hidden>
+  <div class="topbar">
+    <button class="linkbtn" id="quit" type="button">Beenden</button>
+    <span class="title" id="pTitle"></span>
+    <span class="meta" id="pTime"></span>
+  </div>
+  <div class="track" aria-hidden="true"><i id="overall"></i></div>
+  <div class="confirm" id="confirmQuit" hidden>
+    <p>Training beenden?</p>
+    <button type="button" id="quitNo">Weiter trainieren</button>
+    <button type="button" class="danger" id="quitYes">Beenden</button>
+  </div>
+  <div class="stage" id="stage" data-phase="rest" aria-live="polite">
+    <div class="exname-big" id="sName"></div>
+    <p class="hint" id="sHint"></p>
+    <div class="chips" id="sChips"></div>
+    <div class="center">
+      <span class="phase" id="sPhase"></span>
+      <span class="bignum" id="sBig"></span>
+      <span class="sub" id="sSub"></span>
+    </div>
+    <div class="segbar" aria-hidden="true"><i id="segFill"></i></div>
+  </div>
+  <p class="nextup" id="nextUp"></p>
+  <div class="controls">
+    <button class="ctl" id="btnBack" type="button" aria-label="Zurück">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 5v14"/><path d="M19 5 9 12l10 7z" fill="currentColor"/></svg>Zurück
+    </button>
+    <button class="ctl main" id="btnPlay" type="button">
+      <svg id="icoPause" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+      <svg id="icoPlay" viewBox="0 0 24 24" fill="currentColor" hidden><path d="M7 5v14l12-7z"/></svg>
+      <span id="playLabel">Pause</span>
+    </button>
+    <button class="ctl" id="btnSkip" type="button" aria-label="Überspringen">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 5v14"/><path d="M5 5l10 7-10 7z" fill="currentColor"/></svg>Nächste
+    </button>
+  </div>
+</section>
+
+<script>
+/* ---------- Daten: Programme ---------- */
+const PROGRAMS = [
+  {
+    id: "ruecken",
+    name: "Rücken",
+    start: "Auf dem Rücken liegen",
+    exercises: [
+      { name: "Becken kippen", hint: "Bauch einziehen", type: "reps", reps: 15, sets: 2 },
+      { name: "Beine seitlich kippen", type: "sides", reps: 5, sets: 2 },
+      { name: "Brücke", hint: "Oben halten", type: "hold", reps: 10, hold: 5, sets: 2 }
+    ]
+  }
+];
+
+/* ---------- Einstellungen ---------- */
+const DEFAULTS = { tempo: 3, prep: 5, setPause: 30, lower: 3 };
+const FIELD_DEFS = [
+  { key: "tempo", label: "Tempo", help: "Sekunden pro Wiederholung", min: 1, max: 10, step: 1 },
+  { key: "prep", label: "Vorbereitung", help: "Sekunden vor jeder Übung", min: 3, max: 30, step: 1 },
+  { key: "setPause", label: "Satzpause", help: "Sekunden zwischen zwei Sätzen", min: 5, max: 120, step: 5 },
+  { key: "lower", label: "Absenken", help: "Sekunden zwischen zwei Haltephasen", min: 1, max: 10, step: 1 }
+];
+let settings = loadSettings();
+function loadSettings() {
+  try { return { ...DEFAULTS, ...JSON.parse(localStorage.getItem("uebungscoach-settings") || "{}") }; }
+  catch (e) { return { ...DEFAULTS }; }
+}
+function saveSettings() {
+  try { localStorage.setItem("uebungscoach-settings", JSON.stringify(settings)); } catch (e) {}
+}
+
+/* ---------- Ablauf als Liste von Abschnitten ---------- */
+function opt(e, key) { return e[key] ?? settings[key]; }
+function speechSecs(text) { return Math.ceil(text.split(/\s+/).length * 0.45); }
+
+function buildPlan(prog) {
+  const segs = [];
+  const exs = prog.exercises;
+  exs.forEach((e, i) => {
+    const sets = e.sets ?? 1;
+    let label = i === 0 ? "Erste Übung" : (i === exs.length - 1 ? "Letzte Übung" : "Nächste Übung");
+    let intro = (i === 0 && prog.start ? prog.start + ". " : "") + label + ": " + e.name + "." + (e.hint ? " " + e.hint + "." : "") + " " + doseSpoken(e);
+    segs.push({ ex: i, set: 1, kind: "prep", dur: Math.max(settings.prep, speechSecs(intro) + 3), say: intro });
+    for (let s = 1; s <= sets; s++) {
+      const sides = e.type === "sides" ? ["links", "rechts"] : [null];
+      sides.forEach((side, si) => {
+        if (side) {
+          const say = si === 0
+            ? (sets > 1 ? "Satz " + s + " von " + sets + ". " : "") + "Links, " + e.reps + " Mal."
+            : "Seite wechseln. Rechts, " + e.reps + " Mal.";
+          segs.push({ ex: i, set: s, side, kind: "side", dur: Math.max(3, speechSecs(say) + 1), say });
+        }
+        for (let r = 1; r <= e.reps; r++) {
+          if (e.type === "hold") {
+            segs.push({ ex: i, set: s, kind: "hold", rep: r, dur: e.hold, say: r === 1 ? "Hoch und halten" : "Hoch, " + r });
+            segs.push({ ex: i, set: s, kind: "lower", rep: r, dur: opt(e, "lower"), say: "Ab" });
+          } else {
+            segs.push({ ex: i, set: s, side, kind: "rep", rep: r, dur: opt(e, "tempo"), say: String(r) });
+          }
+        }
+      });
+      if (s < sets) {
+        const p = opt(e, "setPause");
+        segs.push({ ex: i, set: s, kind: "pause", dur: p, say: "Satz " + s + " geschafft. " + p + " Sekunden Pause." });
+      }
+    }
+  });
+  segs.push({ ex: exs.length - 1, kind: "done", dur: 0, say: "Training geschafft. Gut gemacht!" });
+  return segs;
+}
+
+function dose(e) {
+  const sets = e.sets ?? 1;
+  if (e.type === "hold") return sets + " × " + e.reps + " × " + e.hold + " s";
+  if (e.type === "sides") return sets + " × " + e.reps + " je Seite";
+  return sets + " × " + e.reps;
+}
+function doseSpoken(e) {
+  const sets = e.sets ?? 1;
+  const head = sets > 1 ? sets + " Sätze, " : "";
+  if (e.type === "hold") return head + e.reps + " Wiederholungen, jeweils " + e.hold + " Sekunden halten.";
+  if (e.type === "sides") return head + "je Seite " + e.reps + " Wiederholungen.";
+  return head + e.reps + " Wiederholungen.";
+}
+function fmtTime(sec) {
+  sec = Math.max(0, Math.round(sec));
+  return Math.floor(sec / 60) + ":" + String(sec % 60).padStart(2, "0");
+}
+
+/* ---------- Ton: Sprache und Piepton ---------- */
+let voice = null, audioCtx = null;
+function pickVoice() {
+  if (!("speechSynthesis" in window)) return;
+  const vs = speechSynthesis.getVoices();
+  voice = vs.find(v => v.lang === "de-DE" && /Anna|Helena|Petra|Google/i.test(v.name))
+       || vs.find(v => (v.lang || "").toLowerCase().startsWith("de")) || null;
+}
+if ("speechSynthesis" in window) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+function speak(text) {
+  if (!text || !("speechSynthesis" in window)) return;
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "de-DE"; if (voice) u.voice = voice; u.rate = 1;
+  speechSynthesis.speak(u);
+}
+// Nur abbrechen, wenn wirklich etwas läuft: ein cancel() direkt vor speak() verschluckt auf iOS oft die nächste Ansage
+function hush() {
+  if ("speechSynthesis" in window && (speechSynthesis.speaking || speechSynthesis.pending)) speechSynthesis.cancel();
+}
+function voiceStatus() {
+  if (!("speechSynthesis" in window)) return "Sprachausgabe: in diesem Browser nicht verfügbar.";
+  pickVoice();
+  const n = speechSynthesis.getVoices().length;
+  return "Sprachausgabe: " + n + " Stimmen gefunden, deutsche Stimme: " + (voice ? voice.name : "keine");
+}
+function initAudio() {
+  try { audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)(); audioCtx.resume?.(); } catch (e) { audioCtx = null; }
+}
+function beep(freq = 740, len = 0.13) {
+  if (!audioCtx) return;
+  const t = audioCtx.currentTime, o = audioCtx.createOscillator(), g = audioCtx.createGain();
+  o.frequency.value = freq;
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(0.35, t + 0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + len);
+  o.connect(g).connect(audioCtx.destination);
+  o.start(t); o.stop(t + len + 0.02);
+}
+
+/* ---------- Bildschirm an lassen ---------- */
+let wakeLock = null;
+async function lockScreen() {
+  try { if (navigator.wakeLock) wakeLock = await navigator.wakeLock.request("screen"); } catch (e) { wakeLock = null; }
+}
+function releaseScreen() { try { wakeLock?.release(); } catch (e) {} wakeLock = null; }
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible" && state.running) lockScreen();
+});
+
+/* ---------- Spieler ---------- */
+const $ = id => document.getElementById(id);
+const state = { prog: null, segs: [], idx: 0, elapsed: 0, running: false, last: 0, timer: null, total: 0 };
+
+function show(id) {
+  ["home", "settings", "player"].forEach(s => $(s).hidden = s !== id);
+  window.scrollTo(0, 0);
+}
+
+function startProgram(prog) {
+  initAudio();
+  hush();
+  pickVoice();
+  state.prog = prog;
+  state.segs = buildPlan(prog);
+  state.total = state.segs.reduce((a, s) => a + s.dur, 0);
+  state.idx = 0; state.elapsed = 0; state.running = true; state.last = performance.now();
+  $("pTitle").textContent = prog.name;
+  $("confirmQuit").hidden = true;
+  show("player");
+  lockScreen();
+  // erste Ansage MUSS direkt im Antippen starten, sonst bleibt iOS stumm
+  enterSeg();
+  clearInterval(state.timer);
+  state.timer = setInterval(tick, 100);
+  render();
+}
+
+function enterSeg() {
+  const seg = state.segs[state.idx];
+  if (seg.kind === "done") { finish(); return; }
+  speak(seg.say);
+}
+
+function tick() {
+  const now = performance.now();
+  const dt = (now - state.last) / 1000;
+  state.last = now;
+  if (!state.running) return;
+  const seg = state.segs[state.idx];
+  const before = Math.ceil(seg.dur - state.elapsed);
+  state.elapsed += dt;
+  const after = Math.ceil(seg.dur - state.elapsed);
+  if ((seg.kind === "prep" || seg.kind === "pause" || seg.kind === "hold") && after < before && after >= 1 && after <= 3) beep();
+  if (state.elapsed >= seg.dur) {
+    state.elapsed = Math.min(state.elapsed - seg.dur, 0.5);
+    state.idx++;
+    enterSeg();
+  }
+  render();
+}
+
+function exStart(i) { return state.segs.findIndex(s => s.ex === i && s.kind === "prep"); }
+function jumpTo(idx) {
+  hush();
+  state.idx = idx; state.elapsed = 0; state.last = performance.now();
+  if (state.running) enterSeg();
+  render();
+}
+function back() {
+  const cur = state.segs[state.idx].ex;
+  const start = exStart(cur);
+  if (state.idx === start && state.elapsed < 2 && cur > 0) jumpTo(exStart(cur - 1));
+  else jumpTo(start);
+}
+function skip() {
+  const cur = state.segs[state.idx].ex;
+  if (cur >= state.prog.exercises.length - 1) jumpTo(state.segs.length - 1);
+  else jumpTo(exStart(cur + 1));
+}
+function togglePause() {
+  if (state.segs[state.idx].kind === "done") { startProgram(state.prog); return; }
+  state.running = !state.running;
+  state.last = performance.now();
+  if (state.running) {
+    initAudio(); lockScreen();
+    speak(state.elapsed < 0.3 ? state.segs[state.idx].say : "Weiter");
+  } else {
+    hush();
+  }
+  render();
+}
+function finish() {
+  state.running = false;
+  clearInterval(state.timer);
+  speak(state.segs[state.segs.length - 1].say);
+  releaseScreen();
+  render();
+}
+function stopTraining() {
+  state.running = false;
+  clearInterval(state.timer);
+  hush(); releaseScreen();
+  show("home");
+}
+
+/* ---------- Anzeige ---------- */
+function render() {
+  const seg = state.segs[state.idx];
+  const exs = state.prog.exercises;
+  const e = exs[seg.ex];
+  const remaining = Math.max(0, Math.ceil(seg.dur - state.elapsed));
+  const done = state.segs.slice(0, state.idx).reduce((a, s) => a + s.dur, 0) + Math.min(state.elapsed, seg.dur);
+  $("overall").style.width = (state.total ? (done / state.total) * 100 : 100) + "%";
+  $("pTime").textContent = seg.kind === "done" ? "" : "noch " + fmtTime(state.total - done);
+
+  const stage = $("stage");
+  const big = $("sBig");
+  big.classList.remove("word");
+  let phase = "rest", label = "", bigText = "", sub = "";
+
+  switch (seg.kind) {
+    case "prep":  label = "Gleich geht's los"; bigText = remaining; sub = dose(e); break;
+    case "side":  label = "Seite"; bigText = seg.side === "links" ? "Links" : "Rechts"; big.classList.add("word"); sub = e.reps + " Mal"; break;
+    case "rep":   phase = "go"; label = "Wiederholung"; bigText = seg.rep; sub = "von " + e.reps; break;
+    case "hold":  phase = "go"; label = "Halten"; bigText = remaining; sub = "Wiederholung " + seg.rep + " von " + e.reps; break;
+    case "lower": label = "Absenken"; bigText = remaining; sub = seg.rep + " von " + e.reps + " geschafft"; break;
+    case "pause": label = "Satzpause"; bigText = remaining; sub = "Gleich Satz " + (seg.set + 1); break;
+    case "done":  phase = "done"; label = "Fertig"; bigText = "Geschafft"; big.classList.add("word"); sub = "Alle Übungen erledigt"; break;
+  }
+  stage.dataset.phase = phase;
+  $("sName").textContent = seg.kind === "done" ? state.prog.name : e.name;
+  let hint = seg.kind === "done" ? "" : (e.hint || "");
+  if (seg.kind === "prep" && seg.ex === 0 && state.prog.start) hint = "Start: " + state.prog.start + (hint ? " · " + hint : "");
+  $("sHint").textContent = hint;
+  $("sPhase").textContent = label;
+  big.textContent = bigText;
+  $("sSub").textContent = sub;
+
+  const chips = [];
+  if (seg.kind !== "done") {
+    chips.push("Übung " + (seg.ex + 1) + " von " + exs.length);
+    chips.push("Satz " + seg.set + " von " + (e.sets ?? 1));
+    if (seg.side) chips.push(seg.side === "links" ? "Linke Seite" : "Rechte Seite");
+  }
+  $("sChips").innerHTML = chips.map(c => '<span class="chip">' + c + "</span>").join("");
+
+  $("segFill").style.width = (seg.dur ? Math.min(state.elapsed / seg.dur, 1) * 100 : 100) + "%";
+  const next = exs[seg.ex + 1];
+  $("nextUp").innerHTML = seg.kind === "done" ? "" : (next ? "Danach: <b>" + next.name + "</b> · " + dose(next) : "Das ist die letzte Übung.");
+
+  const isDone = seg.kind === "done";
+  // SVG-Elemente kennen die .hidden-Eigenschaft nicht, daher das Attribut direkt setzen
+  $("icoPause").toggleAttribute("hidden", !state.running || isDone);
+  $("icoPlay").toggleAttribute("hidden", state.running && !isDone);
+  $("playLabel").textContent = isDone ? "Nochmal" : (state.running ? "Pause" : "Weiter");
+  $("btnBack").disabled = false;
+  $("btnSkip").disabled = isDone;
+}
+
+/* ---------- Startbildschirm & Einstellungen ---------- */
+function renderHome() {
+  $("programs").innerHTML = "";
+  PROGRAMS.forEach(p => {
+    const secs = buildPlan(p).reduce((a, s) => a + s.dur, 0);
+    const card = document.createElement("article");
+    card.className = "program";
+    card.innerHTML =
+      '<div class="program-head"><h2>' + p.name + '</h2><span class="meta">' + p.exercises.length + " Übungen · ca. " + Math.ceil(secs / 60) + " Min</span></div>" +
+      (p.start ? '<p><span class="eyebrow">Start</span><br>' + p.start + "</p>" : "") +
+      '<ul class="exlist">' + p.exercises.map(e =>
+        '<li><span class="exname">' + e.name + "</span>" + (e.hint ? '<span class="exhint">' + e.hint + "</span>" : "") +
+        '<span class="exdose">' + dose(e) + "</span></li>").join("") + "</ul>";
+    const btn = document.createElement("button");
+    btn.className = "primary"; btn.type = "button"; btn.textContent = "Training starten";
+    btn.addEventListener("click", () => startProgram(p));
+    card.appendChild(btn);
+    $("programs").appendChild(card);
+  });
+}
+function renderSettings() {
+  $("fields").innerHTML = FIELD_DEFS.map(f =>
+    '<div class="field"><label for="out-' + f.key + '">' + f.label + "<small>" + f.help + "</small></label>" +
+    '<div class="stepper"><button type="button" data-k="' + f.key + '" data-d="-1" aria-label="' + f.label + ' verringern">−</button>' +
+    '<output id="out-' + f.key + '">' + settings[f.key] + "</output>" +
+    '<button type="button" data-k="' + f.key + '" data-d="1" aria-label="' + f.label + ' erhöhen">+</button></div></div>').join("");
+}
+$("fields").addEventListener("click", ev => {
+  const b = ev.target.closest("button[data-k]"); if (!b) return;
+  const f = FIELD_DEFS.find(x => x.key === b.dataset.k);
+  settings[f.key] = Math.min(f.max, Math.max(f.min, settings[f.key] + f.step * Number(b.dataset.d)));
+  $("out-" + f.key).textContent = settings[f.key];
+  saveSettings();
+});
+
+$("openSettings").addEventListener("click", () => { renderSettings(); $("voiceInfo").textContent = voiceStatus(); show("settings"); });
+$("closeSettings").addEventListener("click", () => { renderHome(); show("home"); });
+$("testVoice").addEventListener("click", () => { initAudio(); hush(); speak("Hallo! So klingen die Ansagen. Eins, zwei, drei."); beep(); $("voiceInfo").textContent = voiceStatus(); });
+$("btnPlay").addEventListener("click", togglePause);
+$("btnBack").addEventListener("click", back);
+$("btnSkip").addEventListener("click", skip);
+$("quit").addEventListener("click", () => {
+  if (state.segs[state.idx]?.kind === "done") { stopTraining(); return; }
+  if (state.running) togglePause();
+  $("confirmQuit").hidden = false;
+});
+$("quitNo").addEventListener("click", () => { $("confirmQuit").hidden = true; if (!state.running) togglePause(); });
+$("quitYes").addEventListener("click", stopTraining);
+
+renderHome();
+</script>
