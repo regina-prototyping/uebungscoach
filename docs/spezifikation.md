@@ -144,7 +144,7 @@ Bei mehreren Sätzen beginnt jede linke Seite mit „Satz x von y.“ wie bisher
 
 ### Entscheidungen
 
-- **Zugang:** Jede Programmkarte auf dem Startbildschirm hat „Bearbeiten“. Unter den Programmen steht eine Karte „+ Neues Programm“. Die Übungsbibliothek erreicht man über die Einstellungen.
+- **Zugang:** Jede Programmkarte auf dem Startbildschirm hat „Bearbeiten“. Unter den Programmen steht eine Karte „+ Neues Programm“. Oben rechts auf dem Startbildschirm öffnet ein Menü-Knopf (☰) ein kleines Menü mit „Übungen“ (Übungsbibliothek) und „Einstellungen“.
 - **Löschen von Übungen:** Im Programm wird eine Übung nur *entfernt*; sie bleibt in der Bibliothek. Endgültig löschen geht nur in der Bibliothek und nur für Übungen, die in keinem Programm vorkommen. Bei verwendeten Übungen steht stattdessen, in welchen Programmen sie stecken.
 - **Doppelte Übungen:** Dieselbe Übung darf mehrmals im selben Programm vorkommen (z. B. Dehnung am Anfang und am Ende).
 - **Verschieben:** mit Pfeil-Knöpfen ↑ ↓ an jeder Übung.
