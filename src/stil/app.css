@@ -1,0 +1,313 @@
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 24px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button { font: inherit; color: inherit; cursor: pointer; }
+
+[hidden] { display: none !important; }
+
+.screen {
+  max-width: 480px;
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: 24px var(--space-5) calc(24px + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.topbar { display: flex; align-items: center; justify-content: space-between; }
+.app-name { font-weight: 800; font-size: 18px; }
+
+.display {
+  margin: 0;
+  font-size: 34px;
+  line-height: 38px;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+}
+
+/* ---------- Bausteine ---------- */
+.muted { color: var(--muted); }
+.klein { font-size: 15px; line-height: 20px; }
+.label { font-size: 15px; line-height: 20px; font-weight: 600; }
+.caption-normal { font-size: 14px; line-height: 18px; }
+.zahl { font-variant-numeric: tabular-nums; }
+.heading { margin: 0; font-size: 24px; line-height: 28px; font-weight: 800; }
+
+.card {
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
+  border-radius: var(--radius-lg);
+}
+
+.icon-btn {
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+}
+
+.btn-primary {
+  height: 60px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--primary);
+  color: #FFFFFF;
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.btn-primary:active { filter: brightness(0.9); }
+
+/* ---------- Startbildschirm ---------- */
+.programm { padding: var(--space-2); display: flex; flex-direction: column; gap: 6px; }
+.programm-kopf { padding: 18px; display: flex; flex-direction: column; gap: 4px; }
+.programm-titel { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-3); }
+.uebungsliste { list-style: none; margin: 0; padding: 4px var(--space-3); }
+.uebungsliste li { display: flex; justify-content: space-between; gap: var(--space-3); padding: 11px 0; }
+.uebungsliste li + li { border-top: 1px solid var(--line); }
+.uebung-name { font-weight: 600; }
+
+.leer { padding: 18px var(--space-5); display: flex; align-items: center; gap: 14px; }
+.symbolfeld {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  background: var(--tint);
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.leer-text { display: flex; flex-direction: column; }
+.leer-titel { font-weight: 700; font-size: 18px; }
+
+.title { margin: 0; font-size: 30px; line-height: 34px; font-weight: 800; letter-spacing: -0.01em; }
+
+.text-btn {
+  border: 0;
+  background: none;
+  padding: 10px 0;
+  min-height: 44px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.btn-zweit {
+  height: 56px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
+  font-size: 17px;
+  font-weight: 700;
+}
+
+/* ---------- Training ---------- */
+.training {
+  --phase: var(--rest);
+  --phase-soft: var(--rest-soft);
+  height: 100dvh;
+  min-height: 0;
+  padding-top: 20px;
+  gap: 16px;
+}
+.training[data-phase="aktiv"], .training[data-phase="fertig"] {
+  --phase: var(--primary);
+  --phase-soft: var(--primary-soft);
+}
+
+.t-kopf { display: flex; align-items: center; gap: var(--space-3); }
+.t-programm { flex: 1; text-align: center; font-weight: 700; }
+.t-restzeit { font-weight: 600; color: var(--muted); min-width: 72px; text-align: right; }
+
+.balken { height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; flex: none; }
+.balken-fuellung { height: 100%; width: 0; border-radius: 3px; background: var(--primary); transition: width 0.2s linear; }
+
+.t-info { display: flex; flex-direction: column; gap: 6px; }
+.t-hinweis { margin: 0; color: var(--muted); font-size: 17px; }
+.chips { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: 6px; }
+.chip {
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  background: var(--phase-soft);
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 700;
+}
+
+.ring-karte {
+  flex: 1;
+  min-height: 0;
+  border-radius: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3);
+}
+.ring {
+  position: relative;
+  height: min(300px, 100%);
+  aspect-ratio: 1;
+  max-width: 100%;
+}
+.ring svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.ring-leer, .ring-voll { fill: none; stroke-width: 16; }
+.ring-leer { stroke: var(--line); }
+.ring-voll { stroke: var(--phase); stroke-linecap: round; transition: stroke-dashoffset 0.15s linear; }
+.ring-inhalt {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  text-align: center;
+}
+.ring-label {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--phase);
+}
+.ring-zahl { font-size: 128px; line-height: 1; font-weight: 800; }
+.ring-zahl.wort { font-size: 48px; line-height: 1.2; }
+.ring-unter { font-size: 18px; font-weight: 600; color: var(--muted); }
+
+.danach {
+  border-radius: 20px;
+  padding: var(--space-3) 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.danach-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.danach-name { flex: 1; font-weight: 700; }
+.danach [data-e="danachMenge"] { white-space: nowrap; }
+
+.steuerung { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.rund-btn {
+  flex: none;
+  width: 64px;
+  height: 64px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pause-btn {
+  flex: 1;
+  height: 72px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--ink);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 700;
+}
+.rund-btn:active, .pause-btn:active, .btn-zweit:active { transform: scale(0.97); }
+
+.ende-knoepfe { display: flex; flex-direction: column; gap: var(--space-3); }
+
+/* Rückfrage „Training beenden?“ */
+.dialog-hintergrund {
+  position: fixed;
+  inset: 0;
+  background: #22181F66;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: var(--space-5);
+  z-index: 10;
+}
+.dialog {
+  width: 100%;
+  max-width: 440px;
+  padding: var(--space-6) var(--space-5) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.dialog p { margin: 0 0 var(--space-2); }
+
+/* Kleine Bildschirme: Zahl etwas kleiner, damit alles passt */
+@media (max-height: 700px) {
+  .ring-zahl { font-size: 96px; }
+  .title { font-size: 26px; line-height: 30px; }
+}
+
+/* ---------- Einstellungen ---------- */
+.einstellungen { gap: var(--space-5); }
+.pill-btn {
+  height: 44px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
+  font-weight: 700;
+}
+.felder { padding: 4px var(--space-5); display: flex; flex-direction: column; }
+.feld { display: flex; align-items: center; gap: var(--space-3); padding: 14px 0; }
+.feld + .feld { border-top: 1px solid var(--line); }
+.feld-text { flex: 1; display: flex; flex-direction: column; }
+.feld-label { font-weight: 700; }
+.stepper-btn {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--tint);
+  font-size: 22px;
+}
+.stepper-btn:active { transform: scale(0.94); }
+.feld-wert { width: 36px; text-align: center; font-size: 22px; font-weight: 800; }
+.hinweis-text, .diagnose { margin: 0; }
+.btn-soft {
+  height: 56px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--primary-soft);
+  font-size: 17px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.btn-soft:active { filter: brightness(0.96); }
