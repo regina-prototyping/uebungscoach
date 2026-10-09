@@ -1,17 +1,18 @@
 import "./stil/theme.css";
 import "./stil/app.css";
 import { PROGRAMME } from "./data/programme";
-import { ladeEinstellungen } from "./einstellungen";
+import { ladeEinstellungen, speichereEinstellungen } from "./einstellungen";
 import { zeigeStart } from "./ansichten/start";
+import { zeigeEinstellungen } from "./ansichten/einstellungen";
 import { TrainingAnsicht } from "./ansichten/training";
 import { Spieler, type Ereignis } from "./logik/spieler";
 import type { Programm } from "./logik/typen";
-import { sprich, still, waehleStimme } from "./geraet/sprache";
+import { sprich, still, stimmenStatus, waehleStimme } from "./geraet/sprache";
 import { piep, tonBereit } from "./geraet/piep";
 import { wachFreigeben, wachHalten } from "./geraet/wachhalten";
 
 const app = document.getElementById("app")!;
-const einstellungen = ladeEinstellungen();
+let einstellungen = ladeEinstellungen();
 
 let spieler: Spieler | null = null;
 let ansicht: TrainingAnsicht | null = null;
@@ -40,9 +41,26 @@ function startseite(): void {
     programme: PROGRAMME,
     einstellungen,
     onStart: training,
-    onEinstellungen: () => {
-      // Einstellungen folgen in Schritt 5
+    onEinstellungen: einstellungsSeite,
+  });
+  window.scrollTo(0, 0);
+}
+
+function einstellungsSeite(): void {
+  zeigeEinstellungen(app, {
+    werte: einstellungen,
+    onAendern: (neu) => {
+      einstellungen = neu;
+      speichereEinstellungen(neu);
     },
+    onFertig: startseite,
+    onStimmeTesten: () => {
+      tonBereit();
+      still();
+      sprich("Hallo! So klingen die Ansagen. Eins, zwei, drei.");
+      piep();
+    },
+    stimmenStatus,
   });
   window.scrollTo(0, 0);
 }

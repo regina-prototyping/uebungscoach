@@ -269,3 +269,45 @@ button { font: inherit; color: inherit; cursor: pointer; }
   .ring-zahl { font-size: 96px; }
   .title { font-size: 26px; line-height: 30px; }
 }
+
+/* ---------- Einstellungen ---------- */
+.einstellungen { gap: var(--space-5); }
+.pill-btn {
+  height: 44px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
+  font-weight: 700;
+}
+.felder { padding: 4px var(--space-5); display: flex; flex-direction: column; }
+.feld { display: flex; align-items: center; gap: var(--space-3); padding: 14px 0; }
+.feld + .feld { border-top: 1px solid var(--line); }
+.feld-text { flex: 1; display: flex; flex-direction: column; }
+.feld-label { font-weight: 700; }
+.stepper-btn {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--tint);
+  font-size: 22px;
+}
+.stepper-btn:active { transform: scale(0.94); }
+.feld-wert { width: 36px; text-align: center; font-size: 22px; font-weight: 800; }
+.hinweis-text, .diagnose { margin: 0; }
+.btn-soft {
+  height: 56px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--primary-soft);
+  font-size: 17px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.btn-soft:active { filter: brightness(0.96); }

@@ -20,3 +20,26 @@ export function speichereEinstellungen(e: Einstellungen): void {
     // z. B. privater Modus: dann gelten die Werte nur bis zum Neuladen
   }
 }
+
+export interface Feld {
+  key: keyof Einstellungen;
+  label: string;
+  hilfe: string;
+  min: number;
+  max: number;
+  schritt: number;
+}
+
+/** Die vier einstellbaren Werte mit erlaubtem Bereich. */
+export const FELDER: Feld[] = [
+  { key: "tempo", label: "Tempo", hilfe: "Sekunden pro Wiederholung", min: 1, max: 10, schritt: 1 },
+  { key: "prep", label: "Vorbereitung", hilfe: "Sekunden vor jeder Übung", min: 3, max: 30, schritt: 1 },
+  { key: "setPause", label: "Satzpause", hilfe: "Sekunden zwischen zwei Sätzen", min: 5, max: 120, schritt: 5 },
+  { key: "lower", label: "Absenken", hilfe: "Sekunden zwischen Haltephasen", min: 1, max: 10, schritt: 1 },
+];
+
+/** Erhöht (+1) oder verringert (−1) einen Wert um einen Schritt, innerhalb der Grenzen. */
+export function aendern(e: Einstellungen, key: keyof Einstellungen, richtung: 1 | -1): Einstellungen {
+  const f = FELDER.find((x) => x.key === key)!;
+  return { ...e, [key]: Math.min(f.max, Math.max(f.min, e[key] + f.schritt * richtung)) };
+}
