@@ -341,18 +341,22 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .symbolfeld-primary { background: var(--primary-soft); color: var(--ink); }
 
 /* ---------- Menü-Panel ---------- */
-.menue-overlay { position: fixed; inset: 0; z-index: 20; display: flex; }
+/* Abdunklung über der ganzen Seite; das Panel gleitet darüber. */
+.menue-overlay { position: fixed; inset: 0; z-index: 20; }
 .menue-streifen {
-  flex: none;
-  width: 56px;
+  position: absolute;
+  inset: 0;
   background: #22181F59;
-  animation: einblenden 0.2s ease-out;
+  animation: einblenden 0.22s ease-out;
 }
 .menue-panel {
-  flex: 1;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 56px;
   background: var(--surface);
-  border-radius: var(--radius-lg) 0 0 var(--radius-lg);
-  box-shadow: -8px 0 32px #22181F26;
+  box-shadow: -8px 0 32px #22181F1F;
   padding: 24px var(--space-5);
   display: flex;
   flex-direction: column;
