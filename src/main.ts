@@ -1,15 +1,27 @@
 import "./stil/theme.css";
 import "./stil/app.css";
 import { ladeEinstellungen, speichereEinstellungen } from "./einstellungen";
-import { datenDauerhaftAufheben, ladeDaten } from "./daten-speicher";
-import { trainingsplan } from "./logik/daten";
+import { datenDauerhaftAufheben, ladeDaten, speichereDaten } from "./daten-speicher";
+import {
+  findeProgramm,
+  programmAendern,
+  programmAnlegen,
+  programmAufraeumen,
+  programmLoeschen,
+  trainingsplan,
+  uebungEntfernen,
+  uebungVerschieben,
+  findeUebung,
+} from "./logik/daten";
 import { zeigeStart } from "./ansichten/start";
 import { zeigeMenue } from "./ansichten/menue";
 import { zeigePlatzhalter } from "./ansichten/platzhalter";
+import { ProgrammAnsicht } from "./ansichten/programm";
+import { schliesseRueckgaengig, zeigeRueckgaengig } from "./ansichten/rueckgaengig";
 import { zeigeEinstellungen } from "./ansichten/einstellungen";
 import { TrainingAnsicht } from "./ansichten/training";
 import { Spieler, type Ereignis } from "./logik/spieler";
-import type { Trainingsplan } from "./logik/typen";
+import type { Daten, Trainingsplan } from "./logik/typen";
 import { sprich, still, stimmenStatus, waehleStimme } from "./geraet/sprache";
 import { piep, tonBereit } from "./geraet/piep";
 import { wachFreigeben, wachHalten } from "./geraet/wachhalten";
@@ -18,6 +30,8 @@ import { aktuellesZiel, ersetze, geheZu, starteNavigation, zurueck, type Ziel } 
 const app = document.getElementById("app")!;
 let einstellungen = ladeEinstellungen();
 let daten = ladeDaten();
+// Falls die App beim Anlegen eines Programms geschlossen wurde: aufräumen
+for (const p of daten.programme) daten = programmAufraeumen(daten, p.id);
 datenDauerhaftAufheben();
 
 let spieler: Spieler | null = null;
@@ -29,6 +43,32 @@ let liefVorDialog = false;
 let verlassen = false;
 /** Plan für das Training, das gleich angezeigt wird. */
 let naechsterPlan: Trainingsplan | null = null;
+
+/** Zuletzt angezeigtes Ziel – zum Aufräumen beim Verlassen. */
+let vorher: Ziel = { name: "start" };
+
+/**
+ * Übernimmt eine neue Fassung der Daten und speichert sie sofort.
+ * Eine offene Rückgängig-Leiste verschwindet, damit Rückgängig keine
+ * späteren Änderungen überschreibt.
+ */
+function aendern(neu: Daten): void {
+  if (neu === daten) return;
+  schliesseRueckgaengig();
+  daten = neu;
+  speichereDaten(daten);
+}
+
+/** Ändert die Daten mit „Rückgängig“-Leiste; Rückgängig stellt die vorige Fassung her. */
+function aendernMitRueckgaengig(neu: Daten, text: string): void {
+  const alt = daten;
+  aendern(neu);
+  zeigeRueckgaengig(text, () => {
+    daten = alt;
+    speichereDaten(daten);
+    anzeigen(aktuellesZiel());
+  });
+}
 
 /** Führt die Anweisungen des Spielers aus. */
 function ausfuehren(ereignisse: Ereignis[]): void {
@@ -44,6 +84,11 @@ function ausfuehren(ereignisse: Ereignis[]): void {
 /** Zeichnet den Bildschirm für ein Navigationsziel. */
 function anzeigen(ziel: Ziel): void {
   if (ziel.name !== "training") trainingAufraeumen();
+  // Neues Programm ohne Namen beim Verlassen verwerfen bzw. benennen
+  if (vorher.name === "programm" && !(ziel.name === "programm" && ziel.id === vorher.id) && ziel.name !== "auswahl" && ziel.name !== "uebung") {
+    aendern(programmAufraeumen(daten, vorher.id));
+  }
+  vorher = ziel;
   switch (ziel.name) {
     case "start": {
       // Kommt man aus dem Menü zurück, nur das Menü schließen (Scrollposition bleibt)
@@ -69,7 +114,15 @@ function anzeigen(ziel: Ziel): void {
       window.scrollTo(0, 0);
       break;
     case "programm":
-      zeigePlatzhalter(app, "Programm", "Programm bearbeiten kommt in Schritt 3.", zurueck);
+      if (!findeProgramm(daten, ziel.id)) return ersetze({ name: "start" });
+      programmSeite(ziel.id, !!ziel.neu);
+      break;
+    case "auswahl":
+      zeigePlatzhalter(app, "Übung hinzufügen", "Das Auswählen von Übungen kommt in Schritt 4.", zurueck);
+      window.scrollTo(0, 0);
+      break;
+    case "uebung":
+      zeigePlatzhalter(app, "Übung", "Übungen bearbeiten kommt in Schritt 4.", zurueck);
       window.scrollTo(0, 0);
       break;
     case "training":
@@ -100,8 +153,37 @@ function startseite(): void {
       geheZu({ name: "training", id: plan.id });
     },
     onBearbeiten: (id) => geheZu({ name: "programm", id }),
-    onNeuesProgramm: () => geheZu({ name: "programm", id: "neu" }),
+    onNeuesProgramm: () => {
+      const { daten: neu, id } = programmAnlegen(daten);
+      aendern(neu);
+      geheZu({ name: "programm", id, neu: true });
+    },
     onMenue: () => geheZu({ name: "menue" }),
+  });
+  window.scrollTo(0, 0);
+}
+
+function programmSeite(id: string, neu: boolean): void {
+  new ProgrammAnsicht(app, {
+    daten: () => daten,
+    programmId: id,
+    neu,
+    onName: (name) => aendern(programmAendern(daten, id, { name })),
+    onStart: (start) => aendern(programmAendern(daten, id, { start })),
+    onVerschieben: (i, richtung) => aendern(uebungVerschieben(daten, id, i, richtung)),
+    onEntfernen: (i) => {
+      const uebungId = findeProgramm(daten, id)!.uebungen[i];
+      const name = findeUebung(daten, uebungId)?.name || "Übung";
+      aendernMitRueckgaengig(uebungEntfernen(daten, id, i), `„${name}“ entfernt`);
+    },
+    onUebungOeffnen: (uebungId) => geheZu({ name: "uebung", id: uebungId }),
+    onHinzufuegen: () => geheZu({ name: "auswahl", programmId: id }),
+    onLoeschen: () => {
+      const name = findeProgramm(daten, id)!.name || "Programm";
+      aendernMitRueckgaengig(programmLoeschen(daten, id), `„${name}“ gelöscht`);
+      zurueck();
+    },
+    onFertig: zurueck,
   });
   window.scrollTo(0, 0);
 }

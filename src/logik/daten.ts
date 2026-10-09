@@ -92,6 +92,17 @@ export function programmAendern(d: Daten, id: string, aenderung: { name?: string
   });
 }
 
+/**
+ * Beim Verlassen eines Programms: Ohne Namen und ohne Übungen wird es
+ * verworfen; ohne Namen, aber mit Übungen heißt es „Neues Programm“.
+ */
+export function programmAufraeumen(d: Daten, id: string): Daten {
+  const p = findeProgramm(d, id);
+  if (!p || p.name.trim()) return d;
+  if (!p.uebungen.length) return programmLoeschen(d, id);
+  return programmAendern(d, id, { name: "Neues Programm" });
+}
+
 export function programmLoeschen(d: Daten, id: string): Daten {
   return { ...d, programme: d.programme.filter((p) => p.id !== id) };
 }

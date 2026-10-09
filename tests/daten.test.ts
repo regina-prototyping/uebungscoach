@@ -4,6 +4,7 @@ import {
   findeProgramm,
   findeUebung,
   programmAendern,
+  programmAufraeumen,
   programmAnlegen,
   programmLoeschen,
   sindGueltig,
@@ -68,6 +69,23 @@ describe("Programme bearbeiten", () => {
     expect(findeProgramm(d2, id)).toMatchObject({ name: "Schulter neu", start: "Im Stehen" });
     expect(findeProgramm(programmAendern(d2, id, { start: "  " }), id)!.start).toBeUndefined();
     expect(findeProgramm(programmLoeschen(d2, id), id)).toBeUndefined();
+  });
+});
+
+describe("Neues Programm aufräumen", () => {
+  it("verwirft ein neues Programm ohne Namen und ohne Übungen", () => {
+    const { daten, id } = programmAnlegen(d0);
+    expect(findeProgramm(programmAufraeumen(daten, id), id)).toBeUndefined();
+  });
+
+  it("benennt ein Programm ohne Namen, aber mit Übungen", () => {
+    const { daten, id } = programmAnlegen(d0, "  ");
+    const d = programmAufraeumen(uebungHinzufuegen(daten, id, "bruecke"), id);
+    expect(findeProgramm(d, id)!.name).toBe("Neues Programm");
+  });
+
+  it("lässt Programme mit Namen unverändert", () => {
+    expect(programmAufraeumen(d0, "arme")).toBe(d0);
   });
 });
 
