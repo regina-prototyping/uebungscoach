@@ -1,9 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { PROGRAMME } from "../src/data/programme";
+import { MITGELIEFERT } from "../src/data/programme";
+import { trainingsplan } from "../src/logik/daten";
 import { anzeige } from "../src/logik/anzeige";
 import { Spieler } from "../src/logik/spieler";
 
-const ruecken = PROGRAMME.find((p) => p.id === "ruecken")!;
+const ruecken = trainingsplan(MITGELIEFERT, "ruecken")!;
 const STANDARD = { tempo: 3, prep: 5, setPause: 30, lower: 3 };
 
 function spielerBei(pruefe: (sp: Spieler) => boolean): Spieler {
