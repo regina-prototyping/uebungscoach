@@ -11,7 +11,7 @@ export type Ziel =
   | { name: "uebungen" }
   | { name: "programm"; id: string; neu?: boolean }
   | { name: "auswahl"; programmId: string }
-  | { name: "uebung"; id: string }
+  | { name: "uebung"; id: string; neu?: boolean }
   | { name: "training"; id: string };
 
 interface NavOptionen {

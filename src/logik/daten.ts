@@ -66,6 +66,20 @@ export function uebungDuplizieren(d: Daten, id: string): { daten: Daten; id: str
   return { daten: { ...d, uebungen }, id: kopie.id };
 }
 
+/**
+ * Beim Verlassen einer neu angelegten Übung: Ohne Namen wird sie verworfen
+ * und auch aus allen Programmen entfernt.
+ */
+export function uebungAufraeumen(d: Daten, id: string): Daten {
+  const u = findeUebung(d, id);
+  if (!u || u.name.trim()) return d;
+  return {
+    ...d,
+    uebungen: d.uebungen.filter((x) => x.id !== id),
+    programme: d.programme.map((p) => (p.uebungen.includes(id) ? { ...p, uebungen: p.uebungen.filter((x) => x !== id) } : p)),
+  };
+}
+
 /** Löscht eine Übung – aber nur, wenn sie in keinem Programm vorkommt. Sonst `null`. */
 export function uebungLoeschen(d: Daten, id: string): Daten | null {
   if (verwendetIn(d, id).length) return null;

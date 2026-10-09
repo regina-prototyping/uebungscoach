@@ -9,7 +9,13 @@ import {
   programmAufraeumen,
   programmLoeschen,
   trainingsplan,
+  uebungAendern,
+  uebungAnlegen,
+  uebungAufraeumen,
+  uebungDuplizieren,
   uebungEntfernen,
+  uebungHinzufuegen,
+  uebungLoeschen,
   uebungVerschieben,
   findeUebung,
 } from "./logik/daten";
@@ -17,6 +23,8 @@ import { zeigeStart } from "./ansichten/start";
 import { zeigeMenue } from "./ansichten/menue";
 import { zeigePlatzhalter } from "./ansichten/platzhalter";
 import { ProgrammAnsicht } from "./ansichten/programm";
+import { zeigeAuswahl } from "./ansichten/auswahl";
+import { UebungAnsicht } from "./ansichten/uebung";
 import { schliesseRueckgaengig, zeigeRueckgaengig } from "./ansichten/rueckgaengig";
 import { zeigeEinstellungen } from "./ansichten/einstellungen";
 import { TrainingAnsicht } from "./ansichten/training";
@@ -88,6 +96,10 @@ function anzeigen(ziel: Ziel): void {
   if (vorher.name === "programm" && !(ziel.name === "programm" && ziel.id === vorher.id) && ziel.name !== "auswahl" && ziel.name !== "uebung") {
     aendern(programmAufraeumen(daten, vorher.id));
   }
+  // Neue Übung ohne Namen beim Verlassen verwerfen
+  if (vorher.name === "uebung" && !(ziel.name === "uebung" && ziel.id === vorher.id)) {
+    aendern(uebungAufraeumen(daten, vorher.id));
+  }
   vorher = ziel;
   switch (ziel.name) {
     case "start": {
@@ -118,12 +130,12 @@ function anzeigen(ziel: Ziel): void {
       programmSeite(ziel.id, !!ziel.neu);
       break;
     case "auswahl":
-      zeigePlatzhalter(app, "Übung hinzufügen", "Das Auswählen von Übungen kommt in Schritt 4.", zurueck);
-      window.scrollTo(0, 0);
+      if (!findeProgramm(daten, ziel.programmId)) return ersetze({ name: "start" });
+      auswahlSeite(ziel.programmId);
       break;
     case "uebung":
-      zeigePlatzhalter(app, "Übung", "Übungen bearbeiten kommt in Schritt 4.", zurueck);
-      window.scrollTo(0, 0);
+      if (!findeUebung(daten, ziel.id)) return zurueck();
+      uebungSeite(ziel.id, !!ziel.neu);
       break;
     case "training":
       if (naechsterPlan) training(naechsterPlan);
@@ -181,6 +193,49 @@ function programmSeite(id: string, neu: boolean): void {
     onLoeschen: () => {
       const name = findeProgramm(daten, id)!.name || "Programm";
       aendernMitRueckgaengig(programmLoeschen(daten, id), `„${name}“ gelöscht`);
+      zurueck();
+    },
+    onFertig: zurueck,
+  });
+  window.scrollTo(0, 0);
+}
+
+function auswahlSeite(programmId: string): void {
+  zeigeAuswahl(app, {
+    daten,
+    programmId,
+    onWaehlen: (uebungId) => {
+      aendern(uebungHinzufuegen(daten, programmId, uebungId));
+      zurueck();
+    },
+    onNeu: () => {
+      // Neue Übung sofort anlegen und ins Programm setzen; ohne Namen wird sie beim Verlassen verworfen
+      const { daten: neu, id } = uebungAnlegen(daten);
+      aendern(uebungHinzufuegen(neu, programmId, id));
+      ersetze({ name: "uebung", id, neu: true });
+    },
+    onAbbrechen: zurueck,
+  });
+  window.scrollTo(0, 0);
+}
+
+function uebungSeite(id: string, neu: boolean): void {
+  new UebungAnsicht(app, {
+    daten: () => daten,
+    einstellungen,
+    uebungId: id,
+    neu,
+    onAendern: (aenderung) => aendern(uebungAendern(daten, id, aenderung)),
+    onDuplizieren: () => {
+      const { daten: d, id: kopie } = uebungDuplizieren(daten, id);
+      aendern(d);
+      ersetze({ name: "uebung", id: kopie });
+    },
+    onLoeschen: () => {
+      const name = findeUebung(daten, id)?.name || "Übung";
+      const d = uebungLoeschen(daten, id);
+      if (!d) return;
+      aendernMitRueckgaengig(d, `„${name}“ gelöscht`);
       zurueck();
     },
     onFertig: zurueck,
