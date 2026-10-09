@@ -1,12 +1,12 @@
 import { dose } from "../logik/format";
 import { buildPlan, gesamtDauer } from "../logik/plan";
-import type { Einstellungen, Programm } from "../logik/typen";
+import type { Einstellungen, Trainingsplan } from "../logik/typen";
 import { esc, ICON } from "./hilfen";
 
 interface StartOptionen {
-  programme: Programm[];
+  programme: Trainingsplan[];
   einstellungen: Einstellungen;
-  onStart: (prog: Programm) => void;
+  onStart: (prog: Trainingsplan) => void;
   onEinstellungen: () => void;
 }
 
@@ -29,7 +29,7 @@ export function zeigeStart(root: HTMLElement, opt: StartOptionen): void {
   });
 }
 
-function programmKarte(p: Programm, i: number, einst: Einstellungen): string {
+function programmKarte(p: Trainingsplan, i: number, einst: Einstellungen): string {
   const minuten = Math.ceil(gesamtDauer(buildPlan(p, einst)) / 60);
   const anzahl = p.exercises.length === 1 ? "1 Übung" : `${p.exercises.length} Übungen`;
   return `
@@ -48,7 +48,7 @@ function programmKarte(p: Programm, i: number, einst: Einstellungen): string {
     </article>`;
 }
 
-function leereKarte(p: Programm): string {
+function leereKarte(p: Trainingsplan): string {
   return `
     <article class="card leer">
       <span class="symbolfeld">${ICON.plus}</span>

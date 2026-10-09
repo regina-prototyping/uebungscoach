@@ -1,18 +1,21 @@
 import "./stil/theme.css";
 import "./stil/app.css";
-import { PROGRAMME } from "./data/programme";
 import { ladeEinstellungen, speichereEinstellungen } from "./einstellungen";
+import { datenDauerhaftAufheben, ladeDaten } from "./daten-speicher";
+import { trainingsplan } from "./logik/daten";
 import { zeigeStart } from "./ansichten/start";
 import { zeigeEinstellungen } from "./ansichten/einstellungen";
 import { TrainingAnsicht } from "./ansichten/training";
 import { Spieler, type Ereignis } from "./logik/spieler";
-import type { Programm } from "./logik/typen";
+import type { Trainingsplan } from "./logik/typen";
 import { sprich, still, stimmenStatus, waehleStimme } from "./geraet/sprache";
 import { piep, tonBereit } from "./geraet/piep";
 import { wachFreigeben, wachHalten } from "./geraet/wachhalten";
 
 const app = document.getElementById("app")!;
 let einstellungen = ladeEinstellungen();
+const daten = ladeDaten();
+datenDauerhaftAufheben();
 
 let spieler: Spieler | null = null;
 let ansicht: TrainingAnsicht | null = null;
@@ -38,7 +41,7 @@ function startseite(): void {
   spieler = null;
   ansicht = null;
   zeigeStart(app, {
-    programme: PROGRAMME,
+    programme: daten.programme.map((p) => trainingsplan(daten, p.id)!),
     einstellungen,
     onStart: training,
     onEinstellungen: einstellungsSeite,
@@ -66,7 +69,7 @@ function einstellungsSeite(): void {
 }
 
 /** Läuft direkt im Klick auf „Training starten“ bzw. „Nochmal“. */
-function training(prog: Programm): void {
+function training(prog: Trainingsplan): void {
   tonBereit();
   waehleStimme();
   spieler = new Spieler(prog, einstellungen);
