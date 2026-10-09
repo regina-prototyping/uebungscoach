@@ -34,3 +34,69 @@ button { font: inherit; color: inherit; cursor: pointer; }
   font-weight: 800;
   letter-spacing: -0.015em;
 }
+
+/* ---------- Bausteine ---------- */
+.muted { color: var(--muted); }
+.klein { font-size: 15px; line-height: 20px; }
+.label { font-size: 15px; line-height: 20px; font-weight: 600; }
+.caption-normal { font-size: 14px; line-height: 18px; }
+.zahl { font-variant-numeric: tabular-nums; }
+.heading { margin: 0; font-size: 24px; line-height: 28px; font-weight: 800; }
+
+.card {
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
+  border-radius: var(--radius-lg);
+}
+
+.icon-btn {
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+}
+
+.btn-primary {
+  height: 60px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--primary);
+  color: #FFFFFF;
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.btn-primary:active { filter: brightness(0.9); }
+
+/* ---------- Startbildschirm ---------- */
+.programm { padding: var(--space-2); display: flex; flex-direction: column; gap: 6px; }
+.programm-kopf { padding: 18px; display: flex; flex-direction: column; gap: 4px; }
+.programm-titel { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-3); }
+.uebungsliste { list-style: none; margin: 0; padding: 4px var(--space-3); }
+.uebungsliste li { display: flex; justify-content: space-between; gap: var(--space-3); padding: 11px 0; }
+.uebungsliste li + li { border-top: 1px solid var(--line); }
+.uebung-name { font-weight: 600; }
+
+.leer { padding: 18px var(--space-5); display: flex; align-items: center; gap: 14px; }
+.symbolfeld {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  background: var(--tint);
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.leer-text { display: flex; flex-direction: column; }
+.leer-titel { font-weight: 700; font-size: 18px; }

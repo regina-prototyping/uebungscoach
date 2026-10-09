@@ -1,11 +1,23 @@
 import "./stil/theme.css";
 import "./stil/app.css";
+import { PROGRAMME } from "./data/programme";
+import { ladeEinstellungen } from "./einstellungen";
+import { zeigeStart } from "./ansichten/start";
 
 const app = document.getElementById("app")!;
-app.innerHTML = `
-  <section class="screen">
-    <div class="topbar"><span class="app-name">Übungscoach</span></div>
-    <h1 class="display">Was trainierst du heute?</h1>
-    <p style="color: var(--muted)">Hier entsteht gerade die App. Bald gibt es hier das Rückenprogramm.</p>
-  </section>
-`;
+const einstellungen = ladeEinstellungen();
+
+function startseite(): void {
+  zeigeStart(app, {
+    programme: PROGRAMME,
+    einstellungen,
+    onStart: () => {
+      // Trainingsbildschirm folgt in Schritt 4
+    },
+    onEinstellungen: () => {
+      // Einstellungen folgen in Schritt 5
+    },
+  });
+}
+
+startseite();
