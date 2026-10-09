@@ -311,3 +311,70 @@ button { font: inherit; color: inherit; cursor: pointer; }
   gap: 10px;
 }
 .btn-soft:active { filter: brightness(0.96); }
+
+/* ---------- Version 2: Startseite ---------- */
+.programm-titel { align-items: center; }
+.link-btn {
+  flex: none;
+  height: 44px;
+  margin-right: -4px;
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  color: var(--primary);
+  font-size: 15px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.zeilen-karte {
+  width: 100%;
+  border: 0;
+  padding: 18px var(--space-5);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-align: left;
+}
+.zeilen-karte:active { transform: scale(0.99); }
+.symbolfeld-primary { background: var(--primary-soft); color: var(--ink); }
+
+/* ---------- Menü-Panel ---------- */
+.menue-overlay { position: fixed; inset: 0; z-index: 20; display: flex; }
+.menue-streifen {
+  flex: none;
+  width: 56px;
+  background: #22181F59;
+  animation: einblenden 0.2s ease-out;
+}
+.menue-panel {
+  flex: 1;
+  background: var(--surface);
+  border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+  box-shadow: -8px 0 32px #22181F26;
+  padding: 24px var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  overflow-y: auto;
+  animation: hereinschieben 0.22s ease-out;
+}
+.menue-liste { display: flex; flex-direction: column; }
+.menue-eintrag {
+  width: 100%;
+  border: 0;
+  background: none;
+  padding: var(--space-3) 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  text-align: left;
+}
+.menue-eintrag + .menue-eintrag { border-top: 1px solid var(--line); }
+.menue-eintrag .leer-text { flex: 1; }
+@keyframes hereinschieben { from { transform: translateX(100%); } }
+@keyframes einblenden { from { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .menue-panel, .menue-streifen { animation: none; }
+}
