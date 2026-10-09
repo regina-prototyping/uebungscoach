@@ -125,14 +125,16 @@ Bei mehreren Sätzen beginnt jede linke Seite mit „Satz x von y.“ wie bisher
 - [ ] Neues Programm anlegen (Name, optional Startposition)
 - [ ] Programm bearbeiten: Name, Startposition, Übungen
 - [ ] Übung hinzufügen: Auswahl aus der Bibliothek; ganz oben „+ Neue Übung“, die nach dem Speichern direkt im Programm landet
-- [ ] Reihenfolge der Übungen ändern (verschieben)
+- [ ] Reihenfolge der Übungen ändern (Pfeile ↑ ↓)
+- [ ] Dieselbe Übung darf mehrmals vorkommen
 - [ ] Übung aus dem Programm entfernen (sie bleibt in der Bibliothek)
 - [ ] Programm löschen
 - [ ] Das Rückenprogramm ist wie jedes andere bearbeitbar
 
 **Übungsbibliothek**
 - [ ] Liste aller Übungen
-- [ ] Übung anlegen, bearbeiten, duplizieren, löschen
+- [ ] Übung anlegen, bearbeiten, duplizieren
+- [ ] Übung löschen, nur wenn sie in keinem Programm vorkommt
 - [ ] Beim Bearbeiten ist sichtbar, in welchen Programmen die Übung vorkommt
 
 **Allgemein**
@@ -140,12 +142,12 @@ Bei mehreren Sätzen beginnt jede linke Seite mit „Satz x von y.“ wie bisher
 - [ ] Speicherung lokal im Browser. Beim ersten Start übernimmt die App die mitgelieferten Programme und Übungen (Rücken, Arme mit Theraband) in den Speicher; danach gilt nur noch die gespeicherte Fassung
 - [ ] Ein Programm ohne Übungen kann nicht gestartet werden
 
-### Offene Fragen (vor den Entwürfen klären)
+### Entscheidungen
 
-- Wo erreicht man die Bearbeitung? Vorschlag: „Bearbeiten“ auf jeder Programmkarte, eine Karte „+ Neues Programm“ auf dem Startbildschirm und ein Zugang zur Übungsbibliothek.
-- Was passiert beim Löschen einer Übung, die in Programmen verwendet wird? Vorschlag: Sie verschwindet auch aus diesen Programmen; die Rückgängig-Leiste nennt die Anzahl („aus 2 Programmen entfernt“).
-- Darf dieselbe Übung zweimal im selben Programm vorkommen?
-- Verschieben per Ziehen (Drag & Drop) oder per Pfeil-Knöpfen ↑ ↓? Pfeile sind auf dem Handy zuverlässiger, Ziehen ist schneller.
+- **Zugang:** Jede Programmkarte auf dem Startbildschirm hat „Bearbeiten“. Unter den Programmen steht eine Karte „+ Neues Programm“. Die Übungsbibliothek erreicht man über die Einstellungen.
+- **Löschen von Übungen:** Im Programm wird eine Übung nur *entfernt*; sie bleibt in der Bibliothek. Endgültig löschen geht nur in der Bibliothek und nur für Übungen, die in keinem Programm vorkommen. Bei verwendeten Übungen steht stattdessen, in welchen Programmen sie stecken.
+- **Doppelte Übungen:** Dieselbe Übung darf mehrmals im selben Programm vorkommen (z. B. Dehnung am Anfang und am Ende).
+- **Verschieben:** mit Pfeil-Knöpfen ↑ ↓ an jeder Übung.
 
 ## Programme
 
