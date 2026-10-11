@@ -30,7 +30,7 @@ import { zeigeEinstellungen } from "./ansichten/einstellungen";
 import { TrainingAnsicht } from "./ansichten/training";
 import { Spieler, type Ereignis } from "./logik/spieler";
 import type { Daten, Trainingsplan } from "./logik/typen";
-import { sprich, still, stimmenStatus, waehleStimme } from "./geraet/sprache";
+import { beiAnsageStatus, sprich, still, stimmenStatus, waehleStimme } from "./geraet/sprache";
 import { piep, tonBereit } from "./geraet/piep";
 import { wachFreigeben, wachHalten } from "./geraet/wachhalten";
 import { aktuellesZiel, ersetze, geheZu, starteNavigation, zurueck, type Ziel } from "./navigation";
@@ -267,6 +267,7 @@ function einstellungsSeite(): void {
       piep();
     },
     stimmenStatus,
+    beiAnsageStatus,
   });
   window.scrollTo(0, 0);
 }
