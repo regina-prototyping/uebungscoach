@@ -1,11 +1,17 @@
 import { describe, expect, it } from "vitest";
-import { PROGRAMME } from "../src/data/programme";
+import { MITGELIEFERT } from "../src/data/programme";
+import { trainingsplan } from "../src/logik/daten";
 import { dose, doseSpoken, fmtTime } from "../src/logik/format";
 import { buildPlan } from "../src/logik/plan";
-import type { Einstellungen, Programm } from "../src/logik/typen";
+import type { Einstellungen, Trainingsplan, Uebung } from "../src/logik/typen";
 
 const STANDARD: Einstellungen = { tempo: 3, prep: 5, setPause: 30, lower: 3 };
-const ruecken = PROGRAMME.find((p) => p.id === "ruecken")!;
+
+/** Kleiner Trainingsplan mit einer Übung für Tests. */
+function plan1(u: Partial<Uebung>): Trainingsplan {
+  return { id: "t", name: "Test", exercises: [{ id: "a", name: "A", art: "reps", proSeite: false, reps: 1, sets: 1, ...u }] };
+}
+const ruecken = trainingsplan(MITGELIEFERT, "ruecken")!;
 
 describe("buildPlan mit dem Rückenprogramm", () => {
   const plan = buildPlan(ruecken, STANDARD);
@@ -77,18 +83,14 @@ describe("Einstellungen", () => {
   });
 
   it("eigene Werte einer Übung haben Vorrang", () => {
-    const prog: Programm = {
-      id: "t",
-      name: "Test",
-      exercises: [{ name: "A", type: "reps", reps: 2, sets: 2, tempo: 5, setPause: 10 }],
-    };
+    const prog = plan1({ reps: 2, sets: 2, tempo: 5, setPause: 10 });
     const plan = buildPlan(prog, STANDARD);
     expect(plan.filter((s) => s.kind === "rep").every((s) => s.dur === 5)).toBe(true);
     expect(plan.find((s) => s.kind === "pause")!.dur).toBe(10);
   });
 
   it("Vorbereitung dauert mindestens den eingestellten Wert", () => {
-    const prog: Programm = { id: "t", name: "T", exercises: [{ name: "A", type: "reps", reps: 1, sets: 1 }] };
+    const prog = plan1({});
     expect(buildPlan(prog, { ...STANDARD, prep: 20 })[0].dur).toBe(20);
   });
 
@@ -98,10 +100,37 @@ describe("Einstellungen", () => {
   });
 
   it("ein einzelner Satz hat keine Satzpause und keine Satznummer", () => {
-    const prog: Programm = { id: "t", name: "T", exercises: [{ name: "A", type: "sides", reps: 2, sets: 1 }] };
+    const prog = plan1({ proSeite: true, reps: 2 });
     const plan = buildPlan(prog, STANDARD);
     expect(plan.some((s) => s.kind === "pause")).toBe(false);
     expect(plan.find((s) => s.kind === "side")!.say).toBe("Links, 2 Mal.");
+  });
+});
+
+describe("Halten pro Seite", () => {
+  const plan = buildPlan(plan1({ name: "Seitstütz", art: "hold", proSeite: true, reps: 2, hold: 10, sets: 2 }), STANDARD);
+
+  it("hält erst links, dann rechts", () => {
+    const satz1 = plan.filter((s) => s.set === 1 && s.kind !== "prep");
+    expect(satz1.map((s) => [s.kind, s.side, s.say])).toEqual([
+      ["side", "links", "Satz 1 von 2. Links, 2 Mal."],
+      ["hold", "links", "Hoch und halten"],
+      ["lower", "links", "Ab"],
+      ["hold", "links", "Hoch, 2"],
+      ["lower", "links", "Ab"],
+      ["side", "rechts", "Seite wechseln. Rechts, 2 Mal."],
+      ["hold", "rechts", "Hoch und halten"],
+      ["lower", "rechts", "Ab"],
+      ["hold", "rechts", "Hoch, 2"],
+      ["lower", "rechts", "Ab"],
+      ["pause", undefined, "Satz 1 geschafft. 30 Sekunden Pause."],
+    ]);
+    expect(satz1.find((s) => s.kind === "hold")!.dur).toBe(10);
+  });
+
+  it("nennt die Menge mit „je Seite“", () => {
+    expect(plan[0].say).toBe("Erste Übung: Seitstütz. 2 Sätze, je Seite 2 Wiederholungen, jeweils 10 Sekunden halten.");
+    expect(dose(plan1({ art: "hold", proSeite: true, reps: 3, hold: 10, sets: 2 }).exercises[0])).toBe("2 × 3 × 10 s je Seite");
   });
 });
 
@@ -110,7 +139,7 @@ describe("Formatierung", () => {
     expect(ruecken.exercises.map(dose)).toEqual(["2 × 15", "2 × 5 je Seite", "2 × 10 × 5 s"]);
   });
   it("Mengen als Ansage", () => {
-    expect(doseSpoken({ name: "A", type: "reps", reps: 8, sets: 1 })).toBe("8 Wiederholungen.");
+    expect(doseSpoken(plan1({ reps: 8 }).exercises[0])).toBe("8 Wiederholungen.");
   });
   it("Zeit als m:ss", () => {
     expect(fmtTime(432)).toBe("7:12");

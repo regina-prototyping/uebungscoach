@@ -2,17 +2,22 @@ import type { Uebung } from "./typen";
 
 /** Menge als Kurztext, z. B. „2 × 15“, „2 × 5 je Seite“, „2 × 10 × 5 s“. */
 export function dose(e: Uebung): string {
-  if (e.type === "hold") return `${e.sets} × ${e.reps} × ${e.hold} s`;
-  if (e.type === "sides") return `${e.sets} × ${e.reps} je Seite`;
-  return `${e.sets} × ${e.reps}`;
+  return `${e.sets} × ${satzMenge(e)}`;
+}
+
+/** Menge eines Satzes, z. B. „15“, „5 je Seite“, „10 × 5 s“. */
+export function satzMenge(e: Uebung): string {
+  const seite = e.proSeite ? " je Seite" : "";
+  if (e.art === "hold") return `${e.reps} × ${e.hold} s${seite}`;
+  return `${e.reps}${seite}`;
 }
 
 /** Menge als Ansagetext, z. B. „2 Sätze, je Seite 5 Wiederholungen.“ */
 export function doseSpoken(e: Uebung): string {
   const head = e.sets > 1 ? `${e.sets} Sätze, ` : "";
-  if (e.type === "hold") return `${head}${e.reps} Wiederholungen, jeweils ${e.hold} Sekunden halten.`;
-  if (e.type === "sides") return `${head}je Seite ${e.reps} Wiederholungen.`;
-  return `${head}${e.reps} Wiederholungen.`;
+  const seite = e.proSeite ? "je Seite " : "";
+  if (e.art === "hold") return `${head}${seite}${e.reps} Wiederholungen, jeweils ${e.hold} Sekunden halten.`;
+  return `${head}${seite}${e.reps} Wiederholungen.`;
 }
 
 /** Sekunden als „m:ss“. */

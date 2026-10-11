@@ -1,5 +1,5 @@
 import { doseSpoken, speechSecs } from "./format";
-import type { Abschnitt, Einstellungen, Programm, Seite, Uebung } from "./typen";
+import type { Abschnitt, Einstellungen, Seite, Trainingsplan, Uebung } from "./typen";
 
 type Zeitwert = "tempo" | "setPause" | "lower";
 
@@ -13,7 +13,7 @@ function wert(e: Uebung, key: Zeitwert, einst: Einstellungen): number {
  * (Vorbereitung, Wiederholungen, Halten, Absenken, Satzpause, Ende).
  * Der Spieler arbeitet diese Liste der Reihe nach ab.
  */
-export function buildPlan(prog: Programm, einst: Einstellungen): Abschnitt[] {
+export function buildPlan(prog: Trainingsplan, einst: Einstellungen): Abschnitt[] {
   const segs: Abschnitt[] = [];
   const exs = prog.exercises;
 
@@ -28,7 +28,7 @@ export function buildPlan(prog: Programm, einst: Einstellungen): Abschnitt[] {
     segs.push({ ex: i, set: 1, kind: "prep", dur: Math.max(einst.prep, speechSecs(intro) + 3), say: intro });
 
     for (let s = 1; s <= e.sets; s++) {
-      const seiten: (Seite | undefined)[] = e.type === "sides" ? ["links", "rechts"] : [undefined];
+      const seiten: (Seite | undefined)[] = e.proSeite ? ["links", "rechts"] : [undefined];
       seiten.forEach((side, si) => {
         if (side) {
           const say =
@@ -38,9 +38,9 @@ export function buildPlan(prog: Programm, einst: Einstellungen): Abschnitt[] {
           segs.push({ ex: i, set: s, side, kind: "side", dur: Math.max(3, speechSecs(say) + 1), say });
         }
         for (let r = 1; r <= e.reps; r++) {
-          if (e.type === "hold") {
-            segs.push({ ex: i, set: s, kind: "hold", rep: r, dur: e.hold ?? 0, say: r === 1 ? "Hoch und halten" : `Hoch, ${r}` });
-            segs.push({ ex: i, set: s, kind: "lower", rep: r, dur: wert(e, "lower", einst), say: "Ab" });
+          if (e.art === "hold") {
+            segs.push({ ex: i, set: s, side, kind: "hold", rep: r, dur: e.hold ?? 0, say: r === 1 ? "Hoch und halten" : `Hoch, ${r}` });
+            segs.push({ ex: i, set: s, side, kind: "lower", rep: r, dur: wert(e, "lower", einst), say: "Ab" });
           } else {
             segs.push({ ex: i, set: s, side, kind: "rep", rep: r, dur: wert(e, "tempo", einst), say: String(r) });
           }

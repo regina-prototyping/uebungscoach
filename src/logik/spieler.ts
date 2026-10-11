@@ -1,5 +1,5 @@
 import { buildPlan, gesamtDauer } from "./plan";
-import type { Abschnitt, Einstellungen, Programm } from "./typen";
+import type { Abschnitt, Einstellungen, Trainingsplan } from "./typen";
 
 /**
  * Anweisungen des Spielers an Ton und Anzeige.
@@ -20,7 +20,7 @@ const MIT_PIEP = new Set(["prep", "pause", "hold"]);
  * z. B. aus `performance.now()`) kommt immer von außen.
  */
 export class Spieler {
-  readonly prog: Programm;
+  readonly prog: Trainingsplan;
   readonly segs: Abschnitt[];
   readonly total: number;
   idx = 0;
@@ -29,7 +29,7 @@ export class Spieler {
   running = false;
   private last = 0;
 
-  constructor(prog: Programm, einst: Einstellungen) {
+  constructor(prog: Trainingsplan, einst: Einstellungen) {
     this.prog = prog;
     this.segs = buildPlan(prog, einst);
     this.total = gesamtDauer(this.segs);

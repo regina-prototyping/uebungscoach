@@ -1,10 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { PROGRAMME } from "../src/data/programme";
+import { MITGELIEFERT } from "../src/data/programme";
+import { trainingsplan } from "../src/logik/daten";
 import { Spieler, type Ereignis } from "../src/logik/spieler";
 import type { Einstellungen } from "../src/logik/typen";
 
 const STANDARD: Einstellungen = { tempo: 3, prep: 5, setPause: 30, lower: 3 };
-const ruecken = PROGRAMME.find((p) => p.id === "ruecken")!;
+const ruecken = trainingsplan(MITGELIEFERT, "ruecken")!;
 
 /** Spult die Zeit in 100-ms-Schritten vor und sammelt alle Ereignisse. */
 function vorspulen(sp: Spieler, uhr: { t: number }, sekunden: number): Ereignis[] {

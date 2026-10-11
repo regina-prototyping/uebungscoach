@@ -1,0 +1,78 @@
+/* Gemeinsame Bausteine für die Entwürfe ab Version 2.
+   Farben, Rundungen und Schatten kommen aus ../theme.css. */
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; display: flex; justify-content: center; padding: 24px; background: #eee; }
+button, input { font: inherit; color: inherit; }
+
+.frame {
+  position: relative;
+  width: 390px;
+  min-height: 844px;
+  overflow: hidden;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 24px;
+}
+
+.kopf { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.titel { margin: 0; font-size: 30px; line-height: 34px; font-weight: 800; letter-spacing: -0.01em; }
+.app-name { font-weight: 800; font-size: 18px; }
+.display { margin: 0; font-size: 34px; line-height: 38px; font-weight: 800; letter-spacing: -0.015em; }
+.muted { color: var(--muted); }
+.klein { font-size: 14px; line-height: 18px; }
+.zahl { font-variant-numeric: tabular-nums; }
+.abschnitt { margin: 4px 4px -8px; font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+
+.card { background: var(--surface); box-shadow: var(--shadow-soft); border-radius: var(--radius-lg); }
+.zeilen { padding: 4px 20px; display: flex; flex-direction: column; }
+.zeile { display: flex; align-items: center; gap: 12px; padding: 14px 0; min-height: 72px; }
+.zeile + .zeile { border-top: 1px solid var(--line); }
+.zeile-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.zeile-name { font-weight: 700; }
+
+.pill { height: 44px; padding: 0 18px; border: 0; border-radius: var(--radius-pill); background: var(--surface); box-shadow: var(--shadow-soft); font-weight: 700; }
+.text-btn { border: 0; background: none; padding: 10px 0; min-height: 44px; font-weight: 600; color: var(--muted); }
+.rund { flex: none; width: 44px; height: 44px; border: 0; border-radius: var(--radius-pill); background: var(--tint); display: flex; align-items: center; justify-content: center; color: var(--ink); }
+.rund[disabled] { opacity: 0.35; }
+.icon-btn { width: 44px; height: 44px; border: 0; border-radius: var(--radius-pill); background: var(--surface); box-shadow: var(--shadow-soft); display: flex; align-items: center; justify-content: center; color: var(--ink); }
+
+.btn-primary { height: 60px; border: 0; border-radius: var(--radius-pill); background: var(--primary); color: #FFFFFF; font-size: 18px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.btn-soft { height: 56px; border: 0; border-radius: var(--radius-pill); background: var(--primary-soft); font-size: 17px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.btn-tint { height: 60px; padding: 0 22px; border: 0; border-radius: var(--radius-pill); background: var(--tint); font-weight: 700; display: flex; align-items: center; gap: 8px; }
+
+/* Eingabefelder */
+.feld { display: flex; flex-direction: column; gap: 6px; padding: 14px 0; }
+.feld + .feld { border-top: 1px solid var(--line); }
+.feld-label { font-weight: 700; }
+.eingabe { height: 48px; padding: 0 14px; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface); font-size: 17px; }
+.eingabe::placeholder { color: var(--muted); }
+.eingabe.fokus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); }
+
+/* Plus/Minus wie in den Einstellungen */
+.stepper { display: flex; align-items: center; gap: 12px; padding: 14px 0; }
+.stepper + .stepper, .feld + .stepper, .stepper + .feld { border-top: 1px solid var(--line); }
+.stepper .rund { font-size: 22px; }
+.wert { width: 40px; text-align: center; font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.wert.standard { font-size: 15px; font-weight: 600; color: var(--muted); width: 64px; line-height: 18px; }
+
+/* Chips zur Auswahl */
+.chips { display: flex; gap: 8px; }
+.chip { height: 44px; padding: 0 18px; border: 1px solid var(--line); border-radius: var(--radius-pill); background: var(--surface); font-size: 15px; font-weight: 700; display: flex; align-items: center; }
+.chip.aktiv { background: var(--primary-soft); border-color: var(--primary-soft); }
+
+/* Schalter */
+.schalter { flex: none; width: 52px; height: 32px; border-radius: 16px; background: var(--line); position: relative; }
+.schalter::after { content: ""; position: absolute; top: 3px; left: 3px; width: 26px; height: 26px; border-radius: 50%; background: #FFFFFF; box-shadow: 0 1px 3px #22181F33; }
+.schalter.an { background: var(--primary); }
+.schalter.an::after { left: 23px; }
+
+/* Rückgängig-Leiste */
+.leiste { position: absolute; left: 16px; right: 16px; bottom: 20px; padding: 0 8px 0 20px; height: 56px; border-radius: var(--radius-md); background: var(--ink); color: #FFFFFF; display: flex; align-items: center; gap: 12px; box-shadow: 0 8px 24px #22181F33; }
+.leiste span { flex: 1; font-size: 15px; font-weight: 600; }
+.leiste button { height: 44px; padding: 0 14px; border: 0; border-radius: var(--radius-pill); background: none; color: var(--primary-soft); font-weight: 700; }

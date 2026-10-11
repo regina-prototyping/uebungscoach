@@ -25,11 +25,11 @@ export interface Anzeige {
   danach: { name: string; menge: string } | null;
 }
 
-/** Menge eines einzelnen Satzes, z. B. „15 ×“, „5 × je Seite“, „10 × 5 s“. */
-function satzMenge(e: Uebung): string {
-  if (e.type === "hold") return `${e.reps} × ${e.hold} s`;
-  if (e.type === "sides") return `${e.reps} × je Seite`;
-  return `${e.reps} ×`;
+/** Menge des nächsten Satzes für „Danach“, z. B. „15 ×“, „5 × je Seite“, „10 × 5 s“. */
+function naechsterSatz(e: Uebung): string {
+  const seite = e.proSeite ? " je Seite" : "";
+  if (e.art === "hold") return `${e.reps} × ${e.hold} s${seite}`;
+  return `${e.reps} ×${seite}`;
 }
 
 /** Leitet aus dem Zustand des Spielers ab, was auf dem Trainingsbildschirm steht. */
@@ -108,7 +108,7 @@ export function anzeige(sp: Spieler): Anzeige {
   if (seg.side) chips.push(seg.side === "links" ? "Linke Seite" : "Rechte Seite");
 
   let danach: Anzeige["danach"];
-  if (seg.kind === "pause") danach = { name: `Satz ${seg.set + 1}: ${e.name}`, menge: satzMenge(e) };
+  if (seg.kind === "pause") danach = { name: `Satz ${seg.set + 1}: ${e.name}`, menge: naechsterSatz(e) };
   else if (exs[seg.ex + 1]) danach = { name: exs[seg.ex + 1].name, menge: dose(exs[seg.ex + 1]) };
   else danach = { name: "Training geschafft", menge: "" };
 

@@ -1,6 +1,6 @@
-# Übungscoach – Spezifikation v1
+# Übungscoach – Spezifikation
 
-Stand: 8. Oktober 2026
+Stand: 11. Oktober 2026 · Version 1 und Version 2 (Übungen und Programme bearbeiten) sind umgesetzt.
 
 ## Ziel
 
@@ -50,23 +50,104 @@ Das Training läuft ohne Antippen durch; Eingreifen ist nur zum Pausieren oder S
 
 ## Muss-Funktionen Version 1
 
-- [ ] Programmauswahl (mehrere Programme)
-- [ ] Geführter Ablauf mit Sprachansagen und Pieptönen wie oben
-- [ ] Große Anzeige: aktuelle Übung, Zähler bzw. Countdown im Fortschrittsring, Satz x von y, nächste Übung, Restzeit
-- [ ] Steuerung: Pause/Weiter (Symbol wechselt!), Zurück (Anfang der aktuellen bzw. vorherigen Übung), Nächste Übung, Beenden mit Rückfrage
-- [ ] Bildschirm bleibt während des Trainings an (Wake Lock)
-- [ ] Standardwerte global einstellbar und im Browser gespeichert, pro Übung überschreibbar
-- [ ] Als App auf dem Handy-Startbildschirm installierbar (PWA)
+- [x] Programmauswahl (mehrere Programme)
+- [x] Geführter Ablauf mit Sprachansagen und Pieptönen wie oben
+- [x] Große Anzeige: aktuelle Übung, Zähler bzw. Countdown im Fortschrittsring, Satz x von y, nächste Übung, Restzeit
+- [x] Steuerung: Pause/Weiter (Symbol wechselt!), Zurück (Anfang der aktuellen bzw. vorherigen Übung), Nächste Übung, Beenden mit Rückfrage
+- [x] Bildschirm bleibt während des Trainings an (Wake Lock)
+- [x] Standardwerte global einstellbar und im Browser gespeichert, pro Übung überschreibbar
+- [x] Als App auf dem Handy-Startbildschirm installierbar (PWA)
 
 ## Bewusst später
 
-- Übungen und Programme direkt in der App anlegen und bearbeiten
+- Sicherung: Programme und Übungen als Datei exportieren und importieren
 - Spracheingabe von Übungen
 - Trainingsverlauf und Statistik
 - Bilder oder Videos zu den Übungen
 - Synchronisation zwischen Geräten
 - Dunkles Farbschema
 - Weiterlaufen bei gesperrtem Bildschirm (ginge nur als native App)
+
+## Version 2: Übungen und Programme bearbeiten
+
+### Grundidee
+
+Übungen liegen in einer gemeinsamen **Übungsbibliothek**. Ein **Programm** wird aus Übungen dieser Bibliothek zusammengestellt. Dieselbe Übung kann in mehreren Programmen vorkommen. Wird eine Übung geändert, gilt die Änderung in allen Programmen, die sie verwenden.
+
+Wer dieselbe Übung in zwei Programmen unterschiedlich ausführen will (z. B. 2 × 10 und 3 × 8), legt eine zweite Übung an. Dafür gibt es „Übung duplizieren“.
+
+### Datenmodell ab Version 2
+
+**Übung**
+
+| Feld | Pflicht | Gilt bei | Eingabe | Bereich |
+| --- | --- | --- | --- | --- |
+| Name | ja | immer | Textfeld | – |
+| Hinweis | nein | immer | Textfeld, wird vor der Übung angesagt | – |
+| Art | ja | immer | Chips: Wiederholungen · Halten | – |
+| Pro Seite | ja | immer | Schalter (Standard: aus) | – |
+| Wiederholungen | ja | immer (bei „pro Seite“: je Seite) | Plus/Minus | 1–50 |
+| Haltedauer (s) | ja | nur Halten | Plus/Minus | 1–120 |
+| Sätze | ja | immer | Plus/Minus | 1–10 |
+| Tempo (s) | nein | nur Wiederholungen | unter „Eigene Zeiten“ | wie Einstellungen |
+| Absenken (s) | nein | nur Halten | unter „Eigene Zeiten“ | wie Einstellungen |
+| Satzpause (s) | nein | nur bei mehr als 1 Satz | unter „Eigene Zeiten“ | wie Einstellungen |
+
+**Programm**
+
+| Feld | Pflicht | Bedeutung |
+| --- | --- | --- |
+| Name | ja | z. B. „Rücken“ |
+| Startposition | nein | wird ganz am Anfang angesagt |
+| Übungen | – | geordnete Liste von Übungen aus der Bibliothek |
+
+Die bisherigen Typen werden so abgebildet: `reps` = Wiederholungen ohne Seiten, `sides` = Wiederholungen pro Seite, `hold` = Halten ohne Seiten. Neu ist **Halten pro Seite**.
+
+### Art und „pro Seite“ im Ablauf
+
+| | Pro Seite: aus | Pro Seite: an |
+| --- | --- | --- |
+| **Wiederholungen** | „1“ … „15“ | „Links, 5 Mal.“ – „1“ … „5“ – „Seite wechseln. Rechts, 5 Mal.“ – „1“ … „5“ |
+| **Halten** | „Hoch und halten“ – Countdown – „Ab“ – Absenken – „Hoch, 2“ … | „Links, 5 Mal.“ – Halten wie links daneben, 5 × – „Seite wechseln. Rechts, 5 Mal.“ – 5 × |
+
+Bei mehreren Sätzen beginnt jede linke Seite mit „Satz x von y.“ wie bisher.
+
+### Eigene Zeiten (Progressive Disclosure)
+
+- Tempo, Absenken und Satzpause stehen in einem zugeklappten Bereich „Eigene Zeiten“.
+- Es werden nur die Felder gezeigt, die für Art und Satzanzahl sinnvoll sind.
+- Ohne eigenen Wert zeigt das Feld den Standard aus den Einstellungen, z. B. „Standard (3 s)“. Plus oder Minus macht daraus einen eigenen Wert; „Zurücksetzen“ macht ihn wieder zum Standard.
+- Hat eine Übung eigene Zeiten, steht das auch im zugeklappten Zustand, z. B. „Eigene Zeiten · Tempo 4 s“.
+
+### Funktionen
+
+**Programme**
+- [x] Neues Programm anlegen (Name, optional Startposition)
+- [x] Programm bearbeiten: Name, Startposition, Übungen
+- [x] Übung hinzufügen: Auswahl aus der Bibliothek; ganz oben „+ Neue Übung“, die nach dem Speichern direkt im Programm landet
+- [x] Reihenfolge der Übungen ändern (Pfeile ↑ ↓)
+- [x] Dieselbe Übung darf mehrmals vorkommen
+- [x] Übung aus dem Programm entfernen (sie bleibt in der Bibliothek)
+- [x] Programm löschen
+- [x] Das Rückenprogramm ist wie jedes andere bearbeitbar
+
+**Übungsbibliothek**
+- [x] Liste aller Übungen
+- [x] Übung anlegen, bearbeiten, duplizieren
+- [x] Übung löschen, nur wenn sie in keinem Programm vorkommt
+- [x] Beim Bearbeiten ist sichtbar, in welchen Programmen die Übung vorkommt
+
+**Allgemein**
+- [x] Löschen ohne Rückfrage, dafür mit „Rückgängig“: unten erscheint für einige Sekunden eine Leiste, z. B. „Übung gelöscht · Rückgängig“
+- [x] Speicherung lokal im Browser. Beim ersten Start übernimmt die App die mitgelieferten Programme und Übungen (Rücken, Arme mit Theraband) in den Speicher; danach gilt nur noch die gespeicherte Fassung
+- [x] Ein Programm ohne Übungen kann nicht gestartet werden
+
+### Entscheidungen
+
+- **Zugang:** Jede Programmkarte auf dem Startbildschirm hat „Bearbeiten“. Unter den Programmen steht eine Karte „+ Neues Programm“. Oben rechts auf dem Startbildschirm öffnet ein Menü-Knopf (☰) ein Menü-Panel, das fast den ganzen Bildschirm bedeckt (links bleibt ein schmaler, abgedunkelter Streifen der Seite sichtbar). Es enthält „Übungen“ (Übungsbibliothek) und „Einstellungen“ und schließt über ✕ oder Tippen auf den Streifen.
+- **Löschen von Übungen:** Im Programm wird eine Übung nur *entfernt*; sie bleibt in der Bibliothek. Endgültig löschen geht nur in der Bibliothek und nur für Übungen, die in keinem Programm vorkommen. Bei verwendeten Übungen steht stattdessen, in welchen Programmen sie stecken.
+- **Doppelte Übungen:** Dieselbe Übung darf mehrmals im selben Programm vorkommen (z. B. Dehnung am Anfang und am Ende).
+- **Verschieben:** mit Pfeil-Knöpfen ↑ ↓ an jeder Übung.
 
 ## Programme
 

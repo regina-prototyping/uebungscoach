@@ -311,3 +311,210 @@ button { font: inherit; color: inherit; cursor: pointer; }
   gap: 10px;
 }
 .btn-soft:active { filter: brightness(0.96); }
+
+/* ---------- Version 2: Startseite ---------- */
+.programm-titel { align-items: center; }
+.link-btn {
+  flex: none;
+  height: 44px;
+  margin-right: -4px;
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  color: var(--primary);
+  font-size: 15px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.zeilen-karte {
+  width: 100%;
+  border: 0;
+  padding: 18px var(--space-5);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-align: left;
+}
+.zeilen-karte:active { transform: scale(0.99); }
+.symbolfeld-primary { background: var(--primary-soft); color: var(--ink); }
+
+/* ---------- Menü-Panel ---------- */
+/* Abdunklung über der ganzen Seite; das Panel gleitet darüber. */
+.menue-overlay { position: fixed; inset: 0; z-index: 20; }
+.menue-streifen {
+  position: absolute;
+  inset: 0;
+  background: #22181F59;
+  animation: einblenden 0.22s ease-out;
+}
+.menue-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 56px;
+  background: var(--surface);
+  box-shadow: -8px 0 32px #22181F1F;
+  padding: 24px var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  overflow-y: auto;
+  animation: hereinschieben 0.22s ease-out;
+}
+.menue-liste { display: flex; flex-direction: column; }
+.menue-eintrag {
+  width: 100%;
+  border: 0;
+  background: none;
+  padding: var(--space-3) 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  text-align: left;
+}
+.menue-eintrag + .menue-eintrag { border-top: 1px solid var(--line); }
+.menue-eintrag .leer-text { flex: 1; }
+@keyframes hereinschieben { from { transform: translateX(100%); } }
+@keyframes einblenden { from { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .menue-panel, .menue-streifen { animation: none; }
+}
+
+/* ---------- Bearbeiten-Bildschirme ---------- */
+.bearbeiten { gap: var(--space-5); padding-bottom: 96px; }
+.eingabe-feld { display: flex; flex-direction: column; gap: 6px; padding: 14px 0; }
+.eingabe-feld + .eingabe-feld { border-top: 1px solid var(--line); }
+.optional { color: var(--muted); font-weight: 600; }
+.eingabe {
+  height: 48px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 17px;
+}
+.eingabe::placeholder { color: var(--muted); }
+.eingabe:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); }
+.abschnitt {
+  margin: 4px 4px -8px;
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.felder .zeile { display: flex; align-items: center; gap: var(--space-2); padding: 14px 0; }
+.felder .zeile + .zeile { border-top: 1px solid var(--line); }
+.zeile-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.zeile-link { border: 0; background: none; padding: 0; text-align: left; min-height: 44px; justify-content: center; }
+.zeile-name { font-weight: 700; overflow-wrap: anywhere; }
+.stepper-btn { display: flex; align-items: center; justify-content: center; color: var(--ink); }
+.stepper-btn:disabled { opacity: 0.35; cursor: default; }
+.stepper-btn:disabled:active { transform: none; }
+.leer-hinweis { margin: 0; padding: 18px 0; }
+.loeschen-btn { align-self: center; padding: 10px 16px; }
+
+/* Rückgängig-Leiste */
+.leiste {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  bottom: calc(20px + env(safe-area-inset-bottom));
+  max-width: 448px;
+  margin: 0 auto;
+  min-height: 56px;
+  padding: 6px 8px 6px 20px;
+  border-radius: var(--radius-md);
+  background: var(--ink);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  box-shadow: 0 8px 24px #22181F33;
+  z-index: 30;
+  animation: hochgleiten 0.2s ease-out;
+}
+.leiste span { flex: 1; font-size: 15px; line-height: 20px; font-weight: 600; }
+.leiste button {
+  height: 44px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: none;
+  color: var(--primary-soft);
+  font-weight: 700;
+}
+@keyframes hochgleiten { from { transform: translateY(16px); opacity: 0; } }
+
+/* ---------- Übung bearbeiten / auswählen ---------- */
+.unter-titel { margin: -8px 0 0; }
+.zeile-wahl {
+  width: 100%;
+  border-width: 0;
+  background: none;
+  text-align: left;
+}
+.eingabe-feld + .feld { border-top: 1px solid var(--line); }
+#eigene-zeiten > .feld { border-top: 1px solid var(--line); }
+.symbol-plus { background: var(--primary-soft); }
+.auswahl-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.wahl-chip {
+  height: 44px;
+  padding: 0 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  font-size: 15px;
+  font-weight: 700;
+}
+.wahl-chip.aktiv { background: var(--primary-soft); border-color: var(--primary-soft); }
+.schalter {
+  flex: none;
+  position: relative;
+  width: 52px;
+  height: 32px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--line);
+  transition: background 0.15s;
+}
+.schalter::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  box-shadow: 0 1px 3px #22181F33;
+  transition: left 0.15s;
+}
+.schalter[aria-checked="true"] { background: var(--primary); }
+.schalter[aria-checked="true"]::after { left: 23px; }
+.schalter::before { content: ""; position: absolute; inset: -6px; } /* größere Tippfläche */
+.zeit-kopf { width: 100%; border: 0; background: none; text-align: left; }
+.zeit-pfeil { flex: none; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; }
+.feld-wert.standard { width: 64px; font-size: 15px; line-height: 18px; font-weight: 600; color: var(--muted); }
+.zuruecksetzen {
+  align-self: flex-start;
+  margin-top: 2px;
+  padding: 4px 0;
+  border: 0;
+  background: none;
+  color: var(--primary);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: underline;
+}
+.verwendung { margin: 0 4px; }
+
+/* ---------- Übungsbibliothek ---------- */
+.verwendet { color: var(--muted); font-weight: 600; }
+.unbenutzt { color: var(--rest); font-weight: 600; }
