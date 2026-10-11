@@ -22,6 +22,7 @@ Eine Web-App (PWA), die per Sprachansage durch Physio-Übungen führt. Die Nutze
 
 - **Sprachausgabe (Web Speech API) muss im Moment des Antippens starten.** Die erste Ansage nach „Training starten“ muss synchron im Klick-Handler kommen. Eine Verzögerung (z. B. `setTimeout`) führte dazu, dass das Handy für die ganze Sitzung stumm blieb.
 - **`speechSynthesis.cancel()` nur aufrufen, wenn wirklich etwas spricht** (`speaking || pending`). Ein `cancel()` direkt vor `speak()` hat die nächste Ansage verschluckt.
+- **Chrome auf Android kann die Sprachausgabe „angehalten“ hängen lassen** (z. B. nach Hintergrund oder automatischem Neuladen beim Update): `speak()` reiht dann nur ein, nichts ist zu hören, auch nicht bei „Stimme testen“. Deshalb vor jeder Ansage `speechSynthesis.resume()` und ein Wachhund, der bei Stillstand `cancel()`/`resume()` macht und neu spricht (`src/geraet/sprache.ts`).
 - **In der Claude-App (eingebettete Ansicht) gibt es keine Sprachausgabe**, im normalen Browser schon. Immer im echten Browser auf dem Handy testen.
 - **Pieptöne über die Web Audio API funktionieren zuverlässig**; den `AudioContext` beim ersten Antippen erzeugen bzw. fortsetzen.
 - **SVG-Elemente kennen die `.hidden`-Eigenschaft nicht** – Attribut per `toggleAttribute("hidden", …)` setzen. (Daran lag der Fehler, dass Pause und Weiter dasselbe Symbol zeigten.)

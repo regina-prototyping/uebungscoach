@@ -8,6 +8,8 @@ interface EinstellungenOptionen {
   onFertig: () => void;
   onStimmeTesten: () => void;
   stimmenStatus: () => string;
+  /** Meldet Statusänderungen der Sprachausgabe (oder hört mit `null` auf). */
+  beiAnsageStatus: (f: ((status: string) => void) | null) => void;
 }
 
 /** Einstellungsbildschirm mit Plus/Minus-Feldern und „Stimme testen“. */
@@ -54,6 +56,11 @@ export function zeigeEinstellungen(root: HTMLElement, opt: EinstellungenOptionen
   });
   root.querySelector("[data-a=fertig]")!.addEventListener("click", opt.onFertig);
   root.querySelector("[data-a=stimme]")!.addEventListener("click", () => {
+    // Diagnose live aktualisieren, solange die Einstellungen offen sind
+    opt.beiAnsageStatus(() => {
+      if (diagnose.isConnected) diagnose.textContent = opt.stimmenStatus();
+      else opt.beiAnsageStatus(null);
+    });
     opt.onStimmeTesten();
     diagnose.textContent = opt.stimmenStatus();
   });
