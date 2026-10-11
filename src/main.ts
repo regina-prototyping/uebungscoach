@@ -21,10 +21,10 @@ import {
 } from "./logik/daten";
 import { zeigeStart } from "./ansichten/start";
 import { zeigeMenue } from "./ansichten/menue";
-import { zeigePlatzhalter } from "./ansichten/platzhalter";
 import { ProgrammAnsicht } from "./ansichten/programm";
 import { zeigeAuswahl } from "./ansichten/auswahl";
 import { UebungAnsicht } from "./ansichten/uebung";
+import { zeigeBibliothek } from "./ansichten/bibliothek";
 import { schliesseRueckgaengig, zeigeRueckgaengig } from "./ansichten/rueckgaengig";
 import { zeigeEinstellungen } from "./ansichten/einstellungen";
 import { TrainingAnsicht } from "./ansichten/training";
@@ -122,7 +122,16 @@ function anzeigen(ziel: Ziel): void {
       einstellungsSeite();
       break;
     case "uebungen":
-      zeigePlatzhalter(app, "Übungen", "Die Übungsbibliothek kommt in Schritt 5.", zurueck);
+      zeigeBibliothek(app, {
+        daten,
+        onOeffnen: (id) => geheZu({ name: "uebung", id }),
+        onNeu: () => {
+          const { daten: neu, id } = uebungAnlegen(daten);
+          aendern(neu);
+          geheZu({ name: "uebung", id, neu: true });
+        },
+        onFertig: zurueck,
+      });
       window.scrollTo(0, 0);
       break;
     case "programm":

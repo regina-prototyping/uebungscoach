@@ -514,3 +514,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
   text-decoration: underline;
 }
 .verwendung { margin: 0 4px; }
+
+/* ---------- Übungsbibliothek ---------- */
+.verwendet { color: var(--muted); font-weight: 600; }
+.unbenutzt { color: var(--rest); font-weight: 600; }
