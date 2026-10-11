@@ -1,6 +1,6 @@
 # Übungscoach – Spezifikation
 
-Stand: 9. Oktober 2026 · Version 1 ist umgesetzt, Version 2 (Übungen und Programme bearbeiten) ist in Planung.
+Stand: 11. Oktober 2026 · Version 1 und Version 2 (Übungen und Programme bearbeiten) sind umgesetzt.
 
 ## Ziel
 
@@ -50,13 +50,13 @@ Das Training läuft ohne Antippen durch; Eingreifen ist nur zum Pausieren oder S
 
 ## Muss-Funktionen Version 1
 
-- [ ] Programmauswahl (mehrere Programme)
-- [ ] Geführter Ablauf mit Sprachansagen und Pieptönen wie oben
-- [ ] Große Anzeige: aktuelle Übung, Zähler bzw. Countdown im Fortschrittsring, Satz x von y, nächste Übung, Restzeit
-- [ ] Steuerung: Pause/Weiter (Symbol wechselt!), Zurück (Anfang der aktuellen bzw. vorherigen Übung), Nächste Übung, Beenden mit Rückfrage
-- [ ] Bildschirm bleibt während des Trainings an (Wake Lock)
-- [ ] Standardwerte global einstellbar und im Browser gespeichert, pro Übung überschreibbar
-- [ ] Als App auf dem Handy-Startbildschirm installierbar (PWA)
+- [x] Programmauswahl (mehrere Programme)
+- [x] Geführter Ablauf mit Sprachansagen und Pieptönen wie oben
+- [x] Große Anzeige: aktuelle Übung, Zähler bzw. Countdown im Fortschrittsring, Satz x von y, nächste Übung, Restzeit
+- [x] Steuerung: Pause/Weiter (Symbol wechselt!), Zurück (Anfang der aktuellen bzw. vorherigen Übung), Nächste Übung, Beenden mit Rückfrage
+- [x] Bildschirm bleibt während des Trainings an (Wake Lock)
+- [x] Standardwerte global einstellbar und im Browser gespeichert, pro Übung überschreibbar
+- [x] Als App auf dem Handy-Startbildschirm installierbar (PWA)
 
 ## Bewusst später
 
@@ -122,25 +122,25 @@ Bei mehreren Sätzen beginnt jede linke Seite mit „Satz x von y.“ wie bisher
 ### Funktionen
 
 **Programme**
-- [ ] Neues Programm anlegen (Name, optional Startposition)
-- [ ] Programm bearbeiten: Name, Startposition, Übungen
-- [ ] Übung hinzufügen: Auswahl aus der Bibliothek; ganz oben „+ Neue Übung“, die nach dem Speichern direkt im Programm landet
-- [ ] Reihenfolge der Übungen ändern (Pfeile ↑ ↓)
-- [ ] Dieselbe Übung darf mehrmals vorkommen
-- [ ] Übung aus dem Programm entfernen (sie bleibt in der Bibliothek)
-- [ ] Programm löschen
-- [ ] Das Rückenprogramm ist wie jedes andere bearbeitbar
+- [x] Neues Programm anlegen (Name, optional Startposition)
+- [x] Programm bearbeiten: Name, Startposition, Übungen
+- [x] Übung hinzufügen: Auswahl aus der Bibliothek; ganz oben „+ Neue Übung“, die nach dem Speichern direkt im Programm landet
+- [x] Reihenfolge der Übungen ändern (Pfeile ↑ ↓)
+- [x] Dieselbe Übung darf mehrmals vorkommen
+- [x] Übung aus dem Programm entfernen (sie bleibt in der Bibliothek)
+- [x] Programm löschen
+- [x] Das Rückenprogramm ist wie jedes andere bearbeitbar
 
 **Übungsbibliothek**
-- [ ] Liste aller Übungen
-- [ ] Übung anlegen, bearbeiten, duplizieren
-- [ ] Übung löschen, nur wenn sie in keinem Programm vorkommt
-- [ ] Beim Bearbeiten ist sichtbar, in welchen Programmen die Übung vorkommt
+- [x] Liste aller Übungen
+- [x] Übung anlegen, bearbeiten, duplizieren
+- [x] Übung löschen, nur wenn sie in keinem Programm vorkommt
+- [x] Beim Bearbeiten ist sichtbar, in welchen Programmen die Übung vorkommt
 
 **Allgemein**
-- [ ] Löschen ohne Rückfrage, dafür mit „Rückgängig“: unten erscheint für einige Sekunden eine Leiste, z. B. „Übung gelöscht · Rückgängig“
-- [ ] Speicherung lokal im Browser. Beim ersten Start übernimmt die App die mitgelieferten Programme und Übungen (Rücken, Arme mit Theraband) in den Speicher; danach gilt nur noch die gespeicherte Fassung
-- [ ] Ein Programm ohne Übungen kann nicht gestartet werden
+- [x] Löschen ohne Rückfrage, dafür mit „Rückgängig“: unten erscheint für einige Sekunden eine Leiste, z. B. „Übung gelöscht · Rückgängig“
+- [x] Speicherung lokal im Browser. Beim ersten Start übernimmt die App die mitgelieferten Programme und Übungen (Rücken, Arme mit Theraband) in den Speicher; danach gilt nur noch die gespeicherte Fassung
+- [x] Ein Programm ohne Übungen kann nicht gestartet werden
 
 ### Entscheidungen
 

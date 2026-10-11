@@ -16,7 +16,10 @@ npm test         # Tests der Ablauflogik ausführen
 npm run build    # fertige App in dist/ erzeugen (macht Vercel automatisch)
 ```
 
-- Programme: `src/data/programme.ts`
-- Ablauflogik: `src/logik/` (Plan, Spieler, Anzeige) – getestet in `tests/`
-- Bildschirme: `src/ansichten/`
+- Mitgelieferte Übungen und Programme (beim ersten Start übernommen): `src/data/programme.ts`
+- Ablauflogik: `src/logik/` (Plan, Spieler, Anzeige, Datenfunktionen, Formularregeln) – getestet in `tests/`
+- Speichern im Browser: `src/daten-speicher.ts`, `src/einstellungen.ts`
+- Bildschirme: `src/ansichten/`, Navigation mit Zurück-Geste: `src/navigation.ts`
 - Ton, Piepen, Bildschirm wach halten: `src/geraet/`
+
+Übungen und Programme werden in der App angelegt und lokal im Browser gespeichert. Wer die Website-Daten in Chrome löscht, verliert sie (Export/Import ist geplant).
