@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { MITGELIEFERT } from "../src/data/programme";
 import { trainingsplan } from "../src/logik/daten";
-import { Spieler, type Ereignis } from "../src/logik/spieler";
+import { hoerbar, Spieler, type Ereignis } from "../src/logik/spieler";
 import type { Einstellungen } from "../src/logik/typen";
 
 const STANDARD: Einstellungen = { tempo: 3, prep: 5, setPause: 30, lower: 3 };
@@ -19,6 +19,7 @@ function vorspulen(sp: Spieler, uhr: { t: number }, sekunden: number): Ereignis[
 }
 const gesagt = (ev: Ereignis[]) => ev.flatMap((e) => (e.typ === "sagen" ? [e.text] : []));
 const pieps = (ev: Ereignis[]) => ev.filter((e) => e.typ === "piep").length;
+const signale = (ev: Ereignis[]) => ev.flatMap((e) => (e.typ === "signal" ? [e.signal] : []));
 
 function neu() {
   const uhr = { t: 1000 };
@@ -142,5 +143,64 @@ describe("Spieler", () => {
     vorspulen(sp, uhr, 4);
     expect(sp.erledigt).toBeCloseTo(4, 5);
     expect(sp.rest).toBe(6);
+  });
+});
+
+describe("Signaltöne", () => {
+  it("Gong zu Beginn, dann Los bei der ersten Wiederholung und Takt bei den weiteren", () => {
+    const { sp, uhr, start } = neu();
+    expect(signale(start)).toEqual(["neueUebung"]);
+    expect(signale(vorspulen(sp, uhr, 10.05))).toEqual(["los"]);
+    expect(signale(vorspulen(sp, uhr, 6))).toEqual(["takt", "takt"]);
+  });
+
+  it("Satzpause nach dem letzten Mitzählen, danach wieder Los", () => {
+    const { sp, uhr } = neu();
+    const ev = vorspulen(sp, uhr, 10 + 15 * 3 + 30 + 0.5);
+    const s = signale(ev);
+    expect(s.filter((x) => x === "satzpause")).toHaveLength(1);
+    expect(s.at(-1)).toBe("los");
+    expect(sp.seg).toMatchObject({ kind: "rep", set: 2, rep: 1 });
+  });
+
+  it("pro Seite: Seite, Los, Takt … Seite, Los", () => {
+    const { sp, uhr } = neu();
+    sp.skip(uhr.t); // Beine seitlich kippen
+    // Dauer bis kurz nach Beginn der ersten Wiederholung rechts
+    const bisRechts = sp.segs.slice(sp.idx, sp.idx + 1 + 1 + 5 + 1).reduce((a, x) => a + x.dur, 0);
+    const ev = vorspulen(sp, uhr, bisRechts + 0.5);
+    expect(signale(ev)).toEqual(["seite", "los", "takt", "takt", "takt", "takt", "seite", "los"]);
+  });
+
+  it("Halten: Los zu Beginn jeder Haltephase, Ab beim Absenken", () => {
+    const { sp, uhr } = neu();
+    sp.skip(uhr.t);
+    sp.skip(uhr.t); // Brücke
+    // Vorbereitung, Halten, Absenken – dann beginnt das zweite Halten
+    const bisZweitesHalten = sp.segs.slice(sp.idx, sp.idx + 3).reduce((a, x) => a + x.dur, 0);
+    const ev = vorspulen(sp, uhr, bisZweitesHalten + 0.5);
+    expect(signale(ev)).toEqual(["los", "ab", "los"]);
+  });
+
+  it("Ende-Melodie beim Abschluss, Gong beim Springen zur nächsten Übung", () => {
+    const { sp, uhr } = neu();
+    expect(signale(sp.skip(uhr.t))).toEqual(["neueUebung"]);
+    sp.skip(uhr.t);
+    expect(signale(sp.skip(uhr.t))).toEqual(["ende"]);
+  });
+});
+
+describe("Ansage-Modus", () => {
+  it("„Nur Töne“: keine Sprache, aber Takt", () => {
+    expect(hoerbar({ typ: "sagen", text: "1" }, "toene")).toBe(false);
+    expect(hoerbar({ typ: "signal", signal: "takt" }, "toene")).toBe(true);
+    expect(hoerbar({ typ: "signal", signal: "los" }, "toene")).toBe(true);
+    expect(hoerbar({ typ: "piep" }, "toene")).toBe(true);
+  });
+
+  it("„Sprache und Töne“: Sprache und Signale, aber kein Takt", () => {
+    expect(hoerbar({ typ: "sagen", text: "1" }, "sprache")).toBe(true);
+    expect(hoerbar({ typ: "signal", signal: "takt" }, "sprache")).toBe(false);
+    expect(hoerbar({ typ: "signal", signal: "neueUebung" }, "sprache")).toBe(true);
   });
 });

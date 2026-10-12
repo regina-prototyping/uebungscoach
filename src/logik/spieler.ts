@@ -5,9 +5,23 @@ import type { Abschnitt, Einstellungen, Trainingsplan } from "./typen";
  * Anweisungen des Spielers an Ton und Anzeige.
  * Der Spieler selbst spricht und piept nicht – so bleibt er testbar.
  */
+/** Signaltöne, die sagen, wann man hinschauen oder handeln muss (siehe Spezifikation). */
+export type Signal = "neueUebung" | "los" | "ab" | "seite" | "satzpause" | "ende" | "takt";
+
+/** Wie angesagt wird: mit Sprache (und Signaltönen) oder nur mit Tönen. */
+export type AnsageModus = "sprache" | "toene";
+
+/** Welche Ereignisse im gewählten Modus hörbar sein sollen. */
+export function hoerbar(e: Ereignis, modus: AnsageModus): boolean {
+  if (e.typ === "sagen") return modus === "sprache";
+  if (e.typ === "signal" && e.signal === "takt") return modus === "toene";
+  return true;
+}
+
 export type Ereignis =
   | { typ: "sagen"; text: string }
   | { typ: "piep" }
+  | { typ: "signal"; signal: Signal }
   /** Laufende Ansage abbrechen (nur wenn wirklich etwas spricht). */
   | { typ: "still" }
   | { typ: "fertig" };
@@ -127,8 +141,30 @@ export class Spieler {
   private betreten(): Ereignis[] {
     if (this.fertig) {
       this.running = false;
-      return [{ typ: "sagen", text: this.seg.say }, { typ: "fertig" }];
+      return [{ typ: "signal", signal: "ende" }, { typ: "sagen", text: this.seg.say }, { typ: "fertig" }];
     }
-    return [{ typ: "sagen", text: this.seg.say }];
+    return [{ typ: "signal", signal: this.signal() }, { typ: "sagen", text: this.seg.say }];
+  }
+
+  /** Welches Signal beim Betreten des aktuellen Abschnitts ertönt. */
+  private signal(): Signal {
+    const seg = this.seg;
+    switch (seg.kind) {
+      case "prep":
+        return "neueUebung";
+      case "pause":
+        return "satzpause";
+      case "side":
+        return "seite";
+      case "hold":
+        return "los";
+      case "lower":
+        return "ab";
+      default: {
+        // Erste Wiederholung nach Vorbereitung, Seitenansage oder Pause: „Los“, sonst Takt
+        const vorher = this.segs[this.idx - 1]?.kind;
+        return vorher === undefined || vorher === "prep" || vorher === "side" || vorher === "pause" ? "los" : "takt";
+      }
+    }
   }
 }
