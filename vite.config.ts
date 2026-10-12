@@ -1,7 +1,15 @@
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 
+// Versionsangabe für die Einstellungen: Datum des Builds und (bei Vercel) Commit
+const build = new Date().toISOString().slice(0, 16).replace("T", " ");
+const env = (globalThis as { process?: { env: Record<string, string | undefined> } }).process?.env ?? {};
+const commit = env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) ?? "lokal";
+
 export default defineConfig({
+  define: {
+    __VERSION__: JSON.stringify(`${build} · ${commit}`),
+  },
   plugins: [
     VitePWA({
       // Neue Versionen werden beim nächsten Öffnen automatisch übernommen
