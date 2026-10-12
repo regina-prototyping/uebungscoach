@@ -38,6 +38,7 @@ export function zeigeEinstellungen(root: HTMLElement, opt: EinstellungenOptionen
 
       <button type="button" class="btn-soft" data-a="stimme">${LAUTSPRECHER}Stimme testen</button>
       <p class="caption-normal muted diagnose" data-e="diagnose">${opt.stimmenStatus()}</p>
+      <p class="caption-normal muted diagnose">App-Version: ${__VERSION__}</p>
     </section>`;
 
   const diagnose = root.querySelector<HTMLElement>("[data-e=diagnose]")!;

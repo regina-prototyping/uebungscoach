@@ -90,7 +90,8 @@ function neueAnsage(text: string, v: Variante = variante): Ansage {
     if (u.gestartet) laufend = Math.max(0, laufend - 1);
     // „interrupted“/„canceled“ entstehen beim gewollten Abbrechen
     if (ev.error === "interrupted" || ev.error === "canceled") return melde("Ansage abgebrochen");
-    if (!u.gestartet && STIMMEN_FEHLER.has(ev.error)) {
+    // Auch nach „gestartet“: Android meldet den Fehler teils erst danach, hörbar war dann nichts
+    if (STIMMEN_FEHLER.has(ev.error)) {
       // Mit der nächsten Einstellung neu versuchen (oder der schon gewechselten)
       const i = VARIANTEN.indexOf(v);
       if (v === variante && i < VARIANTEN.length - 1) variante = VARIANTEN[i + 1];
