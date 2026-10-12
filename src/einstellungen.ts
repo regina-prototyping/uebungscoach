@@ -1,3 +1,4 @@
+import type { AnsageModus } from "./logik/spieler";
 import type { Einstellungen } from "./logik/typen";
 
 export const STANDARD: Einstellungen = { tempo: 3, prep: 5, setPause: 30, lower: 3 };
@@ -42,4 +43,22 @@ export const FELDER: Feld[] = [
 export function aendern(e: Einstellungen, key: keyof Einstellungen, richtung: 1 | -1): Einstellungen {
   const f = FELDER.find((x) => x.key === key)!;
   return { ...e, [key]: Math.min(f.max, Math.max(f.min, e[key] + f.schritt * richtung)) };
+}
+
+const MODUS_KEY = "uebungscoach-ansagen";
+
+export function ladeAnsageModus(): AnsageModus {
+  try {
+    return localStorage.getItem(MODUS_KEY) === "toene" ? "toene" : "sprache";
+  } catch {
+    return "sprache";
+  }
+}
+
+export function speichereAnsageModus(m: AnsageModus): void {
+  try {
+    localStorage.setItem(MODUS_KEY, m);
+  } catch {
+    // privater Modus: gilt bis zum Neuladen
+  }
 }

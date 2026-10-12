@@ -1,6 +1,6 @@
 # Übungscoach – Spezifikation
 
-Stand: 11. Oktober 2026 · Version 1 und Version 2 (Übungen und Programme bearbeiten) sind umgesetzt.
+Stand: 12. Oktober 2026 · Version 1 und Version 2 (Übungen und Programme bearbeiten) sind umgesetzt; Signaltöne und Modus „Nur Töne“ in Arbeit.
 
 ## Ziel
 
@@ -148,6 +148,31 @@ Bei mehreren Sätzen beginnt jede linke Seite mit „Satz x von y.“ wie bisher
 - **Löschen von Übungen:** Im Programm wird eine Übung nur *entfernt*; sie bleibt in der Bibliothek. Endgültig löschen geht nur in der Bibliothek und nur für Übungen, die in keinem Programm vorkommen. Bei verwendeten Übungen steht stattdessen, in welchen Programmen sie stecken.
 - **Doppelte Übungen:** Dieselbe Übung darf mehrmals im selben Programm vorkommen (z. B. Dehnung am Anfang und am Ende).
 - **Verschieben:** mit Pfeil-Knöpfen ↑ ↓ an jeder Übung.
+
+## Signaltöne und Modus „Nur Töne“
+
+Hintergrund: Auf dem Pixel 9 liefert die Sprachausgabe zeitweise keine Stimme (`synthesis-failed`). Außerdem soll das Training auch nur mit Blick auf den Bildschirm (z. B. Fernseher) gut funktionieren. Töne sagen deshalb an, wann man hinschauen oder handeln muss.
+
+### Einstellung „Ansagen“
+
+- **Sprache und Töne** (Standard): Sprachansagen wie bisher, dazu die Signaltöne – außer dem Takt-Klick.
+- **Nur Töne**: keine Sprachansagen; Signaltöne und Takt-Klick.
+- In den Einstellungen spielt „Töne anhören“ alle Signale nacheinander vor.
+
+### Signale
+
+| Wann | Signal | Klang |
+| --- | --- | --- |
+| Neue Übung beginnt (Vorbereitung) | Neue Übung – hinschauen | Gong: drei aufsteigende Töne |
+| Vorbereitung, Halten, Satzpause enden bald | Countdown | 3 – 2 – 1 wie bisher |
+| Aktivität beginnt (erste Wiederholung nach Vorbereitung, Seitenansage oder Satzpause; jedes Halten) | Los | ein langer hoher Ton |
+| Halten endet (Absenken beginnt) | Ab | ein tiefer Ton |
+| Seitenwechsel bzw. Seitenansage (pro Seite) | Seite | zwei abwechselnde Töne |
+| Satz geschafft, Satzpause beginnt | Satzpause | zwei absteigende Töne |
+| Training geschafft | Ende | kleine Melodie aufwärts |
+| Jede weitere Wiederholung beim Mitzählen | Takt | leiser kurzer Klick – nur im Modus „Nur Töne“ |
+
+Bewusst offen: ob der Takt-Klick auch zusammen mit der Sprache sinnvoll ist – ausprobieren, sobald die Stimme wieder geht.
 
 ## Programme
 
