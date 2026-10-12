@@ -1,6 +1,6 @@
 import "./stil/theme.css";
 import "./stil/app.css";
-import { ladeEinstellungen, speichereEinstellungen } from "./einstellungen";
+import { ladeAnsageModus, ladeEinstellungen, speichereAnsageModus, speichereEinstellungen } from "./einstellungen";
 import { datenDauerhaftAufheben, ladeDaten, speichereDaten } from "./daten-speicher";
 import {
   findeProgramm,
@@ -28,15 +28,17 @@ import { zeigeBibliothek } from "./ansichten/bibliothek";
 import { schliesseRueckgaengig, zeigeRueckgaengig } from "./ansichten/rueckgaengig";
 import { zeigeEinstellungen } from "./ansichten/einstellungen";
 import { TrainingAnsicht } from "./ansichten/training";
-import { Spieler, type Ereignis } from "./logik/spieler";
+import { hoerbar, Spieler, type Ereignis } from "./logik/spieler";
 import type { Daten, Trainingsplan } from "./logik/typen";
 import { beiAnsageStatus, sprich, still, stimmenStatus, waehleStimme } from "./geraet/sprache";
-import { piep, tonBereit } from "./geraet/piep";
+import { piep, SIGNAL_VORSCHAU, signalTon, tonBereit } from "./geraet/piep";
 import { wachFreigeben, wachHalten } from "./geraet/wachhalten";
 import { aktuellesZiel, ersetze, geheZu, starteNavigation, zurueck, type Ziel } from "./navigation";
 
 const app = document.getElementById("app")!;
 let einstellungen = ladeEinstellungen();
+let ansageModus = ladeAnsageModus();
+let vorschauTimer = 0;
 let daten = ladeDaten();
 // Falls die App beim Anlegen eines Programms geschlossen wurde: aufräumen
 for (const p of daten.programme) daten = programmAufraeumen(daten, p.id);
@@ -81,7 +83,9 @@ function aendernMitRueckgaengig(neu: Daten, text: string): void {
 /** Führt die Anweisungen des Spielers aus. */
 function ausfuehren(ereignisse: Ereignis[]): void {
   for (const e of ereignisse) {
-    if (e.typ === "sagen") sprich(e.text);
+    if (!hoerbar(e, ansageModus)) continue;
+    if (e.typ === "signal") signalTon(e.signal);
+    else if (e.typ === "sagen") sprich(e.text);
     else if (e.typ === "still") still();
     else if (e.typ === "piep") piep();
     else if (e.typ === "fertig") wachFreigeben();
@@ -268,6 +272,24 @@ function einstellungsSeite(): void {
     },
     stimmenStatus,
     beiAnsageStatus,
+    modus: ansageModus,
+    onModus: (m) => {
+      ansageModus = m;
+      speichereAnsageModus(m);
+    },
+    onToeneAnhoeren: (anzeigen) => {
+      tonBereit();
+      window.clearTimeout(vorschauTimer);
+      // Ein Signal nach dem anderen, mit kurzer Pause dazwischen
+      const naechstes = (i: number) => {
+        if (i >= SIGNAL_VORSCHAU.length) return anzeigen("Alle Töne gespielt.");
+        const { signal, text } = SIGNAL_VORSCHAU[i];
+        anzeigen(`${i + 1}/${SIGNAL_VORSCHAU.length}: ${text}`);
+        signalTon(signal);
+        vorschauTimer = window.setTimeout(() => naechstes(i + 1), 1600);
+      };
+      naechstes(0);
+    },
   });
   window.scrollTo(0, 0);
 }
