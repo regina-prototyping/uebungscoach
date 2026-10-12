@@ -8,10 +8,26 @@
  * - Chrome auf Android kann nach Hintergrund oder Neuladen „angehalten“ hängen bleiben;
  *   Ansagen landen dann in einer Warteschlange, die nie abgespielt wird. Daher vor
  *   jeder Ansage resume() und ein Wachhund, der bei Stillstand zurücksetzt.
+ * - Meldet Android „synthesis-failed“, ist die ausdrücklich gewählte Stimme gerade nicht
+ *   nutzbar. Dann ohne festgelegte Stimme (nur Sprache Deutsch) und zuletzt mit der
+ *   Standardstimme des Geräts neu versuchen und das Funktionierende beibehalten.
  */
 
 const verfuegbar = typeof window !== "undefined" && "speechSynthesis" in window;
 let stimme: SpeechSynthesisVoice | null = null;
+
+/** Wie die Ansage eingestellt wird – von genau bis zur Standardstimme des Geräts. */
+type Variante = "stimme" | "deutsch" | "standard";
+const VARIANTEN: Variante[] = ["stimme", "deutsch", "standard"];
+const VARIANTE_TEXT: Record<Variante, string> = {
+  stimme: "gewählte Stimme",
+  deutsch: "ohne feste Stimme, Sprache Deutsch",
+  standard: "Standardstimme des Geräts",
+};
+let variante: Variante = "stimme";
+
+/** Fehler, bei denen ein Versuch mit einer anderen Einstellung helfen kann. */
+const STIMMEN_FEHLER = new Set(["synthesis-failed", "synthesis-unavailable", "language-unavailable", "voice-unavailable"]);
 
 /** Wie lange eine Ansage höchstens auf ihren Start warten darf (ms). */
 const WACHHUND_MS = 1500;
@@ -52,10 +68,12 @@ if (verfuegbar) {
   speechSynthesis.addEventListener("voiceschanged", waehleStimme);
 }
 
-function neueAnsage(text: string): SpeechSynthesisUtterance & { gestartet?: boolean } {
-  const u: SpeechSynthesisUtterance & { gestartet?: boolean } = new SpeechSynthesisUtterance(text);
-  u.lang = "de-DE";
-  if (stimme) u.voice = stimme;
+type Ansage = SpeechSynthesisUtterance & { gestartet?: boolean; erledigt?: boolean };
+
+function neueAnsage(text: string, v: Variante = variante): Ansage {
+  const u: Ansage = new SpeechSynthesisUtterance(text);
+  if (v !== "standard") u.lang = "de-DE";
+  if (v === "stimme" && stimme) u.voice = stimme;
   u.rate = 1;
   u.onstart = () => {
     u.gestartet = true;
@@ -63,13 +81,26 @@ function neueAnsage(text: string): SpeechSynthesisUtterance & { gestartet?: bool
     melde("Ansage gestartet");
   };
   u.onend = () => {
+    u.erledigt = true;
     if (u.gestartet) laufend = Math.max(0, laufend - 1);
     melde("Ansage fertig");
   };
   u.onerror = (ev) => {
+    u.erledigt = true;
     if (u.gestartet) laufend = Math.max(0, laufend - 1);
     // „interrupted“/„canceled“ entstehen beim gewollten Abbrechen
-    melde(ev.error === "interrupted" || ev.error === "canceled" ? "Ansage abgebrochen" : `Fehler: ${ev.error}`);
+    if (ev.error === "interrupted" || ev.error === "canceled") return melde("Ansage abgebrochen");
+    if (!u.gestartet && STIMMEN_FEHLER.has(ev.error)) {
+      // Mit der nächsten Einstellung neu versuchen (oder der schon gewechselten)
+      const i = VARIANTEN.indexOf(v);
+      if (v === variante && i < VARIANTEN.length - 1) variante = VARIANTEN[i + 1];
+      if (variante !== v) {
+        melde(`Fehler: ${ev.error} – neuer Versuch: ${VARIANTE_TEXT[variante]}`);
+        speechSynthesis.speak(neueAnsage(text, variante));
+        return;
+      }
+    }
+    melde(`Fehler: ${ev.error}`);
   };
   return u;
 }
@@ -84,7 +115,7 @@ export function sprich(text: string): void {
   // Wachhund: Startet die Ansage nicht, obwohl nichts anderes läuft, hängt die Sprachausgabe.
   // Dann zurücksetzen und einmal neu versuchen.
   window.setTimeout(() => {
-    if (u.gestartet || laufend > 0) return;
+    if (u.gestartet || u.erledigt || laufend > 0) return;
     melde("Sprachausgabe hing – neuer Versuch");
     speechSynthesis.cancel();
     speechSynthesis.resume();
@@ -109,6 +140,7 @@ export function stimmenStatus(): string {
     .join(", ");
   return (
     `Sprachausgabe: ${n} Stimmen gefunden, deutsche Stimme: ${name}.` +
+    (variante !== "stimme" ? ` Verwendet: ${VARIANTE_TEXT[variante]}.` : "") +
     (zustand ? ` Zustand: ${zustand}.` : "") +
     (letzterStatus ? ` Zuletzt: ${letzterStatus}.` : "")
   );
