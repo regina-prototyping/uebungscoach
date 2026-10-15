@@ -1,7 +1,7 @@
 import { aendern, FELDER } from "../einstellungen";
 import type { Einstellungen } from "../logik/typen";
 import type { AnsageModus } from "../logik/spieler";
-import { LAUTSPRECHER } from "./hilfen";
+import { esc, LAUTSPRECHER } from "./hilfen";
 
 interface EinstellungenOptionen {
   werte: Einstellungen;
@@ -55,7 +55,7 @@ export function zeigeEinstellungen(root: HTMLElement, opt: EinstellungenOptionen
       <p class="caption-normal muted diagnose" data-e="toeneText" hidden></p>
       <button type="button" class="btn-soft" data-a="stimme">${LAUTSPRECHER}Stimme testen</button>
       <p class="caption-normal muted diagnose" data-e="diagnose">${opt.stimmenStatus()}</p>
-      <p class="caption-normal muted diagnose">App-Version: ${__VERSION__}</p>
+      <p class="caption-normal muted diagnose">App-Version: ${__VERSION__} · ${esc(location.host)}</p>
     </section>`;
 
   const diagnose = root.querySelector<HTMLElement>("[data-e=diagnose]")!;
