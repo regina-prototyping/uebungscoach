@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { MITGELIEFERT } from "../src/data/programme";
 import { trainingsplan } from "../src/logik/daten";
 import { dose, doseSpoken, fmtTime } from "../src/logik/format";
-import { buildPlan } from "../src/logik/plan";
+import { buildPlan, programmInfo } from "../src/logik/plan";
 import type { Einstellungen, Trainingsplan, Uebung } from "../src/logik/typen";
 
 const STANDARD: Einstellungen = { tempo: 3, prep: 5, setPause: 30, lower: 3 };
@@ -138,6 +138,9 @@ describe("Formatierung", () => {
   it("Mengen wie auf dem Startbildschirm", () => {
     expect(ruecken.exercises.map(dose)).toEqual(["2 × 15", "2 × 5 je Seite", "2 × 10 × 5 s"]);
   });
+  it("Halten mit einer Wiederholung ohne überflüssige 1", () => {
+    expect(dose(plan1({ art: "hold", proSeite: true, reps: 1, hold: 30, sets: 1 }).exercises[0])).toBe("1 × 30 s je Seite");
+  });
   it("Mengen als Ansage", () => {
     expect(doseSpoken(plan1({ reps: 8 }).exercises[0])).toBe("8 Wiederholungen.");
   });
@@ -145,5 +148,15 @@ describe("Formatierung", () => {
     expect(fmtTime(432)).toBe("7:12");
     expect(fmtTime(5)).toBe("0:05");
     expect(fmtTime(-3)).toBe("0:00");
+  });
+});
+
+describe("Programm-Kurzinfo", () => {
+  it("Anzahl Übungen und Dauer", () => {
+    expect(programmInfo(ruecken, STANDARD)).toBe("3 Übungen · ca. 8 Min");
+    expect(programmInfo(plan1({}), STANDARD)).toBe("1 Übung · ca. 1 Min");
+  });
+  it("leeres Programm", () => {
+    expect(programmInfo({ id: "x", name: "X", exercises: [] }, STANDARD)).toBe("Noch keine Übungen");
   });
 });

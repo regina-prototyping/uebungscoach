@@ -1,5 +1,4 @@
-import { dose } from "../logik/format";
-import { buildPlan, gesamtDauer } from "../logik/plan";
+import { programmInfo } from "../logik/plan";
 import type { Einstellungen, Trainingsplan } from "../logik/typen";
 import { esc, ICON, MENU_ICON } from "./hilfen";
 
@@ -7,12 +6,13 @@ interface StartOptionen {
   programme: Trainingsplan[];
   einstellungen: Einstellungen;
   onStart: (prog: Trainingsplan) => void;
+  onOeffnen: (programmId: string) => void;
   onBearbeiten: (programmId: string) => void;
   onNeuesProgramm: () => void;
   onMenue: () => void;
 }
 
-/** Startbildschirm: Programmkarten mit „Training starten“ und „Bearbeiten“. */
+/** Startbildschirm: kompakte Programmkarten mit Schnellstart. */
 export function zeigeStart(root: HTMLElement, opt: StartOptionen): void {
   root.innerHTML = `
     <section class="screen start">
@@ -21,7 +21,7 @@ export function zeigeStart(root: HTMLElement, opt: StartOptionen): void {
         <button type="button" class="icon-btn" data-aktion="menue" aria-label="Menü">${MENU_ICON.menue}</button>
       </div>
       <h1 class="display">Was trainierst du heute?</h1>
-      ${opt.programme.map((p, i) => (p.exercises.length ? programmKarte(p, i, opt.einstellungen) : leereKarte(p))).join("")}
+      ${opt.programme.map((p, i) => (p.exercises.length ? kompakteKarte(p, i, opt.einstellungen) : leereKarte(p))).join("")}
       <button type="button" class="card zeilen-karte" data-aktion="neu">
         <span class="symbolfeld symbolfeld-primary">${ICON.plus}</span>
         <span class="leer-titel">Neues Programm</span>
@@ -34,27 +34,23 @@ export function zeigeStart(root: HTMLElement, opt: StartOptionen): void {
     // Wichtig: onStart läuft direkt im Klick, damit die erste Ansage sofort kommt
     btn.addEventListener("click", () => opt.onStart(opt.programme[Number(btn.dataset.start)]));
   });
+  root.querySelectorAll<HTMLButtonElement>("[data-oeffnen]").forEach((btn) => {
+    btn.addEventListener("click", () => opt.onOeffnen(btn.dataset.oeffnen!));
+  });
   root.querySelectorAll<HTMLButtonElement>("[data-bearbeiten]").forEach((btn) => {
     btn.addEventListener("click", () => opt.onBearbeiten(btn.dataset.bearbeiten!));
   });
 }
 
-function programmKarte(p: Trainingsplan, i: number, einst: Einstellungen): string {
-  const minuten = Math.ceil(gesamtDauer(buildPlan(p, einst)) / 60);
-  const anzahl = p.exercises.length === 1 ? "1 Übung" : `${p.exercises.length} Übungen`;
+/** Kompakte Karte: Antippen öffnet das Programm, ▶ startet sofort. */
+function kompakteKarte(p: Trainingsplan, i: number, einst: Einstellungen): string {
   return `
-    <article class="card programm">
-      <div class="programm-kopf">
-        <div class="programm-titel">
-          <h2 class="heading">${esc(p.name)}</h2>
-          <button type="button" class="link-btn" data-bearbeiten="${esc(p.id)}">${MENU_ICON.stift}Bearbeiten</button>
-        </div>
-        <span class="muted klein">${anzahl} · ca. ${minuten} Min${p.start ? ` · Start: ${esc(p.start)}` : ""}</span>
-      </div>
-      <ul class="uebungsliste">
-        ${p.exercises.map((e) => `<li><span class="uebung-name">${esc(e.name)}</span><span class="zahl muted">${dose(e)}</span></li>`).join("")}
-      </ul>
-      <button type="button" class="btn-primary" data-start="${i}">${ICON.play}Training starten</button>
+    <article class="card kompakt">
+      <button type="button" class="kompakt-text" data-oeffnen="${esc(p.id)}">
+        <span class="kompakt-name">${esc(p.name)}</span>
+        <span class="caption-normal muted">${programmInfo(p, einst)}</span>
+      </button>
+      <button type="button" class="schnellstart" data-start="${i}" aria-label="${esc(p.name)} starten">${ICON.play}</button>
     </article>`;
 }
 
@@ -62,10 +58,10 @@ function programmKarte(p: Trainingsplan, i: number, einst: Einstellungen): strin
 function leereKarte(p: Trainingsplan): string {
   return `
     <button type="button" class="card zeilen-karte" data-bearbeiten="${esc(p.id)}">
-      <span class="symbolfeld">${MENU_ICON.stiftGross}</span>
       <span class="leer-text">
-        <span class="leer-titel">${esc(p.name || "Ohne Namen")}</span>
+        <span class="kompakt-name">${esc(p.name || "Ohne Namen")}</span>
         <span class="caption-normal muted">Noch keine Übungen · Tippen zum Bearbeiten</span>
       </span>
+      <span class="symbolfeld">${MENU_ICON.stiftGross}</span>
     </button>`;
 }

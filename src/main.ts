@@ -22,6 +22,7 @@ import {
 import { zeigeStart } from "./ansichten/start";
 import { zeigeMenue } from "./ansichten/menue";
 import { ProgrammAnsicht } from "./ansichten/programm";
+import { zeigeProgrammAnsicht } from "./ansichten/programm-ansicht";
 import { zeigeAuswahl } from "./ansichten/auswahl";
 import { UebungAnsicht } from "./ansichten/uebung";
 import { zeigeBibliothek } from "./ansichten/bibliothek";
@@ -138,6 +139,19 @@ function anzeigen(ziel: Ziel): void {
       });
       window.scrollTo(0, 0);
       break;
+    case "ansicht": {
+      const plan = trainingsplan(daten, ziel.id);
+      if (!plan) return ersetze({ name: "start" });
+      zeigeProgrammAnsicht(app, {
+        plan,
+        einstellungen,
+        onStart: trainingStarten,
+        onBearbeiten: () => geheZu({ name: "programm", id: ziel.id }),
+        onZurueck: zurueck,
+      });
+      window.scrollTo(0, 0);
+      break;
+    }
     case "programm":
       if (!findeProgramm(daten, ziel.id)) return ersetze({ name: "start" });
       programmSeite(ziel.id, !!ziel.neu);
@@ -168,15 +182,18 @@ function trainingAufraeumen(): void {
   verlassen = false;
 }
 
+/** Läuft synchron im Klick – wichtig für die erste Ansage. */
+function trainingStarten(plan: Trainingsplan): void {
+  naechsterPlan = plan;
+  geheZu({ name: "training", id: plan.id });
+}
+
 function startseite(): void {
   zeigeStart(app, {
     programme: daten.programme.map((p) => trainingsplan(daten, p.id)!),
     einstellungen,
-    // läuft synchron im Klick – wichtig für die erste Ansage
-    onStart: (plan) => {
-      naechsterPlan = plan;
-      geheZu({ name: "training", id: plan.id });
-    },
+    onStart: trainingStarten,
+    onOeffnen: (id) => geheZu({ name: "ansicht", id }),
     onBearbeiten: (id) => geheZu({ name: "programm", id }),
     onNeuesProgramm: () => {
       const { daten: neu, id } = programmAnlegen(daten);

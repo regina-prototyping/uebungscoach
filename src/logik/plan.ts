@@ -62,3 +62,15 @@ export function buildPlan(prog: Trainingsplan, einst: Einstellungen): Abschnitt[
 export function gesamtDauer(segs: Abschnitt[]): number {
   return segs.reduce((a, s) => a + s.dur, 0);
 }
+
+/** Ungefähre Dauer eines Programms in ganzen Minuten (aufgerundet). */
+export function dauerMinuten(prog: Trainingsplan, einst: Einstellungen): number {
+  return Math.ceil(gesamtDauer(buildPlan(prog, einst)) / 60);
+}
+
+/** Kurzinfo wie „3 Übungen · ca. 8 Min“. */
+export function programmInfo(prog: Trainingsplan, einst: Einstellungen): string {
+  const n = prog.exercises.length;
+  if (!n) return "Noch keine Übungen";
+  return `${n === 1 ? "1 Übung" : `${n} Übungen`} · ca. ${dauerMinuten(prog, einst)} Min`;
+}

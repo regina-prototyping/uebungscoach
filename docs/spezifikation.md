@@ -148,6 +148,8 @@ Bei mehreren Sätzen beginnt jede linke Seite mit „Satz x von y.“ wie bisher
 - **Löschen von Übungen:** Im Programm wird eine Übung nur *entfernt*; sie bleibt in der Bibliothek. Endgültig löschen geht nur in der Bibliothek und nur für Übungen, die in keinem Programm vorkommen. Bei verwendeten Übungen steht stattdessen, in welchen Programmen sie stecken.
 - **Doppelte Übungen:** Dieselbe Übung darf mehrmals im selben Programm vorkommen (z. B. Dehnung am Anfang und am Ende).
 - **Verschieben:** mit Pfeil-Knöpfen ↑ ↓ an jeder Übung.
+- **Startseite kompakt:** Jedes Programm ist eine kleine Karte mit Name, „3 Übungen · ca. 8 Min“ und einem ▶-Knopf zum Schnellstart; dort kein „Bearbeiten“. Antippen öffnet die **Programm-Ansicht** mit nummerierter Übungsliste, „Bearbeiten“ und „Training starten“. Leere Programme zeigen „Noch keine Übungen“ und führen direkt zum Bearbeiten.
+- **Mengen stehen unter dem Übungsnamen**, nicht daneben, damit lange Namen sauber umbrechen. Halten mit einer Wiederholung ohne überflüssige „1 ×“ (z. B. „1 × 30 s je Seite“).
 
 ## Signaltöne und Modus „Nur Töne“
 
