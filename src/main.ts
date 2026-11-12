@@ -28,6 +28,9 @@ import { UebungAnsicht } from "./ansichten/uebung";
 import { zeigeBibliothek } from "./ansichten/bibliothek";
 import { schliesseRueckgaengig, zeigeRueckgaengig } from "./ansichten/rueckgaengig";
 import { zeigeEinstellungen } from "./ansichten/einstellungen";
+import { zeigeSicherung } from "./ansichten/sicherung";
+import { dateiname, sicherungErstellen, type Sicherung } from "./logik/sicherung";
+import { dateiWeitergeben } from "./geraet/datei";
 import { TrainingAnsicht } from "./ansichten/training";
 import { hoerbar, Spieler, type Ereignis } from "./logik/spieler";
 import type { Daten, Trainingsplan } from "./logik/typen";
@@ -121,10 +124,14 @@ function anzeigen(ziel: Ziel): void {
         // ersetzen statt öffnen: Zurück führt dann zur Startseite, nicht ins Menü
         onUebungen: () => ersetze({ name: "uebungen" }),
         onEinstellungen: () => ersetze({ name: "einstellungen" }),
+        onSicherung: () => ersetze({ name: "sicherung" }),
       });
       break;
     case "einstellungen":
       einstellungsSeite();
+      break;
+    case "sicherung":
+      sicherungsSeite();
       break;
     case "uebungen":
       zeigeBibliothek(app, {
@@ -309,6 +316,41 @@ function einstellungsSeite(): void {
     },
   });
   window.scrollTo(0, 0);
+}
+
+function sicherungsSeite(): void {
+  zeigeSicherung(app, {
+    onSpeichern: async () => {
+      const jetzt = new Date();
+      const s = sicherungErstellen(daten, einstellungen, ansageModus, jetzt);
+      const name = dateiname(jetzt);
+      const ergebnis = await dateiWeitergeben(JSON.stringify(s, null, 2), name, "Übungscoach-Sicherung");
+      if (ergebnis === "geteilt") return "Sicherung weitergegeben.";
+      if (ergebnis === "heruntergeladen") return `Sicherung heruntergeladen: ${name}`;
+      return "";
+    },
+    onLaden: (s) => {
+      const alt = sicherungErstellen(daten, einstellungen, ansageModus, new Date());
+      sicherungUebernehmen(s);
+      zeigeRueckgaengig("Sicherung geladen", () => {
+        sicherungUebernehmen(alt);
+        anzeigen(aktuellesZiel());
+      });
+    },
+    onFertig: zurueck,
+  });
+  window.scrollTo(0, 0);
+}
+
+/** Ersetzt Daten, Einstellungen und Ansage-Modus und speichert alles. */
+function sicherungUebernehmen(s: Sicherung): void {
+  schliesseRueckgaengig();
+  daten = s.daten;
+  einstellungen = s.einstellungen;
+  ansageModus = s.ansagen;
+  speichereDaten(daten);
+  speichereEinstellungen(einstellungen);
+  speichereAnsageModus(ansageModus);
 }
 
 /** Läuft direkt im Klick auf „Training starten“ bzw. „Nochmal“. */

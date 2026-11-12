@@ -60,11 +60,10 @@ Das Training läuft ohne Antippen durch; Eingreifen ist nur zum Pausieren oder S
 
 ## Bewusst später
 
-- Sicherung: Programme und Übungen als Datei exportieren und importieren
 - Spracheingabe von Übungen
 - Trainingsverlauf und Statistik
 - Bilder oder Videos zu den Übungen
-- Synchronisation zwischen Geräten
+- Synchronisation zwischen Geräten (Konto mit automatischer Speicherung, siehe Issue #15)
 - Dunkles Farbschema
 - Weiterlaufen bei gesperrtem Bildschirm (ginge nur als native App)
 
@@ -175,6 +174,16 @@ Hintergrund: Auf dem Pixel 9 liefert die Sprachausgabe zeitweise keine Stimme (`
 | Jede weitere Wiederholung beim Mitzählen | Takt | leiser kurzer Klick – nur im Modus „Nur Töne“ |
 
 Bewusst offen: ob der Takt-Klick auch zusammen mit der Sprache sinnvoll ist – ausprobieren, sobald die Stimme wieder geht.
+
+## Sicherung
+
+Die Daten liegen nur im Browser des Geräts. Eine Sicherungsdatei schützt vor Verlust (Website-Daten gelöscht, App deinstalliert, neues Handy) und bringt die Daten auf andere Geräte.
+
+- **Zugang:** Menü → „Sicherung“ (eigener Bildschirm).
+- **Sicherung speichern:** erstellt eine Datei `uebungscoach-sicherung-JJJJ-MM-TT.json` und öffnet auf dem Handy das Teilen-Menü (z. B. „In Drive speichern“). Chrome teilt keine `.json`-Dateien, deshalb wird dort dieselbe Datei als `.txt` geteilt. Wo Teilen nicht geht, wird die Datei heruntergeladen.
+- **Inhalt:** Übungen, Programme, Einstellungen (Tempo, Vorbereitung, Satzpause, Absenken) und Ansage-Modus, dazu `app: "uebungscoach"`, `format: 1` und der Zeitpunkt. Die gewählte Stimme nicht (gerätespezifisch).
+- **Sicherung laden:** Datei auswählen (auch direkt aus Google Drive), Rückfrage mit Datum und Umfang („Sicherung vom 12.11.2026, 14:30 · 8 Übungen, 3 Programme“), dann werden **alle** Daten **ersetzt** – kein Zusammenführen. Danach „Sicherung geladen · Rückgängig“.
+- **Prüfung:** Dateien, die keine Sicherung sind, beschädigt sind (`sindGueltig()`, Programme verweisen auf fehlende Übungen) oder aus einer neueren App-Version stammen, werden mit einer verständlichen Meldung abgelehnt; nichts wird geändert. Einstellungen außerhalb der erlaubten Bereiche werden begrenzt, fehlende durch die Standardwerte ersetzt.
 
 ## Programme
 

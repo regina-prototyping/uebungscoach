@@ -8,6 +8,7 @@ export type Ziel =
   | { name: "start" }
   | { name: "menue" }
   | { name: "einstellungen" }
+  | { name: "sicherung" }
   | { name: "uebungen" }
   | { name: "ansicht"; id: string }
   | { name: "programm"; id: string; neu?: boolean }

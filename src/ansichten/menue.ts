@@ -1,8 +1,9 @@
-import { esc, ICON, MENU_ICON } from "./hilfen";
+import { esc, ICON, MENU_ICON, SICHERUNG_ICON } from "./hilfen";
 
 interface MenueOptionen {
   onUebungen: () => void;
   onEinstellungen: () => void;
+  onSicherung: () => void;
   onSchliessen: () => void;
 }
 
@@ -26,11 +27,13 @@ export function zeigeMenue(root: HTMLElement, opt: MenueOptionen): void {
       <div class="menue-liste">
         ${eintrag("uebungen", MENU_ICON.liste, "symbolfeld-primary", "Übungen", "Alle Übungen anlegen und bearbeiten")}
         ${eintrag("einstellungen", ICON.regler, "", "Einstellungen", "Tempo, Pausen, Stimme")}
+        ${eintrag("sicherung", SICHERUNG_ICON.menue, "", "Sicherung", "Daten speichern und laden")}
       </div>
     </nav>`;
   root.appendChild(overlay);
   overlay.querySelectorAll("[data-aktion=schliessen]").forEach((n) => n.addEventListener("click", opt.onSchliessen));
   overlay.querySelector("[data-aktion=uebungen]")!.addEventListener("click", opt.onUebungen);
   overlay.querySelector("[data-aktion=einstellungen]")!.addEventListener("click", opt.onEinstellungen);
+  overlay.querySelector("[data-aktion=sicherung]")!.addEventListener("click", opt.onSicherung);
   overlay.querySelector<HTMLButtonElement>(".menue-panel .icon-btn")!.focus();
 }
