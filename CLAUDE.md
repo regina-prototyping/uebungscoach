@@ -4,12 +4,22 @@ Eine Web-App (PWA), die per Sprachansage durch Physio-Übungen führt. Die Nutze
 
 ## Wichtige Dateien
 
-- `docs/spezifikation.md` – was die App können muss (Datenmodell, Ablauf, Muss-Funktionen, Programme). **Die Quelle der Wahrheit für Funktionen.**
+- `docs/spezifikation.md` – was die App können muss (Datenmodell, Ablauf, Funktionen von Version 1 und 2, Signaltöne, Entscheidungen). **Die Quelle der Wahrheit für Funktionen.** Neue Funktionen zuerst hier eintragen.
+- **GitHub Issues** im Repository – die Ideen- und Aufgabenliste, ein Issue pro Feature (mit den schon getroffenen Entscheidungen). Eine neue Sitzung beginnt typischerweise mit „Lies CLAUDE.md und Issue #…“.
 - `design/` – das abgestimmte Design:
   - `tokens.json` – Farben, Schrift, Abstände, Rundungen, Schatten mit Verwendungshinweisen
   - `theme.css` – dieselben Werte als CSS-Variablen
-  - `screens/` – die vier Bildschirme als statisches HTML (im Browser öffnen): Start, Training, Satzpause, Einstellungen
-- `prototyp/uebungscoach-prototyp.html` – funktionierender Prototyp in einer Datei. Die Ablauflogik (`buildPlan`, Spieler mit `tick`, Zurück/Weiter) ist erprobt und soll übernommen, aber sauber aufgeteilt werden. Das Aussehen des Prototyps ist überholt; es gilt `design/`.
+  - `screens/` – Entwürfe als statisches HTML: 1–4 Version 1 (Start, Training, Satzpause, Einstellungen), 5–9 Version 2 (Startseite mit Bearbeiten, Menü, Programm bearbeiten, Übung auswählen/bearbeiten, Übungsbibliothek); gemeinsame Bausteine in `bausteine.css`. Wo die Spezifikation später Abweichendes beschlossen hat (z. B. kompakte Startseite mit Programm-Ansicht), gilt die Spezifikation und die App.
+- `prototyp/uebungscoach-prototyp.html` – der ursprüngliche Prototyp; nur noch als Referenz.
+
+## Aufbau des Codes
+
+- `src/data/programme.ts` – mitgelieferte Übungen und Programme (werden beim ersten Start in den Browser-Speicher übernommen).
+- `src/logik/` – reine Logik ohne Bildschirm und Ton, **mit Tests in `tests/`**: `plan.ts` (Programm → Abschnitte), `spieler.ts` (Zeitlauf, Pause/Zurück/Weiter, Ereignisse „sagen/piep/signal/still/fertig“), `anzeige.ts` (was im Training angezeigt wird), `daten.ts` (Übungen/Programme ändern, rein, für Rückgängig), `uebung-form.ts`, `format.ts`, `typen.ts`.
+- `src/geraet/` – Sprachausgabe (`sprache.ts`, mit Wachhund und Ausweichversuchen), Töne (`piep.ts`, Countdown und Signaltöne), Bildschirm wach halten.
+- `src/ansichten/` – die Bildschirme (Start, Menü, Programm-Ansicht, Programm bearbeiten, Übung auswählen/bearbeiten, Bibliothek, Einstellungen, Training, Rückgängig-Leiste).
+- `src/navigation.ts` – jeder Bildschirm ist ein Eintrag im Browser-Verlauf, damit die Android-Zurück-Geste funktioniert; im Training fragt sie erst nach.
+- `src/main.ts` – verbindet alles; `src/daten-speicher.ts`, `src/einstellungen.ts` – Speichern im Browser (`localStorage`).
 
 ## Technik-Entscheidungen
 
@@ -41,7 +51,23 @@ Eine Web-App (PWA), die per Sprachansage durch Physio-Übungen führt. Die Nutze
 
 ## Arbeitsweise
 
-- Vor größeren Schritten einen kurzen Plan zeigen und auf Reginas OK warten.
-- Kleine, nachvollziehbare Commits mit deutschen Commit-Nachrichten.
-- Die Ablauflogik (Plan aus Programm erzeugen, Zurück/Weiter) mit Tests absichern.
+- **Eine Sitzung pro Feature.** Zu Beginn `CLAUDE.md`, die Spezifikation und das zugehörige GitHub-Issue lesen.
+- Vor größeren Schritten einen kurzen Plan zeigen und auf Reginas OK warten. Bei sichtbaren Änderungen zuerst Entwürfe (Screenshots) zeigen.
+- Kleine, nachvollziehbare Commits mit deutschen Commit-Nachrichten. Neue Funktionen und Entscheidungen in `docs/spezifikation.md` festhalten.
+- Logik mit Tests absichern (`npm test`), vor jedem Push `npx tsc --noEmit`, `npm test` und `npm run build`.
 - Nach jeder sichtbaren Änderung sagen, wie Regina sie auf dem Handy ausprobieren kann.
+
+## Ablauf bis aufs Handy
+
+1. Arbeit auf dem Feature-Branch der Sitzung, Push → Vercel baut eine **Vorschau** (Link in den Vercel-Deployments bzw. als Kommentar im Pull Request). Vorschauen brauchen den Vercel-Login und haben **eigenen Speicher** (Reginas Übungen fehlen dort).
+2. Pull Request nach `main`; Regina übernimmt ihn selbst („Merge pull request“). Ist ein früherer PR des Branches schon gemerged, den Branch neu von `main` beginnen.
+3. Vercel veröffentlicht `main` unter **`uebungscoach.vercel.app`** – dort ist Reginas App installiert, dort liegen ihre Daten. Die App aktualisiert sich beim nächsten Öffnen mit Internet; sonst App ganz schließen und neu öffnen.
+4. **Kontrolle:** In den Einstellungen ganz unten steht „App-Version: Build-Zeit (UTC) · Commit · Adresse“. Stimmt der Commit nicht, ist das Update nicht angekommen.
+5. Ob Vercel erfolgreich war, zeigt der Commit-Status auf GitHub (`/commits/<sha>/status`). Einmal scheiterte die Veröffentlichung von `main` ohne Build-Link, vermutlich am Tageslimit des kostenlosen Tarifs – deshalb nicht unnötig oft pushen. Es gab zwei Vercel-Projekte (`uebungscoach` und `uebungscoach-9hpx`); nur `uebungscoach` wird gebraucht.
+
+## Testen ohne Handy
+
+- Die Arbeitsumgebung hat Chromium mit Playwright, aber **keine Sprachausgabe** und keinen Zugriff auf `*.vercel.app`. Zum Testen `npx vite preview` lokal starten.
+- Uhr vorspulen mit `page.clock`, eigene Daten per `localStorage` vorbelegen, Screenshots im Handyformat (412 × 915) zum Vergleich mit den Entwürfen.
+- Sprachausgabe mit einer **Attrappe** von `speechSynthesis` nachbilden (Zustände: normal, angehalten, hängt, `synthesis-failed` vor/nach Start); Töne prüfen, indem man die gespielten Frequenzen von `OscillatorNode.start` mitschreibt.
+- Was nur das echte Handy zeigen kann (Klang, Stimme, Wake Lock), ehrlich als ungeprüft benennen und Regina um einen Test mit Screenshot bitten.
