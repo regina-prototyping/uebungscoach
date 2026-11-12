@@ -8,7 +8,8 @@ export function dose(e: Uebung): string {
 /** Menge eines Satzes, z. B. „15“, „5 je Seite“, „10 × 5 s“. */
 export function satzMenge(e: Uebung): string {
   const seite = e.proSeite ? " je Seite" : "";
-  if (e.art === "hold") return `${e.reps} × ${e.hold} s${seite}`;
+  // Halten mit nur einer Wiederholung: „30 s“ statt „1 × 30 s“
+  if (e.art === "hold") return `${e.reps > 1 ? `${e.reps} × ` : ""}${e.hold} s${seite}`;
   return `${e.reps}${seite}`;
 }
 
