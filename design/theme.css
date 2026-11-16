@@ -9,11 +9,11 @@
   --muted: #6B5F67;
   --line: #ECE6EA;
   --surface: #FFFFFF;
-  --ground: #FFFFFF;
+  --ground: #F6F4F6;
   --tint: #F6F4F6;
   --font-sans: "Figtree", "Segoe UI", system-ui, sans-serif;
   --radius-md: 16px;
-  --radius-lg: 28px;
+  --radius-lg: 20px;
   --radius-pill: 999px;
   --shadow-soft: 0 1px 2px #22181F0A, 0 8px 24px #22181F0F;
   /* Seitenhintergrund: reines Weiß */

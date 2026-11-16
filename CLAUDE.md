@@ -43,8 +43,10 @@ Eine Web-App (PWA), die per Sprachansage durch Physio-Übungen führt. Die Nutze
 
 ## Design-Regeln (Kurzfassung, Details in `design/tokens.json`)
 
-- Weißer Hintergrund, weiße Karten mit weichem Schatten (`shadow-soft`), große Rundungen (`radius-lg` 28 px), runde Knöpfe und Chips.
-- `primary` (#921A5B) = aktive Phase (Wiederholung, Halten) und der eine wichtigste Button. `rest` (#A65A0A) = Vorbereitung, Satzpause, Absenken.
+- Leicht getönter Seitenhintergrund (`ground` #F6F4F6), weiße Karten (`surface`) mit dezentem Schatten, Rundung `radius-lg` 20 px, runde Knöpfe und Chips. Gemeinsamer Kartenaufbau auf der Startseite: Text links, runde 48-px-Aktion rechts.
+- `primary` (#921A5B) = aktive Phase (Wiederholung, Halten) und **die** Aktionsfarbe (Start, Pause, Hauptbutton). `rest` (#A65A0A) **nur** für Vorbereitung, Satzpause, Absenken – nirgends sonst.
+- Schrift- und Abstandsstufen nur über Tokens (`--text-xs…xl` in rem, `--weight-*`, `--space-1…10` im 4er-Raster), keine negativen Margins. 800 nur für die Ring-Zahl; Überschriften 700, Titel/Buttons 600, Metatext 15/22 px 400.
+- Barrierefreiheit: Rückfragen als natives `<dialog>` mit `showModal()`, Ausgeblendetes per `hidden`, kein `aria-live` am Sekundenzähler (Ansagen über `.sr-only`-Element), sichtbarer `:focus-visible`-Ring, `prefers-reduced-motion` global.
 - Die große Zahl im Fortschrittsring ist das Wichtigste im Training; aus 1–2 m lesbar. Ziffern mit `tabular-nums`.
 - Schrift: Figtree (Google Fonts).
 - Touch-Ziele mindestens 44 px, Steuerknöpfe 64 px, Pause-Button 72 px hoch.

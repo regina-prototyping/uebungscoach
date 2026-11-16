@@ -1,4 +1,4 @@
-import { anzeige } from "../logik/anzeige";
+import { anzeige, screenreaderAnsage } from "../logik/anzeige";
 import type { Spieler } from "../logik/spieler";
 import { esc, STEUER_ICON } from "./hilfen";
 
@@ -20,10 +20,16 @@ export interface TrainingAktionen {
  */
 export class TrainingAnsicht {
   private el: Record<string, HTMLElement | SVGElement> = {};
+  private dialogEl: HTMLDialogElement;
+  /** Element, das vor dem Öffnen des Dialogs den Fokus hatte. */
+  private fokusVorDialog: HTMLElement | null = null;
+  /** Zuletzt angesagter Abschnitt (für den Screenreader). */
+  private letzteAnsage = "";
 
   constructor(root: HTMLElement, programmName: string, aktion: TrainingAktionen) {
     root.innerHTML = `
       <section class="screen training" data-phase="ruhe">
+        <p class="sr-only" aria-live="polite" data-e="ansage"></p>
         <div class="t-kopf">
           <button type="button" class="text-btn" data-a="beenden">Beenden</button>
           <span class="t-programm">${esc(programmName)}</span>
@@ -44,7 +50,7 @@ export class TrainingAnsicht {
               <circle cx="150" cy="150" r="130" class="ring-voll" data-e="ring"
                 stroke-dasharray="${UMFANG}" stroke-dashoffset="${UMFANG}" transform="rotate(-90 150 150)"/>
             </svg>
-            <div class="ring-inhalt" aria-live="polite">
+            <div class="ring-inhalt">
               <span class="ring-label" data-e="label"></span>
               <span class="ring-zahl zahl" data-e="gross"></span>
               <span class="ring-unter" data-e="unter"></span>
@@ -69,20 +75,24 @@ export class TrainingAnsicht {
           <button type="button" class="btn-zweit" data-a="uebersicht">Zur Übersicht</button>
         </div>
 
-        <div class="dialog-hintergrund" data-e="dialog" hidden>
-          <div class="card dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-titel">
-            <h2 class="heading" id="dialog-titel">Training beenden?</h2>
-            <p class="muted">Dein Fortschritt in diesem Training wird nicht gespeichert.</p>
-            <button type="button" class="btn-primary" data-a="weitertrainieren">Weitertrainieren</button>
-            <button type="button" class="btn-zweit" data-a="wirklichBeenden">Beenden</button>
-          </div>
-        </div>
+        <dialog class="card dialog" data-e="dialog" aria-labelledby="dialog-titel">
+          <h2 class="heading" id="dialog-titel">Training beenden?</h2>
+          <p class="muted">Dein Fortschritt in diesem Training wird nicht gespeichert.</p>
+          <button type="button" class="btn-primary" data-a="weitertrainieren">Weitertrainieren</button>
+          <button type="button" class="btn-zweit" data-a="wirklichBeenden">Beenden</button>
+        </dialog>
       </section>`;
 
     root.querySelectorAll<HTMLElement | SVGElement>("[data-e]").forEach((n) => (this.el[n.dataset.e!] = n));
     this.el.screen = root.querySelector(".training")!;
     this.el.iconPause = root.querySelector("[data-icon=pause]")!;
     this.el.iconPlay = root.querySelector("[data-icon=play]")!;
+    this.dialogEl = root.querySelector("dialog")!;
+    // Escape bzw. Zurück-Geste bei offenem Dialog: wie „Weitertrainieren“
+    this.dialogEl.addEventListener("cancel", (ev) => {
+      ev.preventDefault();
+      this.dialog(false);
+    });
 
     const handler: Record<string, () => void> = {
       beenden: aktion.beenden,
@@ -92,19 +102,34 @@ export class TrainingAnsicht {
       nochmal: aktion.nochmal,
       uebersicht: aktion.uebersicht,
       weitertrainieren: () => this.dialog(false),
-      wirklichBeenden: aktion.uebersicht,
+      wirklichBeenden: () => {
+        this.dialogEl.close();
+        aktion.uebersicht();
+      },
     };
     root.querySelectorAll<HTMLButtonElement>("[data-a]").forEach((b) => b.addEventListener("click", handler[b.dataset.a!]));
   }
 
   /** Rückfrage „Training beenden?“ zeigen oder verbergen. */
   dialog(offen: boolean): void {
-    this.el.dialog.toggleAttribute("hidden", !offen);
-    if (!offen) this.onDialogZu?.();
+    const d = this.dialogEl;
+    if (offen) {
+      if (d.open) return;
+      this.fokusVorDialog = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      // showModal: Hintergrund ist gesperrt, Fokus bleibt im Dialog
+      d.showModal();
+      d.querySelector<HTMLButtonElement>("[data-a=weitertrainieren]")!.focus();
+      return;
+    }
+    if (d.open) d.close();
+    // Fokus zurück auf den auslösenden Knopf (bei der Zurück-Geste: „Beenden“)
+    const ziel = this.fokusVorDialog?.isConnected && this.fokusVorDialog !== document.body ? this.fokusVorDialog : null;
+    (ziel ?? d.parentElement!.querySelector<HTMLButtonElement>("[data-a=beenden]")!).focus();
+    this.onDialogZu?.();
   }
 
   get dialogOffen(): boolean {
-    return !this.el.dialog.hasAttribute("hidden");
+    return this.dialogEl.open;
   }
 
   /** Wird aufgerufen, wenn „Weitertrainieren“ gewählt wurde. */
@@ -114,6 +139,11 @@ export class TrainingAnsicht {
     const a = anzeige(sp);
     const fertig = a.phase === "fertig";
     this.el.screen.dataset.phase = a.phase;
+    const ansage = screenreaderAnsage(sp);
+    if (ansage.schluessel !== this.letzteAnsage) {
+      this.letzteAnsage = ansage.schluessel;
+      this.el.ansage.textContent = ansage.text;
+    }
     this.el.restzeit.textContent = a.restzeit;
     this.el.balken.style.width = `${a.gesamt * 100}%`;
     this.el.titel.textContent = a.titel;

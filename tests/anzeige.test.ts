@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { MITGELIEFERT } from "../src/data/programme";
 import { trainingsplan } from "../src/logik/daten";
-import { anzeige } from "../src/logik/anzeige";
+import { anzeige, screenreaderAnsage } from "../src/logik/anzeige";
 import { Spieler } from "../src/logik/spieler";
 
 const ruecken = trainingsplan(MITGELIEFERT, "ruecken")!;
@@ -67,5 +67,35 @@ describe("Anzeige im Training", () => {
   it("Ende zeigt „Geschafft“", () => {
     const a = anzeige(spielerBei((sp) => sp.fertig));
     expect(a).toMatchObject({ phase: "fertig", gross: "Geschafft", chips: [], danach: null, gesamt: 1 });
+  });
+});
+
+describe("Ansage für Screenreader", () => {
+  it("nennt die Übung beim Start und bleibt während der Wiederholungen gleich", () => {
+    const start = screenreaderAnsage(spielerBei(() => true));
+    expect(start.text).toBe("Übung 1 von 3: Becken kippen");
+    const rep7 = screenreaderAnsage(spielerBei((sp) => sp.seg.kind === "rep" && sp.seg.rep === 7));
+    expect(rep7).toEqual(start);
+  });
+
+  it("meldet Satzpause, neuen Satz, nächste Übung und Ende", () => {
+    expect(screenreaderAnsage(spielerBei((sp) => sp.seg.kind === "pause")).text).toBe("Satzpause: Satz 1 geschafft");
+    expect(screenreaderAnsage(spielerBei((sp) => sp.seg.kind === "rep" && sp.seg.set === 2)).text).toBe("Satz 2 von 2: Becken kippen");
+    expect(screenreaderAnsage(spielerBei((sp) => sp.seg.ex === 1)).text).toBe("Übung 2 von 3: Beine seitlich kippen");
+    expect(screenreaderAnsage(spielerBei(() => false)).text).toBe("Training geschafft");
+  });
+
+  it("ändert den Schlüssel nur bei einem neuen Abschnitt", () => {
+    const sp = new Spieler(ruecken, STANDARD);
+    let t = 0;
+    sp.start(t);
+    const schluessel = new Set<string>();
+    while (!sp.fertig) {
+      schluessel.add(screenreaderAnsage(sp).schluessel);
+      sp.tick((t += 100));
+    }
+    schluessel.add(screenreaderAnsage(sp).schluessel);
+    // 3 Übungen × 2 Sätze + 3 Satzpausen + Ende
+    expect(schluessel.size).toBe(10);
   });
 });

@@ -12,16 +12,16 @@
   --ground: #F6F4F6;    /* Seitenhintergrund, leicht getönt */
   --tint: #F6F4F6;
 
-  /* Schrift */
+  /* Schrift – in rem, damit die Textgröße des Browsers wirkt (1rem = 16 px) */
   --font-sans: "Figtree", "Segoe UI", system-ui, sans-serif;
-  --text-xs: 13px;
-  --text-sm: 15px;
-  --text-md: 17px;
-  --text-lg: 20px;
-  --text-xl: 28px;
-  /* Ausnahme: große Anzeige im Trainingsring (aus 1–2 m lesbar) */
+  --text-xs: 0.8125rem; /* 13 px */
+  --text-sm: 0.9375rem; /* 15 px */
+  --text-md: 1.0625rem; /* 17 px */
+  --text-lg: 1.25rem;   /* 20 px */
+  --text-xl: 1.75rem;   /* 28 px */
+  /* Ausnahme: große Anzeige im Trainingsring (aus 1–2 m lesbar).
+     Bewusst in px: Der Ring hat eine feste Größe, die Zahl muss hineinpassen. */
   --text-display: 128px;
-  --text-display-klein: 96px;  /* niedrige Bildschirme */
   --text-display-wort: 48px;   /* Wörter wie „Links“, „Geschafft“ */
   --weight-regular: 400;
   --weight-medium: 600;

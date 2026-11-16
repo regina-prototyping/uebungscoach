@@ -127,3 +127,18 @@ export function anzeige(sp: Spieler): Anzeige {
     danach,
   };
 }
+
+/**
+ * Kurzer Satz für Screenreader. Ändert sich nur bei Übungs- oder Satzwechsel,
+ * Pausenbeginn und Trainingsende – nicht bei jeder Sekunde oder Wiederholung.
+ * `schluessel` gibt an, ob sich etwas Ansagewürdiges geändert hat.
+ */
+export function screenreaderAnsage(sp: Spieler): { schluessel: string; text: string } {
+  const seg = sp.seg;
+  const exs = sp.prog.exercises;
+  const e = exs[seg.ex];
+  if (seg.kind === "done") return { schluessel: "fertig", text: "Training geschafft" };
+  if (seg.kind === "pause") return { schluessel: `${seg.ex}-${seg.set}-pause`, text: `Satzpause: Satz ${seg.set} geschafft` };
+  const text = seg.set === 1 ? `Übung ${seg.ex + 1} von ${exs.length}: ${e.name}` : `Satz ${seg.set} von ${e.sets}: ${e.name}`;
+  return { schluessel: `${seg.ex}-${seg.set}`, text };
+}

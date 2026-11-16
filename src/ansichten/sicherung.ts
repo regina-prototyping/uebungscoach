@@ -35,21 +35,20 @@ export function zeigeSicherung(root: HTMLElement, opt: SicherungOptionen): void 
 
       <p class="caption-normal meldung" data-e="meldung" role="status" hidden></p>
 
-      <div class="dialog-hintergrund" data-e="dialog" hidden>
-        <div class="card dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-titel">
-          <h2 class="heading" id="dialog-titel">Sicherung laden?</h2>
-          <p class="zahl" data-e="dialogText"></p>
-          <p class="muted">Deine aktuellen Übungen, Programme und Einstellungen werden ersetzt.</p>
-          <button type="button" class="btn-primary" data-a="ersetzen">Laden und ersetzen</button>
-          <button type="button" class="btn-zweit" data-a="abbrechen">Abbrechen</button>
-        </div>
-      </div>
+      <dialog class="card dialog" data-e="dialog" aria-labelledby="dialog-titel">
+        <h2 class="heading" id="dialog-titel">Sicherung laden?</h2>
+        <p class="zahl" data-e="dialogText"></p>
+        <p class="muted">Deine aktuellen Übungen, Programme und Einstellungen werden ersetzt.</p>
+        <button type="button" class="btn-primary" data-a="ersetzen">Laden und ersetzen</button>
+        <button type="button" class="btn-zweit" data-a="abbrechen">Abbrechen</button>
+      </dialog>
     </section>`;
 
   const el = (name: string) => root.querySelector<HTMLElement>(`[data-e=${name}]`)!;
   const meldung = el("meldung");
   const datei = el("datei") as HTMLInputElement;
-  const dialog = el("dialog");
+  const dialog = el("dialog") as HTMLDialogElement;
+  const ladenBtn = root.querySelector<HTMLButtonElement>("[data-a=laden]")!;
   let gelesen: Sicherung | null = null;
 
   const melden = (text: string, fehler = false) => {
@@ -57,7 +56,22 @@ export function zeigeSicherung(root: HTMLElement, opt: SicherungOptionen): void 
     meldung.textContent = text;
     meldung.classList.toggle("fehler", fehler);
   };
-  const dialogZeigen = (offen: boolean) => dialog.toggleAttribute("hidden", !offen);
+  const dialogZeigen = (offen: boolean) => {
+    if (offen) {
+      dialog.showModal();
+      // Fokus auf die sichere Wahl, weil „Laden und ersetzen“ Daten überschreibt
+      dialog.querySelector<HTMLButtonElement>("[data-a=abbrechen]")!.focus();
+    } else {
+      dialog.close();
+      ladenBtn.focus();
+    }
+  };
+  // Escape bzw. Zurück-Geste: wie „Abbrechen“
+  dialog.addEventListener("cancel", (ev) => {
+    ev.preventDefault();
+    gelesen = null;
+    dialogZeigen(false);
+  });
 
   root.querySelector("[data-a=fertig]")!.addEventListener("click", opt.onFertig);
 
@@ -67,7 +81,7 @@ export function zeigeSicherung(root: HTMLElement, opt: SicherungOptionen): void 
     opt.onSpeichern().then((text) => text && melden(text));
   });
 
-  root.querySelector("[data-a=laden]")!.addEventListener("click", () => {
+  ladenBtn.addEventListener("click", () => {
     meldung.hidden = true;
     datei.value = "";
     datei.click();

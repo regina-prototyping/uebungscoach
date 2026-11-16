@@ -26,19 +26,21 @@ export function zeigeEinstellungen(root: HTMLElement, opt: EinstellungenOptionen
         <button type="button" class="pill-btn" data-a="fertig">Fertig</button>
       </div>
 
-      <section class="card felder">
-        ${FELDER.map(
-          (f) => `
-          <div class="feld">
-            <div class="feld-text"><span class="feld-label">${f.label}</span><span class="caption-normal muted">${f.hilfe}</span></div>
-            <button type="button" class="stepper-btn" data-k="${f.key}" data-d="-1" aria-label="${f.label} verringern">−</button>
-            <output class="feld-wert zahl" data-wert="${f.key}" aria-live="polite">${werte[f.key]}</output>
-            <button type="button" class="stepper-btn" data-k="${f.key}" data-d="1" aria-label="${f.label} erhöhen">+</button>
-          </div>`,
-        ).join("")}
-      </section>
+      <div class="gruppe">
+        <section class="card felder">
+          ${FELDER.map(
+            (f) => `
+            <div class="feld">
+              <div class="feld-text"><span class="feld-label">${f.label}</span><span class="caption-normal muted">${f.hilfe}</span></div>
+              <button type="button" class="stepper-btn" data-k="${f.key}" data-d="-1" aria-label="${f.label} verringern">−</button>
+              <output class="feld-wert zahl" data-wert="${f.key}" aria-live="polite">${werte[f.key]}</output>
+              <button type="button" class="stepper-btn" data-k="${f.key}" data-d="1" aria-label="${f.label} erhöhen">+</button>
+            </div>`,
+          ).join("")}
+        </section>
 
-      <p class="caption-normal muted hinweis-text">Gilt für alle Übungen, außer eine Übung hat einen eigenen Wert.</p>
+        <p class="caption-normal muted hinweis-text">Gilt für alle Übungen, außer eine Übung hat einen eigenen Wert.</p>
+      </div>
 
       <section class="card felder">
         <div class="eingabe-feld">
@@ -51,10 +53,14 @@ export function zeigeEinstellungen(root: HTMLElement, opt: EinstellungenOptionen
         </div>
       </section>
 
-      <button type="button" class="btn-soft" data-a="toene">${LAUTSPRECHER}Töne anhören</button>
-      <p class="caption-normal muted diagnose" data-e="toeneText" hidden></p>
-      <button type="button" class="btn-soft" data-a="stimme">${LAUTSPRECHER}Stimme testen</button>
-      <p class="caption-normal muted diagnose" data-e="diagnose">${opt.stimmenStatus()}</p>
+      <div class="gruppe">
+        <button type="button" class="btn-soft" data-a="toene">${LAUTSPRECHER}Töne anhören</button>
+        <p class="caption-normal muted diagnose" data-e="toeneText" hidden></p>
+      </div>
+      <div class="gruppe">
+        <button type="button" class="btn-soft" data-a="stimme">${LAUTSPRECHER}Stimme testen</button>
+        <p class="caption-normal muted diagnose" data-e="diagnose">${opt.stimmenStatus()}</p>
+      </div>
       <p class="caption-normal muted diagnose">App-Version: ${__VERSION__} · ${esc(location.host)}</p>
     </section>`;
 

@@ -3,16 +3,47 @@
 html, body {
   margin: 0;
   background: var(--ground);
+  -webkit-tap-highlight-color: transparent;
+}
+/* Kein font-size am html-Element: 1rem folgt der Textgröße aus den Browser-Einstellungen */
+body {
   color: var(--ink);
   font-family: var(--font-sans);
   font-size: var(--text-md);
-  line-height: 24px;
-  -webkit-tap-highlight-color: transparent;
+  line-height: 1.5rem;
 }
 
 button { font: inherit; color: inherit; cursor: pointer; }
 
 [hidden] { display: none !important; }
+
+/* Sichtbarer Fokus bei Tastatur-Bedienung */
+button:focus-visible, a:focus-visible, [role="switch"]:focus-visible, [role="radio"]:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Nur für Screenreader: unsichtbar, aber vorgelesen */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Weniger Bewegung, wenn im System eingestellt (auch der Ring springt dann ohne Übergang) */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
 
 .screen {
   max-width: 480px;
@@ -36,7 +67,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 }
 
 /* ---------- Bausteine ---------- */
-.muted, .caption-normal { font-size: var(--text-sm); line-height: 22px; font-weight: var(--weight-regular); }
+.muted, .caption-normal { font-size: var(--text-sm); line-height: 1.375rem; font-weight: var(--weight-regular); }
 .muted { color: var(--muted); }
 .zahl { font-variant-numeric: tabular-nums; }
 .heading { margin: 0; font-size: var(--text-lg); line-height: 1.3; font-weight: var(--weight-bold); }
@@ -140,7 +171,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
   border-radius: var(--radius-pill);
   background: var(--phase-soft);
   font-size: var(--text-sm);
-  line-height: 20px;
+  line-height: 1.25rem;
   font-weight: var(--weight-medium);
 }
 
@@ -158,6 +189,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
   height: min(300px, 100%);
   aspect-ratio: 1;
   max-width: 100%;
+  /* Größe des Rings als Bezug für die Zahl darin (cqh = 1 % der Ringhöhe) */
+  container-type: size;
 }
 .ring svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 .ring-leer, .ring-voll { fill: none; stroke-width: 16; }
@@ -180,8 +213,13 @@ button { font: inherit; color: inherit; cursor: pointer; }
   text-transform: uppercase;
   color: var(--phase);
 }
-.ring-zahl { font-size: var(--text-display); line-height: 1; font-weight: var(--weight-black); }
-.ring-zahl.wort { font-size: var(--text-display-wort); line-height: 1.2; }
+.ring-zahl {
+  /* 128 px, auf niedrigen Bildschirmen so klein, dass Label und Untertext im Ring bleiben */
+  font-size: min(var(--text-display), calc(62cqh - 3.5rem));
+  line-height: 1;
+  font-weight: var(--weight-black);
+}
+.ring-zahl.wort { font-size: min(var(--text-display-wort), 22cqh); line-height: 1.2; }
 .ring-unter { font-size: var(--text-lg); font-weight: var(--weight-medium); color: var(--muted); }
 
 .danach {
@@ -196,7 +234,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
   color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  line-height: 20px;
+  line-height: 1.25rem;
 }
 .danach-name { font-weight: var(--weight-medium); }
 
@@ -231,31 +269,20 @@ button { font: inherit; color: inherit; cursor: pointer; }
 
 .ende-knoepfe { display: flex; flex-direction: column; gap: var(--space-3); }
 
-/* Rückfrage „Training beenden?“ */
-.dialog-hintergrund {
-  position: fixed;
-  inset: 0;
-  background: #22181F66;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  padding: var(--space-5);
-  z-index: 10;
-}
+/* Rückfragen („Training beenden?“, „Sicherung laden?“) als natives <dialog>, unten am Bildschirm */
 .dialog {
-  width: 100%;
+  width: calc(100% - 2 * var(--space-5));
   max-width: 440px;
+  margin: auto auto calc(var(--space-5) + env(safe-area-inset-bottom));
   padding: var(--space-6) var(--space-5) var(--space-5);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
+  border: 0;
+  color: var(--ink);
 }
+/* nur geöffnet als Flexbox – geschlossen bleibt display: none (nicht im Accessibility-Baum) */
+.dialog[open] { display: flex; flex-direction: column; gap: var(--space-3); }
+.dialog::backdrop { background: #22181F66; }
 .dialog p { margin: 0 0 var(--space-2); }
 
-/* Kleine Bildschirme: Zahl etwas kleiner, damit alles passt */
-@media (max-height: 700px) {
-  .ring-zahl { font-size: var(--text-display-klein); }
-}
 
 /* ---------- Einstellungen ---------- */
 .pill-btn {
@@ -352,9 +379,6 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .menue-eintrag .leer-text { flex: 1; }
 @keyframes hereinschieben { from { transform: translateX(100%); } }
 @keyframes einblenden { from { opacity: 0; } }
-@media (prefers-reduced-motion: reduce) {
-  .menue-panel, .menue-streifen { animation: none; }
-}
 
 /* ---------- Bearbeiten-Bildschirme ---------- */
 .bearbeiten { padding-bottom: calc(3 * var(--space-8)); } /* Platz für die Rückgängig-Leiste */
@@ -377,7 +401,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .abschnitt {
   margin: 0 var(--space-1);
   font-size: var(--text-xs);
-  line-height: 20px;
+  line-height: 1.25rem;
   font-weight: var(--weight-medium);
   color: var(--muted);
   text-transform: uppercase;
@@ -414,7 +438,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
   z-index: 30;
   animation: hochgleiten 0.2s ease-out;
 }
-.leiste span { flex: 1; font-size: var(--text-sm); line-height: 20px; font-weight: var(--weight-medium); }
+.leiste span { flex: 1; font-size: var(--text-sm); line-height: 1.25rem; font-weight: var(--weight-medium); }
 .leiste button {
   height: 44px;
   padding: 0 var(--space-4);
@@ -476,7 +500,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .schalter::before { content: ""; position: absolute; inset: calc(-1 * var(--space-2)); } /* größere Tippfläche */
 .zeit-kopf { width: 100%; border: 0; background: none; text-align: left; }
 .zeit-pfeil { flex: none; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; }
-.feld-wert.standard { width: 64px; font-size: var(--text-sm); line-height: 20px; font-weight: var(--weight-medium); color: var(--muted); }
+.feld-wert.standard { width: 64px; font-size: var(--text-sm); line-height: 1.25rem; font-weight: var(--weight-medium); color: var(--muted); }
 .zuruecksetzen {
   align-self: flex-start;
   margin-top: var(--space-1);
@@ -532,7 +556,10 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .karten-aktion-zweit { background: var(--primary-soft); color: var(--primary); }
 /* Programmkarte: die ganze Karte öffnet das Programm, ▶ startet sofort */
 .kompakt-text { padding: 0; border: 0; background: none; text-align: left; }
-.kompakt-text::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
+.kompakt-text::after { content: ""; position: absolute; inset: 0; border-radius: var(--radius-lg); }
+/* Fokusring um die ganze Karte, weil die ganze Karte antippbar ist */
+.kompakt-text:focus-visible { outline: none; }
+.kompakt-text:focus-visible::after { outline: 3px solid var(--primary); outline-offset: 2px; }
 .karte-zeile:active:not(:has(.karten-aktion:active)) { transform: scale(0.99); }
 .karten-aktion:active { transform: scale(0.94); }
 /* „Neues Programm“: dezent, gestrichelt, ohne Schatten */
@@ -568,6 +595,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 /* ---------- Sicherung ---------- */
 .sicherung-karte { padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-2); }
 .sicherung-karte h2, .sicherung-karte p { margin: 0; }
+.sicherung-karte h2 { font-size: var(--text-lg); line-height: 1.3; }
 .sicherung-karte button { margin-top: var(--space-2); }
 .meldung { margin: 0; font-weight: var(--weight-medium); color: var(--ink); }
 .meldung.fehler { color: var(--primary); }

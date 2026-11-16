@@ -150,6 +150,24 @@ Bei mehreren Sätzen beginnt jede linke Seite mit „Satz x von y.“ wie bisher
 - **Startseite kompakt:** Jedes Programm ist eine kleine Karte mit Name, „3 Übungen · ca. 8 Min“ und einem ▶-Knopf zum Schnellstart; dort kein „Bearbeiten“. Antippen öffnet die **Programm-Ansicht** mit nummerierter Übungsliste, „Bearbeiten“ und „Training starten“. Leere Programme zeigen „Noch keine Übungen“ und führen direkt zum Bearbeiten.
 - **Mengen stehen unter dem Übungsnamen**, nicht daneben, damit lange Namen sauber umbrechen. Halten mit einer Wiederholung ohne überflüssige „1 ×“ (z. B. „1 × 30 s je Seite“).
 
+## Gestaltung und Barrierefreiheit (UI-Überarbeitung)
+
+Ziel: ruhigere Typografie, einheitliche Abstände, mehr Struktur, saubere Barrierefreiheit – ohne Funktionen oder Texte zu ändern. Werte stehen in `src/stil/theme.css` und `design/tokens.json`.
+
+- **Tokens:** Schriftgrößen `--text-xs/sm/md/lg/xl` (13/15/17/20/28 px, intern in rem, damit die Textgröße des Browsers wirkt), Stärken 400/600/700/800, Abstände `--space-1…10` im 4er-Raster. Ausnahme: die große Zahl im Ring (128 px, bzw. 48 px für Wörter) – in px, weil der Ring eine feste Größe hat; auf niedrigen Bildschirmen schrumpft sie mit dem Ring, damit Label und Untertext im Kreis bleiben.
+- **Schrift:** H1 28 px/700; Karten-, Listen- und Übungstitel, Buttons, Chips und App-Name 600; grauer Metatext 15/22 px/400; Uppercase-Labels 13 px/600. 800 nur für die Ring-Zahl.
+- **Flächen:** Seitenhintergrund leicht getönt (#F6F4F6), Karten weiß, Rundung 20 px, Schatten dezent.
+- **Startseite:** Alle Karten im selben Aufbau (Innenabstand 16/20 px, Text links, runde 48-px-Aktion rechts, gleiche Mindesthöhe). ▶ magenta, Bearbeiten und Plus getönt. Die ganze Programmkarte öffnet die Programm-Ansicht. „Neues Programm“ als dezente, gestrichelte Karte.
+- **Farben:** Magenta ist die Aktionsfarbe (auch der Pause-Button im Training). Orange-Braun nur für Vorbereitung, Satzpause, Absenken. Menü-Symbole alle auf `primary-soft`. „In keinem Programm“ (Bibliothek) dunkel und halbfett statt orange.
+- **„Danach“-Karte:** Label, Übungsname und Menge untereinander.
+- **Barrierefreiheit:**
+  - Der Sekundenzähler hat kein `aria-live` mehr. Ein unsichtbares Element (`.sr-only`, `aria-live="polite"`) sagt nur bei Übungs- oder Satzwechsel, Pausenbeginn und Trainingsende einen kurzen Satz an, z. B. „Übung 2 von 3: Beine seitlich kippen“, „Satzpause: Satz 1 geschafft“, „Training geschafft“ (`screenreaderAnsage` in `anzeige.ts`).
+  - Rückfragen („Training beenden?“, „Sicherung laden?“) sind native `<dialog>`-Elemente mit `showModal()`: Hintergrund gesperrt, Fokus im Dialog. Escape bzw. die Android-Zurück-Geste bei offenem Dialog wirken wie „Weitertrainieren“ bzw. „Abbrechen“. Beim Öffnen liegt der Fokus auf „Weitertrainieren“ (bei der Sicherung auf „Abbrechen“, weil „Laden und ersetzen“ Daten überschreibt), beim Schließen wieder auf dem auslösenden Knopf.
+  - Ausgeblendetes immer per `hidden` bzw. `display: none`.
+  - Sichtbarer Fokusring (`:focus-visible`, 3 px magenta), bei der Programmkarte um die ganze Karte.
+  - `prefers-reduced-motion`: alle Animationen und Übergänge praktisch aus, der Ring springt.
+  - Textkontraste mindestens 4,5:1 (Metatext auf getöntem Grund 5,5:1, Orange-Braun auf Weiß 5,1:1).
+
 ## Signaltöne und Modus „Nur Töne“
 
 Hintergrund: Auf dem Pixel 9 liefert die Sprachausgabe zeitweise keine Stimme (`synthesis-failed`). Außerdem soll das Training auch nur mit Blick auf den Bildschirm (z. B. Fernseher) gut funktionieren. Töne sagen deshalb an, wann man hinschauen oder handeln muss.
