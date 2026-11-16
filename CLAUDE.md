@@ -15,11 +15,11 @@ Eine Web-App (PWA), die per Sprachansage durch Physio-Übungen führt. Die Nutze
 ## Aufbau des Codes
 
 - `src/data/programme.ts` – mitgelieferte Übungen und Programme (werden beim ersten Start in den Browser-Speicher übernommen).
-- `src/logik/` – reine Logik ohne Bildschirm und Ton, **mit Tests in `tests/`**: `plan.ts` (Programm → Abschnitte), `spieler.ts` (Zeitlauf, Pause/Zurück/Weiter, Ereignisse „sagen/piep/signal/still/fertig“), `anzeige.ts` (was im Training angezeigt wird), `daten.ts` (Übungen/Programme ändern, rein, für Rückgängig), `uebung-form.ts`, `format.ts`, `typen.ts`.
+- `src/logik/` – reine Logik ohne Bildschirm und Ton, **mit Tests in `tests/`**: `plan.ts` (Programm → Abschnitte), `spieler.ts` (Zeitlauf, Pause/Zurück/Weiter, Ereignisse „sagen/piep/signal/still/fertig“), `anzeige.ts` (was im Training angezeigt wird), `verlauf.ts` (Trainingsverlauf, Anheften, Raster und Kalender), `daten.ts` (Übungen/Programme ändern, rein, für Rückgängig), `uebung-form.ts`, `format.ts`, `typen.ts`.
 - `src/geraet/` – Sprachausgabe (`sprache.ts`, mit Wachhund und Ausweichversuchen), Töne (`piep.ts`, Countdown und Signaltöne), Bildschirm wach halten.
 - `src/ansichten/` – die Bildschirme (Start, Menü, Programm-Ansicht, Programm bearbeiten, Übung auswählen/bearbeiten, Bibliothek, Einstellungen, Training, Rückgängig-Leiste).
 - `src/navigation.ts` – jeder Bildschirm ist ein Eintrag im Browser-Verlauf, damit die Android-Zurück-Geste funktioniert; im Training fragt sie erst nach.
-- `src/main.ts` – verbindet alles; `src/daten-speicher.ts`, `src/einstellungen.ts` – Speichern im Browser (`localStorage`).
+- `src/main.ts` – verbindet alles; `src/daten-speicher.ts` (Daten und Trainingsverlauf), `src/einstellungen.ts` – Speichern im Browser (`localStorage`).
 
 ## Technik-Entscheidungen
 
