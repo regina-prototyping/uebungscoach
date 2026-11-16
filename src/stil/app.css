@@ -81,8 +81,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
   width: 44px;
   height: 44px;
   border-radius: var(--radius-md);
-  background: var(--tint);
-  color: var(--muted);
+  background: var(--primary-soft);
+  color: var(--primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -219,7 +219,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
   height: 72px;
   border: 0;
   border-radius: var(--radius-pill);
-  background: var(--ink);
+  background: var(--primary);
   color: #FFFFFF;
   display: flex;
   align-items: center;
@@ -493,7 +493,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 
 /* ---------- Übungsbibliothek ---------- */
 .verwendet { color: var(--muted); }
-.unbenutzt { color: var(--rest); font-weight: var(--weight-medium); }
+.unbenutzt { color: var(--ink); font-weight: var(--weight-medium); }
 
 /* ---------- Karten auf der Startseite ---------- */
 /* Gemeinsamer Aufbau: Text links, runde Aktion (48 px) rechts, gleiche Mindesthöhe */

@@ -9,9 +9,9 @@ interface MenueOptionen {
 
 /** Menü-Panel über der aktuellen Seite (fast bildschirmfüllend, links ein Streifen frei). */
 export function zeigeMenue(root: HTMLElement, opt: MenueOptionen): void {
-  const eintrag = (aktion: string, icon: string, klasse: string, titel: string, text: string) => `
+  const eintrag = (aktion: string, icon: string, titel: string, text: string) => `
     <button type="button" class="menue-eintrag" data-aktion="${aktion}">
-      <span class="symbolfeld ${klasse}">${icon}</span>
+      <span class="symbolfeld">${icon}</span>
       <span class="leer-text"><span class="leer-titel">${esc(titel)}</span><span class="caption-normal muted">${esc(text)}</span></span>
       ${MENU_ICON.rechts}
     </button>`;
@@ -25,9 +25,9 @@ export function zeigeMenue(root: HTMLElement, opt: MenueOptionen): void {
         <button type="button" class="icon-btn" data-aktion="schliessen" aria-label="Menü schließen">${MENU_ICON.schliessen}</button>
       </div>
       <div class="menue-liste">
-        ${eintrag("uebungen", MENU_ICON.liste, "symbolfeld-primary", "Übungen", "Alle Übungen anlegen und bearbeiten")}
-        ${eintrag("einstellungen", ICON.regler, "", "Einstellungen", "Tempo, Pausen, Stimme")}
-        ${eintrag("sicherung", SICHERUNG_ICON.menue, "", "Sicherung", "Daten speichern und laden")}
+        ${eintrag("uebungen", MENU_ICON.liste, "Übungen", "Alle Übungen anlegen und bearbeiten")}
+        ${eintrag("einstellungen", ICON.regler, "Einstellungen", "Tempo, Pausen, Stimme")}
+        ${eintrag("sicherung", SICHERUNG_ICON.menue, "Sicherung", "Daten speichern und laden")}
       </div>
     </nav>`;
   root.appendChild(overlay);
