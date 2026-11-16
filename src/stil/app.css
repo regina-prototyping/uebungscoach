@@ -141,16 +141,26 @@ button:focus-visible, a:focus-visible, [role="switch"]:focus-visible, [role="rad
 
 /* ---------- Training ---------- */
 .training {
-  --phase: var(--rest);
+  /* Ruhe-Phasen (Vorbereitung, Satzpause, Absenken): Türkis */
+  --phase-von: var(--rest-dark);
+  --phase-bis: var(--rest);
+  --phase-text: var(--rest-text);
   --phase-soft: var(--rest-soft);
+  --phase-zart: #EEFAF9;
+  --chip-text: var(--ink);
   height: 100dvh;
   min-height: 0;
   padding-top: var(--space-5);
   gap: var(--space-4);
 }
 .training[data-phase="aktiv"], .training[data-phase="fertig"] {
-  --phase: var(--primary);
+  /* Wiederholung, Halten, Fertig: Indigo */
+  --phase-von: var(--primary-dark);
+  --phase-bis: var(--primary-light);
+  --phase-text: var(--primary);
   --phase-soft: var(--primary-soft);
+  --phase-zart: #F1F0FD;
+  --chip-text: var(--primary-dark);
 }
 
 .t-kopf { display: flex; align-items: center; gap: var(--space-3); }
@@ -158,7 +168,7 @@ button:focus-visible, a:focus-visible, [role="switch"]:focus-visible, [role="rad
 .t-restzeit { font-weight: var(--weight-medium); color: var(--muted); min-width: 72px; text-align: right; }
 
 .balken { height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; flex: none; }
-.balken-fuellung { height: 100%; width: 0; border-radius: 3px; background: var(--primary); transition: width 0.2s linear; }
+.balken-fuellung { height: 100%; width: 0; border-radius: 3px; background: var(--verlauf); transition: width 0.2s linear; }
 
 .t-info { display: flex; flex-direction: column; gap: var(--space-2); }
 .t-hinweis { margin: 0; color: var(--muted); font-size: var(--text-md); }
@@ -167,6 +177,7 @@ button:focus-visible, a:focus-visible, [role="switch"]:focus-visible, [role="rad
   padding: var(--space-1) var(--space-3);
   border-radius: var(--radius-pill);
   background: var(--phase-soft);
+  color: var(--chip-text);
   font-size: var(--text-sm);
   line-height: 1.25rem;
   font-weight: var(--weight-medium);
@@ -175,7 +186,6 @@ button:focus-visible, a:focus-visible, [role="switch"]:focus-visible, [role="rad
 .ring-karte {
   flex: 1;
   min-height: 0;
-  border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -192,7 +202,9 @@ button:focus-visible, a:focus-visible, [role="switch"]:focus-visible, [role="rad
 .ring svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 .ring-leer, .ring-voll { fill: none; stroke-width: 16; }
 .ring-leer { stroke: var(--line); }
-.ring-voll { stroke: var(--phase); stroke-linecap: round; transition: stroke-dashoffset 0.15s linear; }
+.ring-von { stop-color: var(--phase-von); }
+.ring-bis { stop-color: var(--phase-bis); }
+.ring-voll { stroke: url(#ring-verlauf); stroke-linecap: round; transition: stroke-dashoffset 0.15s linear; }
 .ring-inhalt {
   position: absolute;
   inset: 0;
@@ -208,7 +220,7 @@ button:focus-visible, a:focus-visible, [role="switch"]:focus-visible, [role="rad
   font-weight: var(--weight-medium);
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--phase);
+  color: var(--phase-text);
 }
 .ring-zahl {
   /* 128 px, auf niedrigen Bildschirmen so klein, dass Label und Untertext im Ring bleiben */
@@ -220,8 +232,10 @@ button:focus-visible, a:focus-visible, [role="switch"]:focus-visible, [role="rad
 .ring-unter { font-size: var(--text-lg); font-weight: var(--weight-medium); color: var(--muted); }
 
 .danach {
-  border-radius: var(--radius-lg);
+  border: 1px solid var(--phase-soft);
+  border-radius: var(--radius-sm);
   padding: var(--space-3) var(--space-5);
+  background: linear-gradient(225deg, var(--phase-zart), #FFFFFF);
   display: flex;
   flex-direction: column;
 }
@@ -242,8 +256,7 @@ button:focus-visible, a:focus-visible, [role="switch"]:focus-visible, [role="rad
   height: 64px;
   border: 0;
   border-radius: var(--radius-pill);
-  background: var(--surface);
-  box-shadow: var(--shadow-soft);
+  background: var(--tint);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -253,7 +266,7 @@ button:focus-visible, a:focus-visible, [role="switch"]:focus-visible, [role="rad
   height: 72px;
   border: 0;
   border-radius: var(--radius-pill);
-  background: var(--primary);
+  background: var(--verlauf);
   color: #FFFFFF;
   display: flex;
   align-items: center;

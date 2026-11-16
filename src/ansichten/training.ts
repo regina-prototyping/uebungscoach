@@ -43,9 +43,16 @@ export class TrainingAnsicht {
           <div class="chips" data-e="chips"></div>
         </div>
 
-        <div class="card ring-karte">
+        <div class="ring-karte">
           <div class="ring">
             <svg viewBox="0 0 300 300" aria-hidden="true">
+              <defs>
+                <!-- Verlauf über den Ring: oben links dunkel, unten rechts hell; Farben je Phase aus dem CSS -->
+                <linearGradient id="ring-verlauf" x1="1" y1="0" x2="0" y2="1">
+                  <stop offset="0" class="ring-von"/>
+                  <stop offset="1" class="ring-bis"/>
+                </linearGradient>
+              </defs>
               <circle cx="150" cy="150" r="130" class="ring-leer"/>
               <circle cx="150" cy="150" r="130" class="ring-voll" data-e="ring"
                 stroke-dasharray="${UMFANG}" stroke-dashoffset="${UMFANG}" transform="rotate(-90 150 150)"/>
@@ -58,7 +65,7 @@ export class TrainingAnsicht {
           </div>
         </div>
 
-        <div class="card danach" data-e="danach">
+        <div class="danach" data-e="danach">
           <span class="danach-label">Danach</span>
           <span class="danach-name" data-e="danachName"></span>
           <span class="muted zahl" data-e="danachMenge"></span>
