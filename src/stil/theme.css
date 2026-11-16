@@ -1,15 +1,21 @@
 /* Design-Werte aus design/theme.css bzw. design/tokens.json */
 :root {
-  /* Farben */
-  --primary: #921A5B;
-  --primary-soft: #F7E8F0;
-  --rest: #A65A0A;
-  --rest-soft: #FCEFDC;
+  /* Farben – Indigo als Aktionsfarbe, Türkis für Pausen */
+  --primary: #4A44C2;        /* Indigo: Ring, Balken, Links, Fokus */
+  --primary-dark: #262A80;   /* dunkles Indigo: Text auf zarten Flächen */
+  --primary-light: #7670E2;  /* helles Ende des Ring-Verlaufs */
+  --primary-soft: #ECEBFB;   /* zarte Fläche: Chips, Symbol-Kacheln, Nebenknöpfe */
+  --on-primary-muted: #DCDAF8; /* Nebentext auf Indigo */
+  --verlauf: linear-gradient(135deg, #262A80, #4A44C2); /* große Farbflächen und Hauptknöpfe */
+  --rest: #0FA3A3;           /* Türkis: Ring in Vorbereitung, Satzpause, Absenken */
+  --rest-dark: #0B5754;      /* dunkles Ende des Pausen-Ring-Verlaufs */
+  --rest-text: #0B6E6B;      /* Türkis als Schrift (auf Weiß 6:1) */
+  --rest-soft: #D5F3F1;
   --ink: #22181F;
   --muted: #6B5F67;
   --line: #ECE6EA;
-  --surface: #FFFFFF;   /* Karten */
-  --ground: #F6F4F6;    /* Seitenhintergrund, leicht getönt */
+  --surface: #FFFFFF;
+  --ground: #FFFFFF;    /* Seitenhintergrund weiß; gegliedert wird über Linien und wenige Farbflächen */
   --tint: #F6F4F6;
 
   /* Schrift – in rem, damit die Textgröße des Browsers wirkt (1rem = 16 px) */
@@ -39,8 +45,8 @@
   --space-10: 40px;
 
   /* Rundungen und Schatten */
-  --radius-md: 16px;
-  --radius-lg: 20px;
+  --radius-sm: 8px;     /* kleine Flächen: „Danach“, Eingabefelder */
+  --radius-md: 12px;    /* Symbol-Kacheln */
+  --radius-lg: 20px;    /* große Farbflächen: Programmkarte, Dialog */
   --radius-pill: 999px;
-  --shadow-soft: 0 1px 2px #22181F0A, 0 8px 24px #22181F0F;
 }

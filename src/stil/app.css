@@ -62,7 +62,7 @@ button:focus-visible, a:focus-visible, [role="switch"]:focus-visible, [role="rad
   margin: 0;
   font-size: var(--text-xl);
   line-height: 1.15;
-  font-weight: var(--weight-bold);
+  font-weight: var(--weight-medium);
   letter-spacing: -0.01em;
 }
 
@@ -70,11 +70,10 @@ button:focus-visible, a:focus-visible, [role="switch"]:focus-visible, [role="rad
 .muted, .caption-normal { font-size: var(--text-sm); line-height: 1.375rem; font-weight: var(--weight-regular); }
 .muted { color: var(--muted); }
 .zahl { font-variant-numeric: tabular-nums; }
-.heading { margin: 0; font-size: var(--text-lg); line-height: 1.3; font-weight: var(--weight-bold); }
+.heading { margin: 0; font-size: var(--text-lg); line-height: 1.3; font-weight: var(--weight-medium); }
 
 .card {
   background: var(--surface);
-  box-shadow: var(--shadow-soft);
   border-radius: var(--radius-lg);
 }
 
@@ -83,8 +82,7 @@ button:focus-visible, a:focus-visible, [role="switch"]:focus-visible, [role="rad
   height: 44px;
   border: 0;
   border-radius: var(--radius-pill);
-  background: var(--surface);
-  box-shadow: var(--shadow-soft);
+  background: var(--tint);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -95,7 +93,7 @@ button:focus-visible, a:focus-visible, [role="switch"]:focus-visible, [role="rad
   height: 60px;
   border: 0;
   border-radius: var(--radius-pill);
-  background: var(--primary);
+  background: var(--verlauf);
   color: #FFFFFF;
   font-size: var(--text-md);
   font-weight: var(--weight-medium);
@@ -113,7 +111,7 @@ button:focus-visible, a:focus-visible, [role="switch"]:focus-visible, [role="rad
   height: 44px;
   border-radius: var(--radius-md);
   background: var(--primary-soft);
-  color: var(--primary);
+  color: var(--primary-dark);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -121,7 +119,7 @@ button:focus-visible, a:focus-visible, [role="switch"]:focus-visible, [role="rad
 .leer-text { display: flex; flex-direction: column; }
 .leer-titel { font-weight: var(--weight-medium); font-size: var(--text-md); }
 
-.title { margin: 0; font-size: var(--text-xl); line-height: 1.15; font-weight: var(--weight-bold); letter-spacing: -0.01em; }
+.title { margin: 0; font-size: var(--text-xl); line-height: 1.15; font-weight: var(--weight-medium); letter-spacing: -0.01em; }
 
 .text-btn {
   border: 0;
@@ -136,8 +134,7 @@ button:focus-visible, a:focus-visible, [role="switch"]:focus-visible, [role="rad
   height: 56px;
   border: 0;
   border-radius: var(--radius-pill);
-  background: var(--surface);
-  box-shadow: var(--shadow-soft);
+  background: var(--tint);
   font-size: var(--text-md);
   font-weight: var(--weight-medium);
 }
@@ -290,8 +287,8 @@ button:focus-visible, a:focus-visible, [role="switch"]:focus-visible, [role="rad
   padding: 0 var(--space-5);
   border: 0;
   border-radius: var(--radius-pill);
-  background: var(--surface);
-  box-shadow: var(--shadow-soft);
+  background: var(--primary-soft);
+  color: var(--primary-dark);
   font-weight: var(--weight-medium);
 }
 .felder { padding: var(--space-1) var(--space-5); display: flex; flex-direction: column; }
@@ -316,6 +313,7 @@ button:focus-visible, a:focus-visible, [role="switch"]:focus-visible, [role="rad
   border: 0;
   border-radius: var(--radius-pill);
   background: var(--primary-soft);
+  color: var(--primary-dark);
   font-size: var(--text-md);
   font-weight: var(--weight-medium);
   display: flex;
@@ -356,7 +354,6 @@ button:focus-visible, a:focus-visible, [role="switch"]:focus-visible, [role="rad
   bottom: 0;
   left: 56px;
   background: var(--surface);
-  box-shadow: -8px 0 32px #22181F1F;
   padding: var(--space-6) var(--space-5);
   display: flex;
   flex-direction: column;
@@ -389,7 +386,7 @@ button:focus-visible, a:focus-visible, [role="switch"]:focus-visible, [role="rad
   height: 48px;
   padding: 0 var(--space-4);
   border: 1px solid var(--line);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   background: var(--surface);
   color: var(--ink);
   font: inherit;
@@ -461,7 +458,7 @@ button:focus-visible, a:focus-visible, [role="switch"]:focus-visible, [role="rad
 }
 .eingabe-feld + .feld { border-top: 1px solid var(--line); }
 #eigene-zeiten > .feld { border-top: 1px solid var(--line); }
-.symbol-plus { background: var(--primary-soft); }
+.symbol-plus { background: var(--primary-soft); color: var(--primary-dark); }
 .auswahl-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .wahl-chip {
   height: 44px;
@@ -472,7 +469,7 @@ button:focus-visible, a:focus-visible, [role="switch"]:focus-visible, [role="rad
   font-size: var(--text-sm);
   font-weight: var(--weight-medium);
 }
-.wahl-chip.aktiv { background: var(--primary-soft); border-color: var(--primary-soft); }
+.wahl-chip.aktiv { background: var(--primary-soft); border-color: var(--primary-soft); color: var(--primary-dark); }
 .schalter {
   flex: none;
   position: relative;
@@ -598,4 +595,4 @@ button:focus-visible, a:focus-visible, [role="switch"]:focus-visible, [role="rad
 .sicherung-karte h2 { font-size: var(--text-lg); line-height: 1.3; }
 .sicherung-karte button { margin-top: var(--space-2); }
 .meldung { margin: 0; font-weight: var(--weight-medium); color: var(--ink); }
-.meldung.fehler { color: var(--primary); }
+.meldung.fehler { color: var(--primary-dark); }
