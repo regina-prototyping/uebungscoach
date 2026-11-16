@@ -141,12 +141,12 @@ button:focus-visible, a:focus-visible, [role="switch"]:focus-visible, [role="rad
 
 /* ---------- Training ---------- */
 .training {
-  /* Ruhe-Phasen (Vorbereitung, Satzpause, Absenken): Türkis */
+  /* Ruhe-Phasen (Vorbereitung, Satzpause, Absenken): Grau – ruhig, Indigo bleibt die einzige Farbe */
   --phase-von: var(--rest-dark);
   --phase-bis: var(--rest);
   --phase-text: var(--rest-text);
   --phase-soft: var(--rest-soft);
-  --phase-zart: #EEFAF9;
+  --phase-zart: #F8F7F8;
   --chip-text: var(--ink);
   height: 100dvh;
   min-height: 0;

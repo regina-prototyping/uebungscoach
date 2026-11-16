@@ -7,10 +7,10 @@
   --primary-soft: #ECEBFB;   /* zarte Fläche: Chips, Symbol-Kacheln, Nebenknöpfe */
   --on-primary-muted: #DCDAF8; /* Nebentext auf Indigo */
   --verlauf: linear-gradient(135deg, #262A80, #4A44C2); /* große Farbflächen und Hauptknöpfe */
-  --rest: #0FA3A3;           /* Türkis: Ring in Vorbereitung, Satzpause, Absenken */
-  --rest-dark: #0B5754;      /* dunkles Ende des Pausen-Ring-Verlaufs */
-  --rest-text: #0B6E6B;      /* Türkis als Schrift (auf Weiß 6:1) */
-  --rest-soft: #D5F3F1;
+  --rest: #8C8389;           /* Grau: Ring in Vorbereitung, Satzpause, Absenken (auf Weiß 3,7:1) */
+  --rest-dark: #3D3439;      /* dunkles Ende des Pausen-Ring-Verlaufs */
+  --rest-text: #6B5F67;      /* „SATZPAUSE“ usw. (auf Weiß 6:1) */
+  --rest-soft: #EFECEE;      /* Chips in Ruhe-Phasen */
   --ink: #22181F;
   --muted: #6B5F67;
   --line: #ECE6EA;
