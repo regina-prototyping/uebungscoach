@@ -186,10 +186,9 @@ button { font: inherit; color: inherit; cursor: pointer; }
 
 .danach {
   border-radius: var(--radius-lg);
-  padding: var(--space-3) var(--space-4);
+  padding: var(--space-3) var(--space-5);
   display: flex;
-  align-items: center;
-  gap: var(--space-3);
+  flex-direction: column;
 }
 .danach-label {
   font-size: var(--text-xs);
@@ -197,9 +196,9 @@ button { font: inherit; color: inherit; cursor: pointer; }
   color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 0.06em;
+  line-height: 20px;
 }
-.danach-name { flex: 1; font-weight: var(--weight-medium); }
-.danach [data-e="danachMenge"] { white-space: nowrap; }
+.danach-name { font-weight: var(--weight-medium); }
 
 .steuerung { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
 .rund-btn {

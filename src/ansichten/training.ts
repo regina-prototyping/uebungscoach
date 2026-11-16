@@ -55,7 +55,7 @@ export class TrainingAnsicht {
         <div class="card danach" data-e="danach">
           <span class="danach-label">Danach</span>
           <span class="danach-name" data-e="danachName"></span>
-          <span class="muted" data-e="danachMenge"></span>
+          <span class="muted zahl" data-e="danachMenge"></span>
         </div>
 
         <div class="steuerung" data-e="steuerung">
@@ -133,6 +133,7 @@ export class TrainingAnsicht {
     if (a.danach) {
       this.el.danachName.textContent = a.danach.name;
       this.el.danachMenge.textContent = a.danach.menge;
+      this.el.danachMenge.toggleAttribute("hidden", !a.danach.menge);
     }
 
     // SVG-Elemente kennen die .hidden-Eigenschaft nicht – Attribut direkt setzen
