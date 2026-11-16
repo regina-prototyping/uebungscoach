@@ -1,6 +1,7 @@
 import { MITGELIEFERT } from "./data/programme";
 import { sindGueltig } from "./logik/daten";
 import type { Daten } from "./logik/typen";
+import { istVerlauf, LEERER_VERLAUF, type Verlauf } from "./logik/verlauf";
 
 const KEY = "uebungscoach-daten";
 
@@ -29,4 +30,28 @@ export function speichereDaten(d: Daten): void {
 /** Bittet den Browser, die Daten nicht bei Speichermangel zu löschen. */
 export function datenDauerhaftAufheben(): void {
   void navigator.storage?.persist?.().catch(() => {});
+}
+
+const VERLAUF_KEY = "uebungscoach-verlauf";
+
+/** Lädt den Trainingsverlauf (leer, wenn noch nichts gespeichert ist). */
+export function ladeVerlauf(): Verlauf {
+  try {
+    const roh = localStorage.getItem(VERLAUF_KEY);
+    if (roh) {
+      const v: unknown = JSON.parse(roh);
+      if (istVerlauf(v)) return v;
+    }
+  } catch {
+    // nicht lesbar: leer beginnen
+  }
+  return LEERER_VERLAUF;
+}
+
+export function speichereVerlauf(v: Verlauf): void {
+  try {
+    localStorage.setItem(VERLAUF_KEY, JSON.stringify(v));
+  } catch {
+    // z. B. privater Modus
+  }
 }

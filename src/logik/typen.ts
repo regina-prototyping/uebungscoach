@@ -36,6 +36,8 @@ export interface Daten {
   version: 1;
   uebungen: Uebung[];
   programme: Programm[];
+  /** Angeheftete Programme (höchstens zwei), stehen oben auf der Startseite. */
+  angeheftet?: string[];
 }
 
 /** Programm mit eingesetzten Übungen – so, wie Ablauf und Anzeige es brauchen. */

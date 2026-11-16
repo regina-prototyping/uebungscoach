@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { MITGELIEFERT } from "../src/data/programme";
 import { STANDARD } from "../src/einstellungen";
 import { beschreibung, dateiname, sicherungErstellen, sicherungLesen } from "../src/logik/sicherung";
+import { LEERER_VERLAUF, trainingEintragen } from "../src/logik/verlauf";
 
 const jetzt = new Date(2026, 10, 12, 14, 30);
 const eigene = { tempo: 4, prep: 8, setPause: 45, lower: 2 };
@@ -13,7 +14,7 @@ function text(x: unknown): string {
 describe("Sicherung", () => {
   it("enthält Daten, Einstellungen, Ansage-Modus und Formatnummer", () => {
     const s = sicherungErstellen(MITGELIEFERT, eigene, "toene", jetzt);
-    expect(s).toMatchObject({ app: "uebungscoach", format: 1, daten: MITGELIEFERT, einstellungen: eigene, ansagen: "toene" });
+    expect(s).toMatchObject({ app: "uebungscoach", format: 2, daten: MITGELIEFERT, einstellungen: eigene, ansagen: "toene" });
     expect(new Date(s.erstellt).getTime()).toBe(jetzt.getTime());
   });
 
@@ -34,7 +35,7 @@ describe("Sicherung", () => {
   });
 
   it("meldet Sicherungen aus einer neueren App-Version", () => {
-    const s = { ...sicherungErstellen(MITGELIEFERT, eigene, "sprache", jetzt), format: 2 };
+    const s = { ...sicherungErstellen(MITGELIEFERT, eigene, "sprache", jetzt), format: 3 };
     const r = sicherungLesen(text(s));
     expect(r.ok).toBe(false);
     if (!r.ok) expect(r.fehler).toContain("neueren App-Version");
@@ -73,5 +74,27 @@ describe("Sicherung", () => {
     expect(beschreibung(s)).toBe(`vom 12.11.2026, 14:30 · ${n} Übungen, ${MITGELIEFERT.programme.length} Programme`);
     const eins = { ...s, erstellt: "", daten: { version: 1 as const, uebungen: [MITGELIEFERT.uebungen[0]], programme: [] } };
     expect(beschreibung(eins)).toBe("1 Übung, 0 Programme");
+    const mitTraining = { ...eins, verlauf: trainingEintragen(LEERER_VERLAUF, { id: "p", name: "P" }, jetzt) };
+    expect(beschreibung(mitTraining)).toBe("1 Übung, 0 Programme, 1 Training");
+  });
+
+  it("enthält den Trainingsverlauf und die angehefteten Programme", () => {
+    const v = trainingEintragen(LEERER_VERLAUF, { id: "ruecken", name: "Rücken" }, jetzt);
+    const d = { ...MITGELIEFERT, angeheftet: [MITGELIEFERT.programme[0].id] };
+    const s = sicherungErstellen(d, eigene, "sprache", jetzt, v);
+    expect(sicherungLesen(text(s))).toEqual({ ok: true, sicherung: s });
+  });
+
+  it("alte Sicherungen (Format 1, ohne Verlauf) lassen sich laden", () => {
+    const { verlauf: _weg, ...alt } = { ...sicherungErstellen(MITGELIEFERT, eigene, "sprache", jetzt), format: 1 };
+    const r = sicherungLesen(text(alt));
+    expect(r.ok).toBe(true);
+    if (r.ok) expect(r.sicherung).toMatchObject({ format: 2, verlauf: LEERER_VERLAUF, daten: MITGELIEFERT });
+  });
+
+  it("lehnt einen beschädigten Verlauf ab", () => {
+    const s = { ...sicherungErstellen(MITGELIEFERT, eigene, "sprache", jetzt), verlauf: { version: 1, trainings: [{ zeit: 5 }] } };
+    const r = sicherungLesen(text(s));
+    expect(r.ok).toBe(false);
   });
 });
