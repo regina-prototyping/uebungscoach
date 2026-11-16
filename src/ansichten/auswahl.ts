@@ -26,13 +26,15 @@ export function zeigeAuswahl(root: HTMLElement, opt: AuswahlOptionen): void {
     .join("");
   root.innerHTML = `
     <section class="screen bearbeiten">
-      <div class="topbar">
-        <h1 class="title">Übung hinzufügen</h1>
-        <button type="button" class="text-btn" data-a="abbrechen">Abbrechen</button>
+      <div class="titelblock">
+        <div class="topbar">
+          <h1 class="title">Übung hinzufügen</h1>
+          <button type="button" class="text-btn" data-a="abbrechen">Abbrechen</button>
+        </div>
+        <p class="muted unter-titel">Zu „${esc(p.name || "Neues Programm")}“</p>
       </div>
-      <p class="muted unter-titel">Zu „${esc(p.name || "Neues Programm")}“</p>
       <button type="button" class="btn-soft" data-a="neu">${ICON.plus}Neue Übung anlegen</button>
-      ${zeilen ? `<h2 class="abschnitt">Aus deinen Übungen</h2><section class="card felder">${zeilen}</section>` : ""}
+      ${zeilen ? `<div class="gruppe"><h2 class="abschnitt">Aus deinen Übungen</h2><section class="card felder">${zeilen}</section></div>` : ""}
     </section>`;
   root.querySelector("[data-a=abbrechen]")!.addEventListener("click", opt.onAbbrechen);
   root.querySelector("[data-a=neu]")!.addEventListener("click", opt.onNeu);

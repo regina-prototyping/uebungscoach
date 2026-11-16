@@ -6,7 +6,7 @@ Eine Web-App (PWA), die per Sprachansage durch Physio-Übungen führt. Die Nutze
 
 - `docs/spezifikation.md` – was die App können muss (Datenmodell, Ablauf, Funktionen von Version 1 und 2, Signaltöne, Entscheidungen). **Die Quelle der Wahrheit für Funktionen.** Neue Funktionen zuerst hier eintragen.
 - **GitHub Issues** im Repository – die Ideen- und Aufgabenliste, ein Issue pro Feature (mit den schon getroffenen Entscheidungen). Eine neue Sitzung beginnt typischerweise mit „Lies CLAUDE.md und Issue #…“.
-- `design/` – das abgestimmte Design:
+- `design/` – das abgestimmte Design (Gestaltung zuletzt auf der Design-Arbeitsfläche „Übungscoach – UI-Überarbeitung“ in Claude ausgewählt, Abschnitt „Indigo“):
   - `tokens.json` – Farben, Schrift, Abstände, Rundungen, Schatten mit Verwendungshinweisen
   - `theme.css` – dieselben Werte als CSS-Variablen
   - `screens/` – Entwürfe als statisches HTML: 1–4 Version 1 (Start, Training, Satzpause, Einstellungen), 5–9 Version 2 (Startseite mit Bearbeiten, Menü, Programm bearbeiten, Übung auswählen/bearbeiten, Übungsbibliothek); gemeinsame Bausteine in `bausteine.css`. Wo die Spezifikation später Abweichendes beschlossen hat (z. B. kompakte Startseite mit Programm-Ansicht), gilt die Spezifikation und die App.
@@ -43,8 +43,10 @@ Eine Web-App (PWA), die per Sprachansage durch Physio-Übungen führt. Die Nutze
 
 ## Design-Regeln (Kurzfassung, Details in `design/tokens.json`)
 
-- Weißer Hintergrund, weiße Karten mit weichem Schatten (`shadow-soft`), große Rundungen (`radius-lg` 28 px), runde Knöpfe und Chips.
-- `primary` (#921A5B) = aktive Phase (Wiederholung, Halten) und der eine wichtigste Button. `rest` (#A65A0A) = Vorbereitung, Satzpause, Absenken.
+- Weißer Hintergrund, **keine Schatten**, wenige Boxen: Listen stehen mit feinen Linien direkt auf der Seite. Farbflächen nur für das Wichtigste (Programmkarte der Startseite, Kopf der Programm-Ansicht, Hauptknöpfe). Rundungen `radius-lg` 20 px (große Flächen), `radius-sm` 8 px (Eingabefelder, „Danach“), runde Knöpfe und Chips.
+- `primary` Indigo (#4A44C2, Verlauf `--verlauf` #262A80 → #4A44C2) = aktive Phase (Wiederholung, Halten) und **die** Aktionsfarbe. `primary-dark` für Text auf `primary-soft`. `rest` Grau (#8C8389, Verlauf ab `rest-dark` #3D3439, Schrift `rest-text` #6B5F67) **nur** für Vorbereitung, Satzpause, Absenken – bewusst unbunt, Indigo bleibt die einzige Farbe. Der Ring hat einen Verlauf in der Phasenfarbe.
+- Schrift- und Abstandsstufen nur über Tokens (`--text-xs…xl` in rem, `--weight-*`, `--space-1…10` im 4er-Raster), keine negativen Margins. 800 nur für die Ring-Zahl; Überschriften, Titel und Buttons 600, Metatext 15/22 px 400.
+- Barrierefreiheit: Rückfragen als natives `<dialog>` mit `showModal()`, Ausgeblendetes per `hidden`, kein `aria-live` am Sekundenzähler (Ansagen über `.sr-only`-Element), sichtbarer `:focus-visible`-Ring, `prefers-reduced-motion` global.
 - Die große Zahl im Fortschrittsring ist das Wichtigste im Training; aus 1–2 m lesbar. Ziffern mit `tabular-nums`.
 - Schrift: Figtree (Google Fonts).
 - Touch-Ziele mindestens 44 px, Steuerknöpfe 64 px, Pause-Button 72 px hoch.

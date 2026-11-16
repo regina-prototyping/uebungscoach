@@ -45,8 +45,10 @@ export class ProgrammAnsicht {
           </label>
         </section>
 
-        <h2 class="abschnitt" data-e="anzahl"></h2>
-        <section class="card felder" data-e="liste"></section>
+        <div class="gruppe">
+          <h2 class="abschnitt" data-e="anzahl"></h2>
+          <section class="card felder" data-e="liste"></section>
+        </div>
 
         <button type="button" class="btn-soft" data-a="hinzufuegen">${ICON.plus}Übung hinzufügen</button>
         <button type="button" class="text-btn loeschen-btn" data-a="loeschen">Programm löschen</button>

@@ -1,22 +1,52 @@
 /* Design-Werte aus design/theme.css bzw. design/tokens.json */
 :root {
-  --primary: #921A5B;
-  --primary-soft: #F7E8F0;
-  --rest: #A65A0A;
-  --rest-soft: #FCEFDC;
+  /* Farben – Indigo als Aktionsfarbe, Grau für Ruhe-Phasen */
+  --primary: #4A44C2;        /* Indigo: Ring, Balken, Links, Fokus */
+  --primary-dark: #262A80;   /* dunkles Indigo: Text auf zarten Flächen */
+  --primary-light: #7670E2;  /* helles Ende des Ring-Verlaufs */
+  --primary-soft: #ECEBFB;   /* zarte Fläche: Chips, Symbol-Kacheln, Nebenknöpfe */
+  --on-primary-muted: #DCDAF8; /* Nebentext auf Indigo */
+  --verlauf: linear-gradient(135deg, #262A80, #4A44C2); /* große Farbflächen und Hauptknöpfe */
+  --rest: #8C8389;           /* Grau: Ring in Vorbereitung, Satzpause, Absenken (auf Weiß 3,7:1) */
+  --rest-dark: #3D3439;      /* dunkles Ende des Pausen-Ring-Verlaufs */
+  --rest-text: #6B5F67;      /* „SATZPAUSE“ usw. (auf Weiß 6:1) */
+  --rest-soft: #EFECEE;      /* Chips in Ruhe-Phasen */
   --ink: #22181F;
   --muted: #6B5F67;
   --line: #ECE6EA;
   --surface: #FFFFFF;
-  --ground: #FFFFFF;
+  --ground: #FFFFFF;    /* Seitenhintergrund weiß; gegliedert wird über Linien und wenige Farbflächen */
   --tint: #F6F4F6;
+
+  /* Schrift – in rem, damit die Textgröße des Browsers wirkt (1rem = 16 px) */
   --font-sans: "Figtree", "Segoe UI", system-ui, sans-serif;
+  --text-xs: 0.8125rem; /* 13 px */
+  --text-sm: 0.9375rem; /* 15 px */
+  --text-md: 1.0625rem; /* 17 px */
+  --text-lg: 1.25rem;   /* 20 px */
+  --text-xl: 1.75rem;   /* 28 px */
+  /* Ausnahme: große Anzeige im Trainingsring (aus 1–2 m lesbar).
+     Bewusst in px: Der Ring hat eine feste Größe, die Zahl muss hineinpassen. */
+  --text-display: 128px;
+  --text-display-wort: 48px;   /* Wörter wie „Links“, „Geschafft“ */
+  --weight-regular: 400;
+  --weight-medium: 600;
+  --weight-bold: 700;
+  --weight-black: 800;
+
+  /* Abstände (4er-Raster) */
+  --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
+  --space-4: 16px;
   --space-5: 20px;
   --space-6: 24px;
-  --radius-md: 16px;
-  --radius-lg: 28px;
+  --space-8: 32px;
+  --space-10: 40px;
+
+  /* Rundungen und Schatten */
+  --radius-sm: 8px;     /* kleine Flächen: „Danach“, Eingabefelder */
+  --radius-md: 12px;    /* Symbol-Kacheln */
+  --radius-lg: 20px;    /* große Farbflächen: Programmkarte, Dialog */
   --radius-pill: 999px;
-  --shadow-soft: 0 1px 2px #22181F0A, 0 8px 24px #22181F0F;
 }

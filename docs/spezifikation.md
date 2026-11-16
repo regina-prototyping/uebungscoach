@@ -150,6 +150,25 @@ Bei mehreren Sätzen beginnt jede linke Seite mit „Satz x von y.“ wie bisher
 - **Startseite kompakt:** Jedes Programm ist eine kleine Karte mit Name, „3 Übungen · ca. 8 Min“ und einem ▶-Knopf zum Schnellstart; dort kein „Bearbeiten“. Antippen öffnet die **Programm-Ansicht** mit nummerierter Übungsliste, „Bearbeiten“ und „Training starten“. Leere Programme zeigen „Noch keine Übungen“ und führen direkt zum Bearbeiten.
 - **Mengen stehen unter dem Übungsnamen**, nicht daneben, damit lange Namen sauber umbrechen. Halten mit einer Wiederholung ohne überflüssige „1 ×“ (z. B. „1 × 30 s je Seite“).
 
+## Gestaltung und Barrierefreiheit (UI-Überarbeitung)
+
+Ziel: ruhigere Typografie, einheitliche Abstände, mehr Struktur, saubere Barrierefreiheit – ohne Funktionen oder Texte zu ändern. Werte stehen in `src/stil/theme.css` und `design/tokens.json`.
+
+- **Tokens:** Schriftgrößen `--text-xs/sm/md/lg/xl` (13/15/17/20/28 px, intern in rem, damit die Textgröße des Browsers wirkt), Stärken 400/600/700/800, Abstände `--space-1…10` im 4er-Raster. Ausnahme: die große Zahl im Ring (128 px, bzw. 48 px für Wörter) – in px, weil der Ring eine feste Größe hat; auf niedrigen Bildschirmen schrumpft sie mit dem Ring, damit Label und Untertext im Kreis bleiben.
+- **Schrift:** Überschriften 28 px/600; Karten-, Listen- und Übungstitel, Buttons, Chips und App-Name 600; grauer Metatext 15/22 px/400; Uppercase-Labels 13 px/600. 800 nur für die Ring-Zahl.
+- **Farben (Indigo-Design, ausgewählt auf der Design-Arbeitsfläche):** Indigo ist die Aktionsfarbe: Verlauf `#262A80 → #4A44C2` auf den großen Flächen (Programmkarte der Startseite, Kopf der Programm-Ansicht, Hauptknöpfe, Pause-Knopf, Fortschrittsbalken), Indigo `#4A44C2` für Ring-Label, Links und Fokusring, dunkles Indigo `#262A80` für Text auf zarten Flächen, zart `#ECEBFB` für Chips, Symbol-Kacheln und Nebenknöpfe. **Grau** für Vorbereitung, Satzpause und Absenken (Ring `#3D3439 → #8C8389`, Schrift `#6B5F67`, Chips `#EFECEE`): Türkis war auf dem Handy zu bunt, so bleibt Indigo die einzige Farbe; die Phase erkennt man zusätzlich am Label im Ring („WIEDERHOLUNG“ / „SATZPAUSE“).
+- **Flächen:** Seitenhintergrund weiß, keine Schatten. Gegliedert wird über feine Linien und wenige Farbflächen; Listen (Einstellungen, Bearbeiten, Übungen, Sicherung) stehen ohne Boxen. Rundungen: 20 px große Flächen, 8 px kleine (Eingabefelder, „Danach“), 12 px Symbol-Kacheln.
+- **Startseite:** Das erste Programm mit Übungen steht als große Indigo-Karte oben, mit „Training starten“ (startet sofort) und einem runden Knopf zur Programm-Ansicht. Darunter „Weitere Programme“ als Liste: Programme mit Übungen öffnen die Programm-Ansicht, leere das Bearbeiten; am Ende „Neues Programm“. Sobald es eine Statistik gibt, soll oben das zuletzt trainierte Programm stehen.
+- **Programm-Ansicht:** Indigo-Kopf mit Zurück, Bearbeiten, Name, Info-Zeile (Übungen, Dauer, Startposition) und „Training starten“; darunter die Übungen als Zeitstrahl mit verbundenen Nummern.
+- **Training:** Ring ohne Karte mit Farbverlauf (Indigo bzw. Grau je Phase), Chips in der Phasenfarbe, runde Knöpfe zartgrau, Pause-Knopf mit Indigo-Verlauf. „Danach“-Box mit zartem Verlauf in der Phasenfarbe: Label, Übungsname und Menge untereinander. **„Danach“ erscheint nur während der Übung selbst** (Wiederholen, Halten, Absenken). In Vorbereitung, Seitenwechsel und Satzpause steht nur die aktuelle Übung, damit der Bildschirm ruhig bleibt; was als Nächstes kommt, sagt die Ansage. Beim Absenken bleibt es sichtbar, damit die Box im Wechsel Halten/Absenken nicht flackert.
+- **Barrierefreiheit:**
+  - Der Sekundenzähler hat kein `aria-live` mehr. Ein unsichtbares Element (`.sr-only`, `aria-live="polite"`) sagt nur bei Übungs- oder Satzwechsel, Pausenbeginn und Trainingsende einen kurzen Satz an, z. B. „Übung 2 von 3: Beine seitlich kippen“, „Satzpause: Satz 1 geschafft“, „Training geschafft“ (`screenreaderAnsage` in `anzeige.ts`).
+  - Rückfragen („Training beenden?“, „Sicherung laden?“) sind native `<dialog>`-Elemente mit `showModal()`: Hintergrund gesperrt, Fokus im Dialog. Escape bzw. die Android-Zurück-Geste bei offenem Dialog wirken wie „Weitertrainieren“ bzw. „Abbrechen“. Beim Öffnen liegt der Fokus auf „Weitertrainieren“ (bei der Sicherung auf „Abbrechen“, weil „Laden und ersetzen“ Daten überschreibt), beim Schließen wieder auf dem auslösenden Knopf.
+  - Ausgeblendetes immer per `hidden` bzw. `display: none`.
+  - Sichtbarer Fokusring (`:focus-visible`, 3 px magenta), bei der Programmkarte um die ganze Karte.
+  - `prefers-reduced-motion`: alle Animationen und Übergänge praktisch aus, der Ring springt.
+  - Textkontraste mindestens 4,5:1 (alle Paare im Indigo-Design mindestens 5,3:1; Ring-Enden auf Weiß mindestens 3:1).
+
 ## Signaltöne und Modus „Nur Töne“
 
 Hintergrund: Auf dem Pixel 9 liefert die Sprachausgabe zeitweise keine Stimme (`synthesis-failed`). Außerdem soll das Training auch nur mit Blick auf den Bildschirm (z. B. Fernseher) gut funktionieren. Töne sagen deshalb an, wann man hinschauen oder handeln muss.

@@ -16,31 +16,37 @@ const ZURUECK_ICON = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none
 /** Programm ansehen: Übungen mit Menge, „Bearbeiten“ und „Training starten“. */
 export function zeigeProgrammAnsicht(root: HTMLElement, opt: ProgrammAnsichtOptionen): void {
   const p = opt.plan;
+  const letzte = p.exercises.length - 1;
   const zeilen = p.exercises
     .map(
       (e, i) => `
-        <li class="ansicht-zeile">
-          <span class="ansicht-nr zahl">${i + 1}</span>
-          <span class="zeile-text">
+        <li class="zs-zeile">
+          <span class="zs-spur" aria-hidden="true">
+            <span class="zs-nr zahl">${i + 1}</span>
+            ${i < letzte ? `<span class="zs-linie"></span>` : ""}
+          </span>
+          <span class="zeile-text zs-text">
             <span class="zeile-name">${esc(e.name)}</span>
             <span class="caption-normal muted zahl">${dose(e)}${e.hint ? ` · ${esc(e.hint)}` : ""}</span>
           </span>
         </li>`,
     )
     .join("");
+  const info = [programmInfo(p, opt.einstellungen), p.start ? `Start: ${esc(p.start)}` : ""].filter(Boolean).join(" · ");
   root.innerHTML = `
     <section class="screen programm-ansicht">
-      <div class="topbar">
-        <button type="button" class="text-btn zurueck-btn" data-a="zurueck">${ZURUECK_ICON}Übersicht</button>
-        <button type="button" class="link-btn" data-a="bearbeiten">${MENU_ICON.stift}Bearbeiten</button>
-      </div>
-      <div class="ansicht-kopf">
-        <h1 class="display">${esc(p.name)}</h1>
-        <span class="muted">${programmInfo(p, opt.einstellungen)}</span>
-        ${p.start ? `<span class="muted">Start: ${esc(p.start)}</span>` : ""}
-      </div>
-      <ol class="card ansicht-liste">${zeilen}</ol>
-      <button type="button" class="btn-primary" data-a="start">${ICON.play}Training starten</button>
+      <header class="ansicht-kopf">
+        <div class="topbar">
+          <button type="button" class="text-btn zurueck-btn" data-a="zurueck">${ZURUECK_ICON}Übersicht</button>
+          <button type="button" class="link-btn" data-a="bearbeiten">${MENU_ICON.stift}Bearbeiten</button>
+        </div>
+        <div class="ansicht-titel">
+          <h1 class="ansicht-name">${esc(p.name)}</h1>
+          <span class="ansicht-info">${info}</span>
+        </div>
+        <button type="button" class="hero-start" data-a="start">${ICON.play}Training starten</button>
+      </header>
+      <ol class="zeitstrahl">${zeilen}</ol>
     </section>`;
   root.querySelector("[data-a=zurueck]")!.addEventListener("click", opt.onZurueck);
   root.querySelector("[data-a=bearbeiten]")!.addEventListener("click", opt.onBearbeiten);
