@@ -304,7 +304,14 @@ button:focus-visible, a:focus-visible, [role="switch"]:focus-visible, [role="rad
   color: var(--primary-dark);
   font-weight: var(--weight-medium);
 }
-.felder { padding: var(--space-1) var(--space-5); display: flex; flex-direction: column; }
+.felder {
+  padding: 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+}
 .feld { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) 0; }
 .feld + .feld { border-top: 1px solid var(--line); }
 .feld-text { flex: 1; display: flex; flex-direction: column; }
@@ -444,7 +451,6 @@ button:focus-visible, a:focus-visible, [role="switch"]:focus-visible, [role="rad
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  box-shadow: 0 8px 24px #22181F33;
   z-index: 30;
   animation: hochgleiten 0.2s ease-out;
 }
@@ -637,7 +643,7 @@ button:focus-visible, a:focus-visible, [role="switch"]:focus-visible, [role="rad
 .zs-zeile:last-child .zs-text { padding-bottom: 0; }
 
 /* ---------- Sicherung ---------- */
-.sicherung-karte { padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-2); }
+.sicherung-karte { padding: var(--space-5) 0 0; border-top: 1px solid var(--line); border-radius: 0; display: flex; flex-direction: column; gap: var(--space-2); }
 .sicherung-karte h2, .sicherung-karte p { margin: 0; }
 .sicherung-karte h2 { font-size: var(--text-lg); line-height: 1.3; }
 .sicherung-karte button { margin-top: var(--space-2); }
