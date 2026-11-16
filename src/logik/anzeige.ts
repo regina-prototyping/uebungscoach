@@ -99,9 +99,11 @@ export function anzeige(sp: Spieler): Anzeige {
   chips.push(seg.kind === "pause" ? `Gleich Satz ${seg.set + 1} von ${e.sets}` : `Satz ${seg.set} von ${e.sets}`);
   if (seg.side) chips.push(seg.side === "links" ? "Linke Seite" : "Rechte Seite");
 
-  // In der Satzpause kein „Danach“: dort zählt nur die aktuelle Übung (ruhiger Bildschirm)
+  // „Danach“ nur während der Übung selbst (Wiederholen, Halten, Absenken).
+  // In Vorbereitung, Seitenwechsel und Satzpause zählt nur die aktuelle Übung – ruhiger Bildschirm.
+  // Beim Absenken bleibt es sichtbar, sonst würde die Box im Halte-Wechsel ständig auf- und zuklappen.
   let danach: Anzeige["danach"];
-  if (seg.kind === "pause") danach = null;
+  if (seg.kind === "prep" || seg.kind === "side" || seg.kind === "pause") danach = null;
   else if (exs[seg.ex + 1]) danach = { name: exs[seg.ex + 1].name, menge: dose(exs[seg.ex + 1]) };
   else danach = { name: "Training geschafft", menge: "" };
 

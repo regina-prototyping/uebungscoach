@@ -26,8 +26,13 @@ describe("Anzeige im Training", () => {
       gross: "10",
       unter: "2 × 15",
       chips: ["Übung 1 von 3", "Satz 1 von 2"],
-      danach: { name: "Beine seitlich kippen", menge: "2 × 5 je Seite" },
+      danach: null,
     });
+  });
+
+  it("„Danach“ erscheint erst während der Übung", () => {
+    const a = anzeige(spielerBei((sp) => sp.seg.kind === "rep"));
+    expect(a.danach).toEqual({ name: "Beine seitlich kippen", menge: "2 × 5 je Seite" });
   });
 
   it("Wiederholung 7 wie im Entwurf", () => {
@@ -50,17 +55,19 @@ describe("Anzeige im Training", () => {
 
   it("Seitenübung zeigt Links und die Seite als Chip", () => {
     const a = anzeige(spielerBei((sp) => sp.seg.kind === "side"));
-    expect(a).toMatchObject({ gross: "Links", grossIstWort: true, unter: "5 Mal" });
+    expect(a).toMatchObject({ gross: "Links", grossIstWort: true, unter: "5 Mal", danach: null });
     expect(a.chips).toContain("Linke Seite");
   });
 
   it("Halten in Aktivfarbe, Absenken in Ruhefarbe", () => {
     expect(anzeige(spielerBei((sp) => sp.seg.kind === "hold"))).toMatchObject({ phase: "aktiv", label: "Halten", gross: "5" });
-    expect(anzeige(spielerBei((sp) => sp.seg.kind === "lower"))).toMatchObject({ phase: "ruhe", label: "Absenken" });
+    const absenken = anzeige(spielerBei((sp) => sp.seg.kind === "lower"));
+    expect(absenken).toMatchObject({ phase: "ruhe", label: "Absenken" });
+    expect(absenken.danach).not.toBeNull(); // kein Flackern im Wechsel Halten/Absenken
   });
 
   it("letzte Übung kündigt das Ende an", () => {
-    const a = anzeige(spielerBei((sp) => sp.seg.ex === 2));
+    const a = anzeige(spielerBei((sp) => sp.seg.ex === 2 && sp.seg.kind === "hold"));
     expect(a.danach).toEqual({ name: "Training geschafft", menge: "" });
   });
 

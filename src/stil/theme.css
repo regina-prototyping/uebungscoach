@@ -1,6 +1,6 @@
 /* Design-Werte aus design/theme.css bzw. design/tokens.json */
 :root {
-  /* Farben – Indigo als Aktionsfarbe, Türkis für Pausen */
+  /* Farben – Indigo als Aktionsfarbe, Grau für Ruhe-Phasen */
   --primary: #4A44C2;        /* Indigo: Ring, Balken, Links, Fokus */
   --primary-dark: #262A80;   /* dunkles Indigo: Text auf zarten Flächen */
   --primary-light: #7670E2;  /* helles Ende des Ring-Verlaufs */
