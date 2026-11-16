@@ -1,7 +1,8 @@
 import "./stil/theme.css";
 import "./stil/app.css";
 import { ladeAnsageModus, ladeEinstellungen, speichereAnsageModus, speichereEinstellungen } from "./einstellungen";
-import { datenDauerhaftAufheben, ladeDaten, speichereDaten } from "./daten-speicher";
+import { datenDauerhaftAufheben, ladeDaten, ladeVerlauf, speichereDaten, speichereVerlauf } from "./daten-speicher";
+import { anheftenUmschalten, istAngeheftet, obenProgramme, raster, trainingEintragen } from "./logik/verlauf";
 import {
   findeProgramm,
   programmAendern,
@@ -44,11 +45,14 @@ let einstellungen = ladeEinstellungen();
 let ansageModus = ladeAnsageModus();
 let vorschauTimer = 0;
 let daten = ladeDaten();
+let verlauf = ladeVerlauf();
 // Falls die App beim Anlegen eines Programms geschlossen wurde: aufräumen
 for (const p of daten.programme) daten = programmAufraeumen(daten, p.id);
 datenDauerhaftAufheben();
 
 let spieler: Spieler | null = null;
+/** Programm des laufenden Trainings – wird beim Abschluss in den Verlauf eingetragen. */
+let laufenderPlan: Trainingsplan | null = null;
 let ansicht: TrainingAnsicht | null = null;
 let timer = 0;
 /** Lief das Training, als „Beenden“ getippt wurde? */
@@ -92,7 +96,15 @@ function ausfuehren(ereignisse: Ereignis[]): void {
     else if (e.typ === "sagen") sprich(e.text);
     else if (e.typ === "still") still();
     else if (e.typ === "piep") piep();
-    else if (e.typ === "fertig") wachFreigeben();
+  }
+  // Abschluss eintragen – unabhängig vom Ansage-Modus
+  if (ereignisse.some((e) => e.typ === "fertig")) {
+    wachFreigeben();
+    if (laufenderPlan) {
+      verlauf = trainingEintragen(verlauf, laufenderPlan, new Date());
+      speichereVerlauf(verlauf);
+      laufenderPlan = null;
+    }
   }
   if (spieler && ansicht) ansicht.aktualisieren(spieler);
 }
@@ -152,6 +164,19 @@ function anzeigen(ziel: Ziel): void {
       zeigeProgrammAnsicht(app, {
         plan,
         einstellungen,
+        verlauf,
+        angeheftet: istAngeheftet(daten, ziel.id),
+        onAnheften: () => {
+          const vorher = daten;
+          const an = !istAngeheftet(daten, ziel.id);
+          aendern(anheftenUmschalten(daten, ziel.id));
+          anzeigenOhneScroll(ziel);
+          zeigeRueckgaengig(an ? "Oben auf der Startseite angeheftet" : "Von der Startseite gelöst", () => {
+            aendern(vorher);
+            anzeigenOhneScroll(ziel);
+          });
+          app.querySelector<HTMLButtonElement>("[data-a=anheften]")?.focus();
+        },
         onStart: trainingStarten,
         onBearbeiten: () => geheZu({ name: "programm", id: ziel.id }),
         onZurueck: zurueck,
@@ -179,12 +204,20 @@ function anzeigen(ziel: Ziel): void {
   }
 }
 
+/** Zeichnet den Bildschirm neu und behält die Scrollposition. */
+function anzeigenOhneScroll(ziel: Ziel): void {
+  const y = window.scrollY;
+  anzeigen(ziel);
+  window.scrollTo(0, y);
+}
+
 function trainingAufraeumen(): void {
   if (!spieler) return;
   window.clearInterval(timer);
   still();
   wachFreigeben();
   spieler = null;
+  laufenderPlan = null;
   ansicht = null;
   verlassen = false;
 }
@@ -196,8 +229,11 @@ function trainingStarten(plan: Trainingsplan): void {
 }
 
 function startseite(): void {
+  const oben = obenProgramme(daten, verlauf);
   zeigeStart(app, {
     programme: daten.programme.map((p) => trainingsplan(daten, p.id)!),
+    oben,
+    raster: raster(daten, verlauf, oben, new Date()),
     einstellungen,
     onStart: trainingStarten,
     onOeffnen: (id) => geheZu({ name: "ansicht", id }),
@@ -322,7 +358,7 @@ function sicherungsSeite(): void {
   zeigeSicherung(app, {
     onSpeichern: async () => {
       const jetzt = new Date();
-      const s = sicherungErstellen(daten, einstellungen, ansageModus, jetzt);
+      const s = sicherungErstellen(daten, einstellungen, ansageModus, jetzt, verlauf);
       const name = dateiname(jetzt);
       const ergebnis = await dateiWeitergeben(JSON.stringify(s, null, 2), name, "Übungscoach-Sicherung");
       if (ergebnis === "geteilt") return "Sicherung weitergegeben.";
@@ -330,7 +366,7 @@ function sicherungsSeite(): void {
       return "";
     },
     onLaden: (s) => {
-      const alt = sicherungErstellen(daten, einstellungen, ansageModus, new Date());
+      const alt = sicherungErstellen(daten, einstellungen, ansageModus, new Date(), verlauf);
       sicherungUebernehmen(s);
       zeigeRueckgaengig("Sicherung geladen", () => {
         sicherungUebernehmen(alt);
@@ -348,7 +384,9 @@ function sicherungUebernehmen(s: Sicherung): void {
   daten = s.daten;
   einstellungen = s.einstellungen;
   ansageModus = s.ansagen;
+  verlauf = s.verlauf;
   speichereDaten(daten);
+  speichereVerlauf(verlauf);
   speichereEinstellungen(einstellungen);
   speichereAnsageModus(ansageModus);
 }
@@ -356,8 +394,11 @@ function sicherungUebernehmen(s: Sicherung): void {
 /** Läuft direkt im Klick auf „Training starten“ bzw. „Nochmal“. */
 function training(prog: Trainingsplan): void {
   tonBereit();
+  // Eine offene Rückgängig-Leiste würde die Steuerknöpfe verdecken
+  schliesseRueckgaengig();
   waehleStimme();
   spieler = new Spieler(prog, einstellungen);
+  laufenderPlan = prog;
   ansicht = new TrainingAnsicht(app, prog.name, {
     pause: () => {
       tonBereit();

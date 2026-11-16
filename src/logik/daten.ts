@@ -118,7 +118,9 @@ export function programmAufraeumen(d: Daten, id: string): Daten {
 }
 
 export function programmLoeschen(d: Daten, id: string): Daten {
-  return { ...d, programme: d.programme.filter((p) => p.id !== id) };
+  const neu: Daten = { ...d, programme: d.programme.filter((p) => p.id !== id) };
+  if (d.angeheftet) neu.angeheftet = d.angeheftet.filter((x) => x !== id);
+  return neu;
 }
 
 export function uebungHinzufuegen(d: Daten, programmId: string, uebungId: string): Daten {
@@ -152,6 +154,7 @@ export function sindGueltig(x: unknown): x is Daten {
     Array.isArray(d.uebungen) &&
     Array.isArray(d.programme) &&
     d.uebungen.every((u) => typeof u?.id === "string" && typeof u.name === "string" && (u.art === "reps" || u.art === "hold")) &&
-    d.programme.every((p) => typeof p?.id === "string" && typeof p.name === "string" && Array.isArray(p.uebungen))
+    d.programme.every((p) => typeof p?.id === "string" && typeof p.name === "string" && Array.isArray(p.uebungen)) &&
+    (d.angeheftet === undefined || (Array.isArray(d.angeheftet) && d.angeheftet.every((id) => typeof id === "string")))
   );
 }

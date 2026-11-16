@@ -1,6 +1,6 @@
 # Übungscoach – Spezifikation
 
-Stand: 12. Oktober 2026 · Version 1 und Version 2 (Übungen und Programme bearbeiten) sind umgesetzt; Signaltöne und Modus „Nur Töne“ in Arbeit.
+Stand: 16. November 2026 · Version 1 und Version 2 (Übungen und Programme bearbeiten) sind umgesetzt, dazu Signaltöne, Sicherung und Trainingsverlauf.
 
 ## Ziel
 
@@ -61,7 +61,7 @@ Das Training läuft ohne Antippen durch; Eingreifen ist nur zum Pausieren oder S
 ## Bewusst später
 
 - Spracheingabe von Übungen
-- Trainingsverlauf und Statistik
+- Weitere Statistik, z. B. ein Diagramm „Trainings pro Woche“ (geht auch rückwirkend, weil jedes Training mit Zeitpunkt gespeichert ist)
 - Bilder oder Videos zu den Übungen
 - Synchronisation zwischen Geräten (Konto mit automatischer Speicherung, siehe Issue #15)
 - Dunkles Farbschema
@@ -158,7 +158,7 @@ Ziel: ruhigere Typografie, einheitliche Abstände, mehr Struktur, saubere Barrie
 - **Schrift:** Überschriften 28 px/600; Karten-, Listen- und Übungstitel, Buttons, Chips und App-Name 600; grauer Metatext 15/22 px/400; Uppercase-Labels 13 px/600. 800 nur für die Ring-Zahl.
 - **Farben (Indigo-Design, ausgewählt auf der Design-Arbeitsfläche):** Indigo ist die Aktionsfarbe: Verlauf `#262A80 → #4A44C2` auf den großen Flächen (Programmkarte der Startseite, Kopf der Programm-Ansicht, Hauptknöpfe, Pause-Knopf, Fortschrittsbalken), Indigo `#4A44C2` für Ring-Label, Links und Fokusring, dunkles Indigo `#262A80` für Text auf zarten Flächen, zart `#ECEBFB` für Chips, Symbol-Kacheln und Nebenknöpfe. **Grau** für Vorbereitung, Satzpause und Absenken (Ring `#3D3439 → #8C8389`, Schrift `#6B5F67`, Chips `#EFECEE`): Türkis war auf dem Handy zu bunt, so bleibt Indigo die einzige Farbe; die Phase erkennt man zusätzlich am Label im Ring („WIEDERHOLUNG“ / „SATZPAUSE“).
 - **Flächen:** Seitenhintergrund weiß, keine Schatten. Gegliedert wird über feine Linien und wenige Farbflächen; Listen (Einstellungen, Bearbeiten, Übungen, Sicherung) stehen ohne Boxen. Rundungen: 20 px große Flächen, 8 px kleine (Eingabefelder, „Danach“), 12 px Symbol-Kacheln.
-- **Startseite:** Das erste Programm mit Übungen steht als große Indigo-Karte oben, mit „Training starten“ (startet sofort) und einem runden Knopf zur Programm-Ansicht. Darunter „Weitere Programme“ als Liste: Programme mit Übungen öffnen die Programm-Ansicht, leere das Bearbeiten; am Ende „Neues Programm“. Sobald es eine Statistik gibt, soll oben das zuletzt trainierte Programm stehen.
+- **Startseite:** siehe „Trainingsverlauf“ – zwei Programmkarten nebeneinander, darunter der Verlauf der letzten 2 Wochen, darunter schmal die weiteren Programme.
 - **Programm-Ansicht:** Indigo-Kopf mit Zurück, Bearbeiten, Name, Info-Zeile (Übungen, Dauer, Startposition) und „Training starten“; darunter die Übungen als Zeitstrahl mit verbundenen Nummern.
 - **Training:** Ring ohne Karte mit Farbverlauf (Indigo bzw. Grau je Phase), Chips in der Phasenfarbe, runde Knöpfe zartgrau, Pause-Knopf mit Indigo-Verlauf. „Danach“-Box mit zartem Verlauf in der Phasenfarbe: Label, Übungsname und Menge untereinander. **„Danach“ erscheint nur während der Übung selbst** (Wiederholen, Halten, Absenken). In Vorbereitung, Seitenwechsel und Satzpause steht nur die aktuelle Übung, damit der Bildschirm ruhig bleibt; was als Nächstes kommt, sagt die Ansage. Beim Absenken bleibt es sichtbar, damit die Box im Wechsel Halten/Absenken nicht flackert.
 - **Barrierefreiheit:**
@@ -200,9 +200,40 @@ Die Daten liegen nur im Browser des Geräts. Eine Sicherungsdatei schützt vor V
 
 - **Zugang:** Menü → „Sicherung“ (eigener Bildschirm).
 - **Sicherung speichern:** erstellt eine Datei `uebungscoach-sicherung-JJJJ-MM-TT.json` und öffnet auf dem Handy das Teilen-Menü (z. B. „In Drive speichern“). Chrome teilt keine `.json`-Dateien, deshalb wird dort dieselbe Datei als `.txt` geteilt. Wo Teilen nicht geht, wird die Datei heruntergeladen.
-- **Inhalt:** Übungen, Programme, Einstellungen (Tempo, Vorbereitung, Satzpause, Absenken) und Ansage-Modus, dazu `app: "uebungscoach"`, `format: 1` und der Zeitpunkt. Die gewählte Stimme nicht (gerätespezifisch).
-- **Sicherung laden:** Datei auswählen (auch direkt aus Google Drive), Rückfrage mit Datum und Umfang („Sicherung vom 12.11.2026, 14:30 · 8 Übungen, 3 Programme“), dann werden **alle** Daten **ersetzt** – kein Zusammenführen. Danach „Sicherung geladen · Rückgängig“.
+- **Inhalt:** Übungen, Programme (mit den angehefteten), Einstellungen (Tempo, Vorbereitung, Satzpause, Absenken), Ansage-Modus und der Trainingsverlauf, dazu `app: "uebungscoach"`, `format: 2` und der Zeitpunkt. Die gewählte Stimme nicht (gerätespezifisch). Sicherungen vom `format: 1` (noch ohne Verlauf) lassen sich weiter laden; der Verlauf ist danach leer.
+- **Sicherung laden:** Datei auswählen (auch direkt aus Google Drive), Rückfrage mit Datum und Umfang („Sicherung vom 12.11.2026, 14:30 · 8 Übungen, 3 Programme, 25 Trainings“), dann werden **alle** Daten **ersetzt** – kein Zusammenführen. Danach „Sicherung geladen · Rückgängig“.
 - **Prüfung:** Dateien, die keine Sicherung sind, beschädigt sind (`sindGueltig()`, Programme verweisen auf fehlende Übungen) oder aus einer neueren App-Version stammen, werden mit einer verständlichen Meldung abgelehnt; nichts wird geändert. Einstellungen außerhalb der erlaubten Bereiche werden begrenzt, fehlende durch die Standardwerte ersetzt.
+
+## Trainingsverlauf (Issue #18)
+
+Ziel: sehen, an welchen Tagen welches Programm trainiert wurde – auf der Startseite für alle Programme, in der Programm-Ansicht für das eine.
+
+### Was gespeichert wird
+
+- Ein Training zählt, wenn es bis „Training geschafft“ durchgelaufen ist. Abgebrochene Trainings zählen nicht. Wer mit „Nächste Übung“ bis zum Ende springt, dem zählt es mit – bewusst so gelassen, weil das in der Praxis nicht vorkommt.
+- Gespeichert wird jedes Training einzeln: Programm, Programmname und Zeitpunkt (`localStorage`-Schlüssel `uebungscoach-verlauf`). Daraus lassen sich später weitere Auswertungen rückwirkend berechnen.
+- Ein Tag ist ein Kalendertag in der Zeitzone des Handys.
+- Wird ein Programm gelöscht, bleiben seine Trainings gespeichert (sie werden nur nicht mehr angezeigt).
+- Der Verlauf gehört zur Sicherung.
+
+### Startseite
+
+1. „Was trainierst du heute?“
+2. **Zwei Programmkarten nebeneinander:** die erste mit Indigo-Verlauf, die zweite zart (`primary-soft`), beide mit Name, „3 Übungen · 8 Min“, rundem ▶ (startet sofort) und Listen-Knopf (öffnet die Programm-Ansicht). Gibt es nur ein Programm mit Übungen, nimmt seine Karte die ganze Breite ein.
+3. **Verlauf „Letzte 2 Wochen“:** rechts die Zahl der Trainings. Darunter einmal die Wochentage (heute in Indigo), dann je Programm der Name mit „· 9 ד und eine Reihe aus 14 abgerundeten Kästchen (ältester Tag links, heute rechts, kleine Lücke zwischen den Wochen). Trainiert = Indigo-Verlauf, nicht trainiert = zartgrau, heute ohne Training = Indigo-Rand. Zwei Trainings am selben Tag sind ein Kästchen. Alle Kästchen in derselben Farbe; welches Programm es ist, steht im Namen darüber.
+   - Zeilen gibt es für die zwei Programme oben (auch ohne Training) und für jedes weitere, das in den 2 Wochen trainiert wurde.
+4. **Weitere Programme** schmal: Name und Anzahl der Übungen; leere Programme führen zum Bearbeiten. Am Ende „Neues Programm“.
+
+**Welche zwei Programme oben stehen:** zuerst die angehefteten, dann die zuletzt trainierten, dann die ersten der Liste – nur Programme mit Übungen. Die Reihenfolge der Karten folgt der Programmliste, damit sie nicht täglich die Plätze tauschen.
+
+**Anheften:** In der Programm-Ansicht oben rechts neben „Bearbeiten“ ein Stecknadel-Knopf (gefüllt = angeheftet). Höchstens zwei Programme sind angeheftet; beim dritten fällt das am längsten angeheftete heraus. Rückmeldung über die Leiste „Oben auf der Startseite angeheftet · Rückgängig“ bzw. „Von der Startseite gelöst“. Gespeichert in den Daten (`angeheftet`), also auch in der Sicherung.
+
+### Programm-Ansicht
+
+- Unter den Übungen, abgesetzt durch großen Abstand und eine feine Linie, ein **Monatskalender**: Titel „November 2026“, rechts ‹ und › zum Blättern (zurück bis zum Monat des ersten Trainings, vor bis zum aktuellen Monat). Woche beginnt am Montag.
+- Trainingstage als Kacheln mit Indigo-Verlauf, andere zartgrau, künftige ohne Fläche, heute umrandet. Zwei oder mehr Trainings an einem Tag: kleine Zahl („2“) an der Ecke.
+- Darunter: „11 Trainings an 10 Tagen · zuletzt heute“ (bzw. „zuletzt gestern“, „zuletzt vor 3 Tagen“, „zuletzt am 2.10.2026“, „Noch nicht trainiert“).
+- Barrierefreiheit: jede Kachel hat einen Text wie „Donnerstag, 12. November: 2 Trainings“; die Reihen der Startseite einen wie „Rücken: an 9 von 14 Tagen trainiert“.
 
 ## Programme
 
