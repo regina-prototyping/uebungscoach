@@ -22,9 +22,9 @@ export function zeigeStart(root: HTMLElement, opt: StartOptionen): void {
       </div>
       <h1 class="display">Was trainierst du heute?</h1>
       ${opt.programme.map((p, i) => (p.exercises.length ? kompakteKarte(p, i, opt.einstellungen) : leereKarte(p))).join("")}
-      <button type="button" class="card zeilen-karte" data-aktion="neu">
-        <span class="symbolfeld symbolfeld-primary">${ICON.plus}</span>
-        <span class="leer-titel">Neues Programm</span>
+      <button type="button" class="karte-zeile karte-neu" data-aktion="neu">
+        <span class="karte-text"><span class="leer-titel">Neues Programm</span></span>
+        <span class="karten-aktion karten-aktion-zweit">${ICON.plus}</span>
       </button>
     </section>`;
 
@@ -45,23 +45,23 @@ export function zeigeStart(root: HTMLElement, opt: StartOptionen): void {
 /** Kompakte Karte: Antippen öffnet das Programm, ▶ startet sofort. */
 function kompakteKarte(p: Trainingsplan, i: number, einst: Einstellungen): string {
   return `
-    <article class="card kompakt">
-      <button type="button" class="kompakt-text" data-oeffnen="${esc(p.id)}">
+    <article class="card karte-zeile kompakt">
+      <button type="button" class="karte-text kompakt-text" data-oeffnen="${esc(p.id)}">
         <span class="kompakt-name">${esc(p.name)}</span>
         <span class="caption-normal muted">${programmInfo(p, einst)}</span>
       </button>
-      <button type="button" class="schnellstart" data-start="${i}" aria-label="${esc(p.name)} starten">${ICON.play}</button>
+      <button type="button" class="karten-aktion" data-start="${i}" aria-label="${esc(p.name)} starten">${ICON.play}</button>
     </article>`;
 }
 
 /** Programm ohne Übungen: ganze Karte führt zum Bearbeiten. */
 function leereKarte(p: Trainingsplan): string {
   return `
-    <button type="button" class="card zeilen-karte" data-bearbeiten="${esc(p.id)}">
-      <span class="leer-text">
+    <button type="button" class="card karte-zeile" data-bearbeiten="${esc(p.id)}">
+      <span class="karte-text">
         <span class="kompakt-name">${esc(p.name || "Ohne Namen")}</span>
         <span class="caption-normal muted">Noch keine Übungen · Tippen zum Bearbeiten</span>
       </span>
-      <span class="symbolfeld">${MENU_ICON.stiftGross}</span>
+      <span class="karten-aktion karten-aktion-zweit">${MENU_ICON.stiftGross}</span>
     </button>`;
 }
