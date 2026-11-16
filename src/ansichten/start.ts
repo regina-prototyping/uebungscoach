@@ -12,8 +12,11 @@ interface StartOptionen {
   onMenue: () => void;
 }
 
-/** Startbildschirm: kompakte Programmkarten mit Schnellstart. */
+/** Startbildschirm: erstes Programm groß, die übrigen als Liste. */
 export function zeigeStart(root: HTMLElement, opt: StartOptionen): void {
+  // Bis es eine Statistik gibt: das erste Programm mit Übungen steht groß oben
+  const iGross = opt.programme.findIndex((p) => p.exercises.length > 0);
+  const weitere = opt.programme.filter((_, i) => i !== iGross);
   root.innerHTML = `
     <section class="screen start">
       <div class="topbar">
@@ -21,11 +24,17 @@ export function zeigeStart(root: HTMLElement, opt: StartOptionen): void {
         <button type="button" class="icon-btn" data-aktion="menue" aria-label="Menü">${MENU_ICON.menue}</button>
       </div>
       <h1 class="display">Was trainierst du heute?</h1>
-      ${opt.programme.map((p, i) => (p.exercises.length ? kompakteKarte(p, i, opt.einstellungen) : leereKarte(p))).join("")}
-      <button type="button" class="karte-zeile karte-neu" data-aktion="neu">
-        <span class="karte-text"><span class="leer-titel">Neues Programm</span></span>
-        <span class="karten-aktion karten-aktion-zweit">${ICON.plus}</span>
-      </button>
+      ${iGross >= 0 ? grosseKarte(opt.programme[iGross], iGross, opt.einstellungen) : ""}
+      <div class="gruppe">
+        <h2 class="abschnitt">${iGross >= 0 ? "Weitere Programme" : "Programme"}</h2>
+        <div class="prog-liste">
+          ${weitere.map((p) => zeile(p, opt.einstellungen)).join("")}
+          <button type="button" class="prog-zeile prog-neu" data-aktion="neu">
+            <span class="plus-rund">${ICON.plus}</span>
+            <span>Neues Programm</span>
+          </button>
+        </div>
+      </div>
     </section>`;
 
   root.querySelector("[data-aktion=menue]")!.addEventListener("click", opt.onMenue);
@@ -42,26 +51,32 @@ export function zeigeStart(root: HTMLElement, opt: StartOptionen): void {
   });
 }
 
-/** Kompakte Karte: Antippen öffnet das Programm, ▶ startet sofort. */
-function kompakteKarte(p: Trainingsplan, i: number, einst: Einstellungen): string {
+/** Große Indigo-Karte: „Training starten“ startet sofort, ☰ öffnet die Programm-Ansicht. */
+function grosseKarte(p: Trainingsplan, i: number, einst: Einstellungen): string {
   return `
-    <article class="card karte-zeile kompakt">
-      <button type="button" class="karte-text kompakt-text" data-oeffnen="${esc(p.id)}">
-        <span class="kompakt-name">${esc(p.name)}</span>
-        <span class="caption-normal muted">${programmInfo(p, einst)}</span>
-      </button>
-      <button type="button" class="karten-aktion" data-start="${i}" aria-label="${esc(p.name)} starten">${ICON.play}</button>
+    <article class="hero">
+      <div class="hero-text">
+        <h2 class="hero-name">${esc(p.name)}</h2>
+        <span class="hero-info">${programmInfo(p, einst)}</span>
+      </div>
+      <div class="hero-knoepfe">
+        <button type="button" class="hero-start" data-start="${i}">${ICON.play}Training starten</button>
+        <button type="button" class="hero-ansehen" data-oeffnen="${esc(p.id)}" aria-label="${esc(p.name)} ansehen">${MENU_ICON.liste}</button>
+      </div>
     </article>`;
 }
 
-/** Programm ohne Übungen: ganze Karte führt zum Bearbeiten. */
-function leereKarte(p: Trainingsplan): string {
+/** Listenzeile: Programme mit Übungen öffnen die Ansicht, leere führen zum Bearbeiten. */
+function zeile(p: Trainingsplan, einst: Einstellungen): string {
+  const leer = p.exercises.length === 0;
+  const ziel = leer ? `data-bearbeiten="${esc(p.id)}"` : `data-oeffnen="${esc(p.id)}"`;
+  const info = leer ? "Noch keine Übungen · Tippen zum Bearbeiten" : programmInfo(p, einst);
   return `
-    <button type="button" class="card karte-zeile" data-bearbeiten="${esc(p.id)}">
-      <span class="karte-text">
-        <span class="kompakt-name">${esc(p.name || "Ohne Namen")}</span>
-        <span class="caption-normal muted">Noch keine Übungen · Tippen zum Bearbeiten</span>
+    <button type="button" class="prog-zeile" ${ziel}>
+      <span class="zeile-text">
+        <span class="zeile-name">${esc(p.name || "Ohne Namen")}</span>
+        <span class="caption-normal muted">${info}</span>
       </span>
-      <span class="karten-aktion karten-aktion-zweit">${MENU_ICON.stiftGross}</span>
+      ${MENU_ICON.rechts}
     </button>`;
 }
