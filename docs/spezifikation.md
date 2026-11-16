@@ -155,18 +155,19 @@ Bei mehreren Sätzen beginnt jede linke Seite mit „Satz x von y.“ wie bisher
 Ziel: ruhigere Typografie, einheitliche Abstände, mehr Struktur, saubere Barrierefreiheit – ohne Funktionen oder Texte zu ändern. Werte stehen in `src/stil/theme.css` und `design/tokens.json`.
 
 - **Tokens:** Schriftgrößen `--text-xs/sm/md/lg/xl` (13/15/17/20/28 px, intern in rem, damit die Textgröße des Browsers wirkt), Stärken 400/600/700/800, Abstände `--space-1…10` im 4er-Raster. Ausnahme: die große Zahl im Ring (128 px, bzw. 48 px für Wörter) – in px, weil der Ring eine feste Größe hat; auf niedrigen Bildschirmen schrumpft sie mit dem Ring, damit Label und Untertext im Kreis bleiben.
-- **Schrift:** H1 28 px/700; Karten-, Listen- und Übungstitel, Buttons, Chips und App-Name 600; grauer Metatext 15/22 px/400; Uppercase-Labels 13 px/600. 800 nur für die Ring-Zahl.
-- **Flächen:** Seitenhintergrund leicht getönt (#F6F4F6), Karten weiß, Rundung 20 px, Schatten dezent.
-- **Startseite:** Alle Karten im selben Aufbau (Innenabstand 16/20 px, Text links, runde 48-px-Aktion rechts, gleiche Mindesthöhe). ▶ magenta, Bearbeiten und Plus getönt. Die ganze Programmkarte öffnet die Programm-Ansicht. „Neues Programm“ als dezente, gestrichelte Karte.
-- **Farben:** Magenta ist die Aktionsfarbe (auch der Pause-Button im Training). Orange-Braun nur für Vorbereitung, Satzpause, Absenken. Menü-Symbole alle auf `primary-soft`. „In keinem Programm“ (Bibliothek) dunkel und halbfett statt orange.
-- **„Danach“-Karte:** Label, Übungsname und Menge untereinander.
+- **Schrift:** Überschriften 28 px/600; Karten-, Listen- und Übungstitel, Buttons, Chips und App-Name 600; grauer Metatext 15/22 px/400; Uppercase-Labels 13 px/600. 800 nur für die Ring-Zahl.
+- **Farben (Indigo-Design, ausgewählt auf der Design-Arbeitsfläche):** Indigo ist die Aktionsfarbe: Verlauf `#262A80 → #4A44C2` auf den großen Flächen (Programmkarte der Startseite, Kopf der Programm-Ansicht, Hauptknöpfe, Pause-Knopf, Fortschrittsbalken), Indigo `#4A44C2` für Ring-Label, Links und Fokusring, dunkles Indigo `#262A80` für Text auf zarten Flächen, zart `#ECEBFB` für Chips, Symbol-Kacheln und Nebenknöpfe. **Türkis** nur für Vorbereitung, Satzpause und Absenken (Ring `#0B5754 → #0FA3A3`, Schrift `#0B6E6B`, zart `#D5F3F1`). Türkis und Indigo unterscheiden sich auch in der Helligkeit.
+- **Flächen:** Seitenhintergrund weiß, keine Schatten. Gegliedert wird über feine Linien und wenige Farbflächen; Listen (Einstellungen, Bearbeiten, Übungen, Sicherung) stehen ohne Boxen. Rundungen: 20 px große Flächen, 8 px kleine (Eingabefelder, „Danach“), 12 px Symbol-Kacheln.
+- **Startseite:** Das erste Programm mit Übungen steht als große Indigo-Karte oben, mit „Training starten“ (startet sofort) und einem runden Knopf zur Programm-Ansicht. Darunter „Weitere Programme“ als Liste: Programme mit Übungen öffnen die Programm-Ansicht, leere das Bearbeiten; am Ende „Neues Programm“. Sobald es eine Statistik gibt, soll oben das zuletzt trainierte Programm stehen.
+- **Programm-Ansicht:** Indigo-Kopf mit Zurück, Bearbeiten, Name, Info-Zeile (Übungen, Dauer, Startposition) und „Training starten“; darunter die Übungen als Zeitstrahl mit verbundenen Nummern.
+- **Training:** Ring ohne Karte mit Farbverlauf (Indigo bzw. Türkis je Phase), Chips in der Phasenfarbe, runde Knöpfe zartgrau, Pause-Knopf mit Indigo-Verlauf. „Danach“-Box mit zartem Verlauf in der Phasenfarbe: Label, Übungsname und Menge untereinander.
 - **Barrierefreiheit:**
   - Der Sekundenzähler hat kein `aria-live` mehr. Ein unsichtbares Element (`.sr-only`, `aria-live="polite"`) sagt nur bei Übungs- oder Satzwechsel, Pausenbeginn und Trainingsende einen kurzen Satz an, z. B. „Übung 2 von 3: Beine seitlich kippen“, „Satzpause: Satz 1 geschafft“, „Training geschafft“ (`screenreaderAnsage` in `anzeige.ts`).
   - Rückfragen („Training beenden?“, „Sicherung laden?“) sind native `<dialog>`-Elemente mit `showModal()`: Hintergrund gesperrt, Fokus im Dialog. Escape bzw. die Android-Zurück-Geste bei offenem Dialog wirken wie „Weitertrainieren“ bzw. „Abbrechen“. Beim Öffnen liegt der Fokus auf „Weitertrainieren“ (bei der Sicherung auf „Abbrechen“, weil „Laden und ersetzen“ Daten überschreibt), beim Schließen wieder auf dem auslösenden Knopf.
   - Ausgeblendetes immer per `hidden` bzw. `display: none`.
   - Sichtbarer Fokusring (`:focus-visible`, 3 px magenta), bei der Programmkarte um die ganze Karte.
   - `prefers-reduced-motion`: alle Animationen und Übergänge praktisch aus, der Ring springt.
-  - Textkontraste mindestens 4,5:1 (Metatext auf getöntem Grund 5,5:1, Orange-Braun auf Weiß 5,1:1).
+  - Textkontraste mindestens 4,5:1 (alle Paare im Indigo-Design mindestens 5,3:1; Ring-Enden auf Weiß mindestens 3:1).
 
 ## Signaltöne und Modus „Nur Töne“
 
