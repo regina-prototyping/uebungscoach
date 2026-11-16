@@ -1,6 +1,5 @@
 import { dose, fmtTime } from "./format";
 import type { Spieler } from "./spieler";
-import type { Uebung } from "./typen";
 
 /** Farbwelt: „aktiv“ = primary (Wiederholung, Halten), „ruhe“ = rest (Vorbereitung, Pause, Absenken). */
 export type Phase = "aktiv" | "ruhe" | "fertig";
@@ -23,13 +22,6 @@ export interface Anzeige {
   gesamt: number;
   restzeit: string;
   danach: { name: string; menge: string } | null;
-}
-
-/** Menge des nächsten Satzes für „Danach“, z. B. „15 ×“, „5 × je Seite“, „10 × 5 s“. */
-function naechsterSatz(e: Uebung): string {
-  const seite = e.proSeite ? " je Seite" : "";
-  if (e.art === "hold") return `${e.reps} × ${e.hold} s${seite}`;
-  return `${e.reps} ×${seite}`;
 }
 
 /** Leitet aus dem Zustand des Spielers ab, was auf dem Trainingsbildschirm steht. */
@@ -107,8 +99,9 @@ export function anzeige(sp: Spieler): Anzeige {
   chips.push(seg.kind === "pause" ? `Gleich Satz ${seg.set + 1} von ${e.sets}` : `Satz ${seg.set} von ${e.sets}`);
   if (seg.side) chips.push(seg.side === "links" ? "Linke Seite" : "Rechte Seite");
 
+  // In der Satzpause kein „Danach“: dort zählt nur die aktuelle Übung (ruhiger Bildschirm)
   let danach: Anzeige["danach"];
-  if (seg.kind === "pause") danach = { name: `Satz ${seg.set + 1}: ${e.name}`, menge: naechsterSatz(e) };
+  if (seg.kind === "pause") danach = null;
   else if (exs[seg.ex + 1]) danach = { name: exs[seg.ex + 1].name, menge: dose(exs[seg.ex + 1]) };
   else danach = { name: "Training geschafft", menge: "" };
 

@@ -44,7 +44,7 @@ describe("Anzeige im Training", () => {
       unter: "Sekunden",
       hinweis: "Satz 1 geschafft",
       chips: ["Übung 1 von 3", "Gleich Satz 2 von 2"],
-      danach: { name: "Satz 2: Becken kippen", menge: "15 ×" },
+      danach: null,
     });
   });
 
