@@ -210,7 +210,7 @@ Ziel: sehen, an welchen Tagen welches Programm trainiert wurde – auf der Start
 
 ### Was gespeichert wird
 
-- Ein Training zählt, wenn es bis „Training geschafft“ durchgelaufen ist. Abgebrochene Trainings zählen nicht.
+- Ein Training zählt, wenn es bis „Training geschafft“ durchgelaufen ist. Abgebrochene Trainings zählen nicht. Wer mit „Nächste Übung“ bis zum Ende springt, dem zählt es mit – bewusst so gelassen, weil das in der Praxis nicht vorkommt.
 - Gespeichert wird jedes Training einzeln: Programm, Programmname und Zeitpunkt (`localStorage`-Schlüssel `uebungscoach-verlauf`). Daraus lassen sich später weitere Auswertungen rückwirkend berechnen.
 - Ein Tag ist ein Kalendertag in der Zeitzone des Handys.
 - Wird ein Programm gelöscht, bleiben seine Trainings gespeichert (sie werden nur nicht mehr angezeigt).
