@@ -41,7 +41,7 @@ export class ProgrammAnsicht {
           </label>
           <label class="eingabe-feld">
             <span class="feld-label">Startposition <span class="optional">· optional</span></span>
-            <input class="eingabe" data-e="start" value="${esc(p.start ?? "")}" placeholder="z. B. Auf dem Rücken liegen" autocomplete="off" enterkeyhint="done">
+            <input class="eingabe" data-e="start" value="${esc(p.start ?? "")}" placeholder="z. B. Im Vierfüßlerstand beginnen" autocomplete="off" enterkeyhint="done">
           </label>
         </section>
 

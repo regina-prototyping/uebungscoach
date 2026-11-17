@@ -34,9 +34,9 @@ describe("Eigene Zeiten", () => {
 describe("Neue Übung aufräumen", () => {
   it("verwirft eine Übung ohne Namen und entfernt sie aus Programmen", () => {
     const { daten, id } = uebungAnlegen(MITGELIEFERT);
-    const d = uebungAufraeumen(uebungHinzufuegen(daten, "ruecken", id), id);
+    const d = uebungAufraeumen(uebungHinzufuegen(daten, "erstes", id), id);
     expect(findeUebung(d, id)).toBeUndefined();
-    expect(findeProgramm(d, "ruecken")!.uebungen).toEqual(findeProgramm(MITGELIEFERT, "ruecken")!.uebungen);
+    expect(findeProgramm(d, "erstes")!.uebungen).toEqual(findeProgramm(MITGELIEFERT, "erstes")!.uebungen);
   });
 
   it("behält Übungen mit Namen", () => {

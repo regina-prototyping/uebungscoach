@@ -23,7 +23,7 @@ const daten: Daten = {
   version: 1,
   uebungen: [{ id: "u", name: "Ü", art: "reps", proSeite: false, reps: 5, sets: 1 }],
   programme: [
-    { id: "a", name: "Rücken", uebungen: ["u"] },
+    { id: "a", name: "Dehnen", uebungen: ["u"] },
     { id: "b", name: "Arme", uebungen: ["u"] },
     { id: "c", name: "Schulter", uebungen: ["u"] },
     { id: "leer", name: "Leer", uebungen: [] },
@@ -39,8 +39,8 @@ function verlauf(...eintraege: [string, number, number?][]): Verlauf {
 
 describe("Verlauf speichern", () => {
   it("trägt Programm, Name und Zeitpunkt ein, ohne den alten Verlauf zu ändern", () => {
-    const v = trainingEintragen(LEERER_VERLAUF, { id: "a", name: "Rücken" }, heute);
-    expect(v.trainings).toEqual([{ programmId: "a", name: "Rücken", zeit: heute.toISOString() }]);
+    const v = trainingEintragen(LEERER_VERLAUF, { id: "a", name: "Dehnen" }, heute);
+    expect(v.trainings).toEqual([{ programmId: "a", name: "Dehnen", zeit: heute.toISOString() }]);
     expect(LEERER_VERLAUF.trainings).toEqual([]);
     expect(istVerlauf(v)).toBe(true);
   });
