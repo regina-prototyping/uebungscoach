@@ -1,6 +1,14 @@
 # Übungscoach
 **Eine Web-App, die mich durch meine Übungen führt, damit ich nicht aufs Handy schauen muss.** Sie kündigt jede Übung an, zählt Wiederholungen mit oder Haltezeiten herunter und geht von selbst zur nächsten Übung weiter. Je nach Einstellung geschieht das mit Signaltönen oder mit Sprachansage.
 
+## TL;DR
+- **Problem:** feste Übungs-Abfolge von der Physio, kein Video dafür, und mitzählen während der Übung klappt nicht.
+- **Lösung:** eine App, die ansagt, mitzählt und von selbst weitergeht, mit Tönen oder Sprache, offline und installierbar.
+- **Schwierig war** nicht der Code, sondern welches Signal wann hilft und welches stört.
+- **Mein Anteil:** entscheiden, spezifizieren, (mit)designen ,testen. Programmiert hat Claude Code.
+
+**[Ausprobieren: uebungscoach.vercel.app](https://uebungscoach.vercel.app)** · Auf dem Handy öffnen und über das Browser-Menü zum Startbildschirm hinzufügen.
+
 <p align="center">
   <img src="docs/bilder/1-start.png" width="260" alt="Startseite mit zwei Programmen und dem Trainingsverlauf der letzten zwei Wochen">
   &nbsp;
@@ -9,13 +17,6 @@
   <img src="docs/bilder/3-training.png" width="260" alt="Training: großer Fortschrittsring mit der aktuellen Wiederholung">
 </p>
 
-## TLDR
-- **Problem:** feste Übungs-Abfolge von der Physio, kein Video dafür, und mitzählen während der Übung klappt nicht.
-- **Lösung:** eine App, die ansagt, mitzählt und von selbst weitergeht, mit Tönen oder Sprache, offline und installierbar.
-- **Schwierig war** nicht der Code, sondern welches Signal wann hilft und welches stört.
-- **Mein Anteil:** entscheiden, spezifizieren, (mit)designen ,testen. Programmiert hat Claude Code.
-
-**[Ausprobieren: uebungscoach.vercel.app](https://uebungscoach.vercel.app)** · Auf dem Handy öffnen und über das Browser-Menü zum Startbildschirm hinzufügen.
 
 
 ## Was die App kann
