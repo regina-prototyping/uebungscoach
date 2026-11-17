@@ -4,11 +4,11 @@ import { trainingsplan } from "../src/logik/daten";
 import { anzeige, screenreaderAnsage } from "../src/logik/anzeige";
 import { Spieler } from "../src/logik/spieler";
 
-const ruecken = trainingsplan(MITGELIEFERT, "ruecken")!;
+const programm = trainingsplan(MITGELIEFERT, "erstes")!;
 const STANDARD = { tempo: 3, prep: 5, setPause: 30, lower: 3 };
 
 function spielerBei(pruefe: (sp: Spieler) => boolean): Spieler {
-  const sp = new Spieler(ruecken, STANDARD);
+  const sp = new Spieler(programm, STANDARD);
   let t = 0;
   sp.start(t);
   while (!pruefe(sp) && !sp.fertig) sp.tick((t += 100));
@@ -20,8 +20,8 @@ describe("Anzeige im Training", () => {
     const a = anzeige(spielerBei(() => true));
     expect(a).toMatchObject({
       phase: "ruhe",
-      titel: "Becken kippen",
-      hinweis: "Start: Auf dem Rücken liegen · Bauch einziehen",
+      titel: "Katze-Kuh",
+      hinweis: "Start: Im Vierfüßlerstand beginnen · Mit dem Atem bewegen",
       label: "Gleich geht’s los",
       gross: "10",
       unter: "2 × 15",
@@ -32,12 +32,12 @@ describe("Anzeige im Training", () => {
 
   it("„Danach“ erscheint erst während der Übung", () => {
     const a = anzeige(spielerBei((sp) => sp.seg.kind === "rep"));
-    expect(a.danach).toEqual({ name: "Beine seitlich kippen", menge: "2 × 5 je Seite" });
+    expect(a.danach).toEqual({ name: "Vogel-Hund", menge: "2 × 5 je Seite" });
   });
 
   it("Wiederholung 7 wie im Entwurf", () => {
     const a = anzeige(spielerBei((sp) => sp.seg.kind === "rep" && sp.seg.rep === 7));
-    expect(a).toMatchObject({ phase: "aktiv", label: "Wiederholung", gross: "7", unter: "von 15", hinweis: "Bauch einziehen" });
+    expect(a).toMatchObject({ phase: "aktiv", label: "Wiederholung", gross: "7", unter: "von 15", hinweis: "Mit dem Atem bewegen" });
     expect(a.ring).toBeCloseTo(7 / 15);
   });
 
@@ -80,20 +80,20 @@ describe("Anzeige im Training", () => {
 describe("Ansage für Screenreader", () => {
   it("nennt die Übung beim Start und bleibt während der Wiederholungen gleich", () => {
     const start = screenreaderAnsage(spielerBei(() => true));
-    expect(start.text).toBe("Übung 1 von 3: Becken kippen");
+    expect(start.text).toBe("Übung 1 von 3: Katze-Kuh");
     const rep7 = screenreaderAnsage(spielerBei((sp) => sp.seg.kind === "rep" && sp.seg.rep === 7));
     expect(rep7).toEqual(start);
   });
 
   it("meldet Satzpause, neuen Satz, nächste Übung und Ende", () => {
     expect(screenreaderAnsage(spielerBei((sp) => sp.seg.kind === "pause")).text).toBe("Satzpause: Satz 1 geschafft");
-    expect(screenreaderAnsage(spielerBei((sp) => sp.seg.kind === "rep" && sp.seg.set === 2)).text).toBe("Satz 2 von 2: Becken kippen");
-    expect(screenreaderAnsage(spielerBei((sp) => sp.seg.ex === 1)).text).toBe("Übung 2 von 3: Beine seitlich kippen");
+    expect(screenreaderAnsage(spielerBei((sp) => sp.seg.kind === "rep" && sp.seg.set === 2)).text).toBe("Satz 2 von 2: Katze-Kuh");
+    expect(screenreaderAnsage(spielerBei((sp) => sp.seg.ex === 1)).text).toBe("Übung 2 von 3: Vogel-Hund");
     expect(screenreaderAnsage(spielerBei(() => false)).text).toBe("Training geschafft");
   });
 
   it("ändert den Schlüssel nur bei einem neuen Abschnitt", () => {
-    const sp = new Spieler(ruecken, STANDARD);
+    const sp = new Spieler(programm, STANDARD);
     let t = 0;
     sp.start(t);
     const schluessel = new Set<string>();

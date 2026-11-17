@@ -4,7 +4,7 @@ Stand: 16. November 2026 · Version 1 und Version 2 (Übungen und Programme bear
 
 ## Ziel
 
-Eine Handy-App, die per Sprachansage durch Physio-Übungen führt: Sie sagt jede Übung an, zählt Wiederholungen mit oder Haltezeiten herunter und geht automatisch zur nächsten Übung weiter. Mehrere Programme (z. B. Rücken, Arme mit Theraband) lassen sich anlegen und auswählen.
+Eine Handy-App, die per Sprachansage durch Physio-Übungen führt: Sie sagt jede Übung an, zählt Wiederholungen mit oder Haltezeiten herunter und geht automatisch zur nächsten Übung weiter. Mehrere Programme (z. B. „Mein erstes Programm“, Dehnen) lassen sich anlegen und auswählen.
 
 ## Datenmodell
 
@@ -12,7 +12,7 @@ Ein **Programm** hat einen Namen, optional eine Startposition und eine geordnete
 
 | Feld | Gilt für | Bedeutung | Beispiel |
 | --- | --- | --- | --- |
-| Name | Programm, Übung | Anzeige- und Ansagetext | Rücken; Becken kippen |
+| Name | Programm, Übung | Anzeige- und Ansagetext | Mein erstes Programm; Katze-Kuh |
 | Startposition | Programm (optional) | Wird ganz am Anfang angesagt | Auf dem Rücken liegen |
 | Hinweis | Übung (optional) | Wird vor der Übung angesagt | Bauch einziehen |
 | Typ | Übung | `reps` (Wiederholungen) · `sides` (pro Seite) · `hold` (Halten) | hold |
@@ -96,7 +96,7 @@ Wer dieselbe Übung in zwei Programmen unterschiedlich ausführen will (z. B. 2 
 
 | Feld | Pflicht | Bedeutung |
 | --- | --- | --- |
-| Name | ja | z. B. „Rücken“ |
+| Name | ja | z. B. „Dehnen“ |
 | Startposition | nein | wird ganz am Anfang angesagt |
 | Übungen | – | geordnete Liste von Übungen aus der Bibliothek |
 
@@ -128,7 +128,7 @@ Bei mehreren Sätzen beginnt jede linke Seite mit „Satz x von y.“ wie bisher
 - [x] Dieselbe Übung darf mehrmals vorkommen
 - [x] Übung aus dem Programm entfernen (sie bleibt in der Bibliothek)
 - [x] Programm löschen
-- [x] Das Rückenprogramm ist wie jedes andere bearbeitbar
+- [x] Das mitgelieferte Programm ist wie jedes andere bearbeitbar
 
 **Übungsbibliothek**
 - [x] Liste aller Übungen
@@ -138,7 +138,7 @@ Bei mehreren Sätzen beginnt jede linke Seite mit „Satz x von y.“ wie bisher
 
 **Allgemein**
 - [x] Löschen ohne Rückfrage, dafür mit „Rückgängig“: unten erscheint für einige Sekunden eine Leiste, z. B. „Übung gelöscht · Rückgängig“
-- [x] Speicherung lokal im Browser. Beim ersten Start übernimmt die App die mitgelieferten Programme und Übungen (Rücken, Arme mit Theraband) in den Speicher; danach gilt nur noch die gespeicherte Fassung
+- [x] Speicherung lokal im Browser. Beim ersten Start übernimmt die App das mitgelieferte Beispielprogramm „Mein erstes Programm“ mit seinen Übungen in den Speicher; danach gilt nur noch die gespeicherte Fassung
 - [x] Ein Programm ohne Übungen kann nicht gestartet werden
 
 ### Entscheidungen
@@ -175,8 +175,8 @@ Hintergrund: Auf dem Pixel 9 liefert die Sprachausgabe zeitweise keine Stimme (`
 
 ### Einstellung „Ansagen“
 
-- **Sprache und Töne** (Standard): Sprachansagen wie bisher, dazu die Signaltöne – außer dem Takt-Klick.
-- **Nur Töne**: keine Sprachansagen; Signaltöne und Takt-Klick.
+- **Sprache und Töne**: Sprachansagen wie bisher, dazu die Signaltöne – außer dem Takt-Klick.
+- **Nur Töne** (Standard): keine Sprachansagen; Signaltöne und Takt-Klick. Entschieden im November 2026, weil die Sprachansage beim Öffnen störte; wer Sprache möchte, wählt sie einmal in den Einstellungen, die Wahl bleibt gespeichert.
 - In den Einstellungen spielt „Töne anhören“ alle Signale nacheinander vor.
 
 ### Signale
@@ -233,20 +233,16 @@ Ziel: sehen, an welchen Tagen welches Programm trainiert wurde – auf der Start
 - Unter den Übungen, abgesetzt durch großen Abstand und eine feine Linie, ein **Monatskalender**: Titel „November 2026“, rechts ‹ und › zum Blättern (zurück bis zum Monat des ersten Trainings, vor bis zum aktuellen Monat). Woche beginnt am Montag.
 - Trainingstage als Kacheln mit Indigo-Verlauf, andere zartgrau, künftige ohne Fläche, heute umrandet. Zwei oder mehr Trainings an einem Tag: kleine Zahl („2“) an der Ecke.
 - Darunter: „11 Trainings an 10 Tagen · zuletzt heute“ (bzw. „zuletzt gestern“, „zuletzt vor 3 Tagen“, „zuletzt am 2.10.2026“, „Noch nicht trainiert“).
-- Barrierefreiheit: jede Kachel hat einen Text wie „Donnerstag, 12. November: 2 Trainings“; die Reihen der Startseite einen wie „Rücken: an 9 von 14 Tagen trainiert“.
+- Barrierefreiheit: jede Kachel hat einen Text wie „Donnerstag, 12. November: 2 Trainings“; die Reihen der Startseite einen wie „Dehnen: an 9 von 14 Tagen trainiert“.
 
 ## Programme
 
-### Rücken
+### Mein erstes Programm
 
-Startposition: auf dem Rücken liegen.
+Mitgeliefertes Beispiel mit bewusst neutralen, klassischen Übungen (das Repository ist öffentlich). Startposition: im Vierfüßlerstand beginnen.
 
 | # | Übung | Hinweis | Typ | Wiederholungen | Haltedauer | Sätze |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 | Becken kippen | Bauch einziehen | reps | 15 | – | 2 |
-| 2 | Beine seitlich kippen | – | sides | 5 je Seite | – | 2 |
+| 1 | Katze-Kuh | Mit dem Atem bewegen | reps | 15 | – | 2 |
+| 2 | Vogel-Hund | – | sides | 5 je Seite | – | 2 |
 | 3 | Brücke | Oben halten | hold | 10 | 5 s | 2 |
-
-### Arme mit Theraband
-
-Übungen folgen.

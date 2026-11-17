@@ -70,8 +70,7 @@ describe("Sicherung", () => {
 
   it("Beschreibung für die Rückfrage", () => {
     const s = sicherungErstellen(MITGELIEFERT, eigene, "sprache", jetzt);
-    const n = MITGELIEFERT.uebungen.length;
-    expect(beschreibung(s)).toBe(`vom 12.11.2026, 14:30 · ${n} Übungen, ${MITGELIEFERT.programme.length} Programme`);
+    expect(beschreibung(s)).toBe("vom 12.11.2026, 14:30 · 3 Übungen, 1 Programm");
     const eins = { ...s, erstellt: "", daten: { version: 1 as const, uebungen: [MITGELIEFERT.uebungen[0]], programme: [] } };
     expect(beschreibung(eins)).toBe("1 Übung, 0 Programme");
     const mitTraining = { ...eins, verlauf: trainingEintragen(LEERER_VERLAUF, { id: "p", name: "P" }, jetzt) };
@@ -79,7 +78,7 @@ describe("Sicherung", () => {
   });
 
   it("enthält den Trainingsverlauf und die angehefteten Programme", () => {
-    const v = trainingEintragen(LEERER_VERLAUF, { id: "ruecken", name: "Rücken" }, jetzt);
+    const v = trainingEintragen(LEERER_VERLAUF, { id: "erstes", name: "Dehnen" }, jetzt);
     const d = { ...MITGELIEFERT, angeheftet: [MITGELIEFERT.programme[0].id] };
     const s = sicherungErstellen(d, eigene, "sprache", jetzt, v);
     expect(sicherungLesen(text(s))).toEqual({ ok: true, sicherung: s });

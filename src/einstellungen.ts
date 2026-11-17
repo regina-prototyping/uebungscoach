@@ -47,11 +47,12 @@ export function aendern(e: Einstellungen, key: keyof Einstellungen, richtung: 1 
 
 const MODUS_KEY = "uebungscoach-ansagen";
 
+/** Standard ist „Nur Töne“; Sprache nur, wenn sie ausdrücklich gewählt wurde. */
 export function ladeAnsageModus(): AnsageModus {
   try {
-    return localStorage.getItem(MODUS_KEY) === "toene" ? "toene" : "sprache";
+    return localStorage.getItem(MODUS_KEY) === "sprache" ? "sprache" : "toene";
   } catch {
-    return "sprache";
+    return "toene";
   }
 }
 

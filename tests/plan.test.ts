@@ -11,14 +11,14 @@ const STANDARD: Einstellungen = { tempo: 3, prep: 5, setPause: 30, lower: 3 };
 function plan1(u: Partial<Uebung>): Trainingsplan {
   return { id: "t", name: "Test", exercises: [{ id: "a", name: "A", art: "reps", proSeite: false, reps: 1, sets: 1, ...u }] };
 }
-const ruecken = trainingsplan(MITGELIEFERT, "ruecken")!;
+const programm = trainingsplan(MITGELIEFERT, "erstes")!;
 
-describe("buildPlan mit dem Rückenprogramm", () => {
-  const plan = buildPlan(ruecken, STANDARD);
+describe("buildPlan mit dem ersten Programm", () => {
+  const plan = buildPlan(programm, STANDARD);
 
   it("hat die erwartete Anzahl Abschnitte", () => {
-    // Becken kippen: 1 + 15 + 1 + 15 = 32
-    // Beine seitlich kippen: 1 + 2 × (1 + 5 + 1 + 5) + 1 Pause = 26
+    // Katze-Kuh: 1 + 15 + 1 + 15 = 32
+    // Vogel-Hund: 1 + 2 × (1 + 5 + 1 + 5) + 1 Pause = 26
     // Brücke: 1 + 2 × 20 + 1 Pause = 42
     // Ende: 1
     expect(plan).toHaveLength(101);
@@ -27,11 +27,11 @@ describe("buildPlan mit dem Rückenprogramm", () => {
   it("beginnt mit Startposition, Name, Hinweis und Menge", () => {
     expect(plan[0]).toMatchObject({ kind: "prep", ex: 0 });
     expect(plan[0].say).toBe(
-      "Auf dem Rücken liegen. Erste Übung: Becken kippen. Bauch einziehen. 2 Sätze, 15 Wiederholungen.",
+      "Im Vierfüßlerstand beginnen. Erste Übung: Katze-Kuh. Mit dem Atem bewegen. 2 Sätze, 15 Wiederholungen.",
     );
   });
 
-  it("zählt Becken kippen von 1 bis 15, dann Satzpause", () => {
+  it("zählt Katze-Kuh von 1 bis 15, dann Satzpause", () => {
     const zahlen = plan.slice(1, 16).map((s) => s.say);
     expect(zahlen).toEqual(Array.from({ length: 15 }, (_, i) => String(i + 1)));
     expect(plan.slice(1, 16).every((s) => s.kind === "rep" && s.dur === 3)).toBe(true);
@@ -42,7 +42,7 @@ describe("buildPlan mit dem Rückenprogramm", () => {
   it("nennt die Startposition nur bei der ersten Übung", () => {
     const preps = plan.filter((s) => s.kind === "prep");
     expect(preps).toHaveLength(3);
-    expect(preps[1].say).toBe("Nächste Übung: Beine seitlich kippen. 2 Sätze, je Seite 5 Wiederholungen.");
+    expect(preps[1].say).toBe("Nächste Übung: Vogel-Hund. 2 Sätze, je Seite 5 Wiederholungen.");
     expect(preps[2].say).toBe("Letzte Übung: Brücke. Oben halten. 2 Sätze, 10 Wiederholungen, jeweils 5 Sekunden halten.");
   });
 
@@ -76,7 +76,7 @@ describe("buildPlan mit dem Rückenprogramm", () => {
 
 describe("Einstellungen", () => {
   it("globale Werte wirken auf Tempo, Satzpause und Absenken", () => {
-    const plan = buildPlan(ruecken, { tempo: 2, prep: 5, setPause: 45, lower: 4 });
+    const plan = buildPlan(programm, { tempo: 2, prep: 5, setPause: 45, lower: 4 });
     expect(plan.find((s) => s.kind === "rep")!.dur).toBe(2);
     expect(plan.find((s) => s.kind === "pause")!.dur).toBe(45);
     expect(plan.find((s) => s.kind === "lower")!.dur).toBe(4);
@@ -96,7 +96,7 @@ describe("Einstellungen", () => {
 
   it("Vorbereitung verlängert sich bei langer Ansage", () => {
     // 14 Wörter → ca. 7 s Ansage + 3 s = 10 s, also mehr als 5 s
-    expect(buildPlan(ruecken, STANDARD)[0].dur).toBe(10);
+    expect(buildPlan(programm, STANDARD)[0].dur).toBe(10);
   });
 
   it("ein einzelner Satz hat keine Satzpause und keine Satznummer", () => {
@@ -136,7 +136,7 @@ describe("Halten pro Seite", () => {
 
 describe("Formatierung", () => {
   it("Mengen wie auf dem Startbildschirm", () => {
-    expect(ruecken.exercises.map(dose)).toEqual(["2 × 15", "2 × 5 je Seite", "2 × 10 × 5 s"]);
+    expect(programm.exercises.map(dose)).toEqual(["2 × 15", "2 × 5 je Seite", "2 × 10 × 5 s"]);
   });
   it("Halten mit einer Wiederholung ohne überflüssige 1", () => {
     expect(dose(plan1({ art: "hold", proSeite: true, reps: 1, hold: 30, sets: 1 }).exercises[0])).toBe("1 × 30 s je Seite");
@@ -153,7 +153,7 @@ describe("Formatierung", () => {
 
 describe("Programm-Kurzinfo", () => {
   it("Anzahl Übungen und Dauer", () => {
-    expect(programmInfo(ruecken, STANDARD)).toBe("3 Übungen · ca. 8 Min");
+    expect(programmInfo(programm, STANDARD)).toBe("3 Übungen · ca. 8 Min");
     expect(programmInfo(plan1({}), STANDARD)).toBe("1 Übung · ca. 1 Min");
   });
   it("leeres Programm", () => {

@@ -5,7 +5,7 @@ import { hoerbar, Spieler, type Ereignis } from "../src/logik/spieler";
 import type { Einstellungen } from "../src/logik/typen";
 
 const STANDARD: Einstellungen = { tempo: 3, prep: 5, setPause: 30, lower: 3 };
-const ruecken = trainingsplan(MITGELIEFERT, "ruecken")!;
+const programm = trainingsplan(MITGELIEFERT, "erstes")!;
 
 /** Spult die Zeit in 100-ms-Schritten vor und sammelt alle Ereignisse. */
 function vorspulen(sp: Spieler, uhr: { t: number }, sekunden: number): Ereignis[] {
@@ -23,7 +23,7 @@ const signale = (ev: Ereignis[]) => ev.flatMap((e) => (e.typ === "signal" ? [e.s
 
 function neu() {
   const uhr = { t: 1000 };
-  const sp = new Spieler(ruecken, STANDARD);
+  const sp = new Spieler(programm, STANDARD);
   const start = sp.start(uhr.t);
   return { sp, uhr, start };
 }
@@ -32,7 +32,7 @@ describe("Spieler", () => {
   it("sagt beim Start sofort die erste Ansage", () => {
     const { start } = neu();
     expect(gesagt(start)).toEqual([
-      "Auf dem Rücken liegen. Erste Übung: Becken kippen. Bauch einziehen. 2 Sätze, 15 Wiederholungen.",
+      "Im Vierfüßlerstand beginnen. Erste Übung: Katze-Kuh. Mit dem Atem bewegen. 2 Sätze, 15 Wiederholungen.",
     ]);
   });
 
@@ -61,7 +61,7 @@ describe("Spieler", () => {
     sp.togglePause(uhr.t);
     sp.skip(uhr.t);
     expect(gesagt(sp.togglePause(uhr.t))).toEqual([
-      "Nächste Übung: Beine seitlich kippen. 2 Sätze, je Seite 5 Wiederholungen.",
+      "Nächste Übung: Vogel-Hund. 2 Sätze, je Seite 5 Wiederholungen.",
     ]);
   });
 
@@ -165,7 +165,7 @@ describe("Signaltöne", () => {
 
   it("pro Seite: Seite, Los, Takt … Seite, Los", () => {
     const { sp, uhr } = neu();
-    sp.skip(uhr.t); // Beine seitlich kippen
+    sp.skip(uhr.t); // Vogel-Hund
     // Dauer bis kurz nach Beginn der ersten Wiederholung rechts
     const bisRechts = sp.segs.slice(sp.idx, sp.idx + 1 + 1 + 5 + 1).reduce((a, x) => a + x.dur, 0);
     const ev = vorspulen(sp, uhr, bisRechts + 0.5);

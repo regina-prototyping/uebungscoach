@@ -21,7 +21,7 @@ import {
 import type { Daten } from "../src/logik/typen";
 
 const d0: Daten = structuredClone(MITGELIEFERT);
-const reihenfolge = (d: Daten, id = "ruecken") => findeProgramm(d, id)!.uebungen;
+const reihenfolge = (d: Daten, id = "erstes") => findeProgramm(d, id)!.uebungen;
 
 describe("Mitgelieferte Daten", () => {
   it("sind gültig und alle Verweise zeigen auf vorhandene Übungen", () => {
@@ -29,37 +29,37 @@ describe("Mitgelieferte Daten", () => {
     for (const p of MITGELIEFERT.programme) for (const id of p.uebungen) expect(findeUebung(MITGELIEFERT, id)).toBeDefined();
   });
 
-  it("ergeben das Rückenprogramm mit drei Übungen", () => {
-    const plan = trainingsplan(MITGELIEFERT, "ruecken")!;
-    expect(plan.exercises.map((e) => e.name)).toEqual(["Becken kippen", "Beine seitlich kippen", "Brücke"]);
-    expect(plan.start).toBe("Auf dem Rücken liegen");
+  it("ergeben das erste Programm mit drei Übungen", () => {
+    const plan = trainingsplan(MITGELIEFERT, "erstes")!;
+    expect(plan.exercises.map((e) => e.name)).toEqual(["Katze-Kuh", "Vogel-Hund", "Brücke"]);
+    expect(plan.start).toBe("Im Vierfüßlerstand beginnen");
   });
 });
 
 describe("Programme bearbeiten", () => {
   it("verschiebt Übungen nach oben und unten", () => {
-    const d = uebungVerschieben(d0, "ruecken", 2, -1);
-    expect(reihenfolge(d)).toEqual(["becken-kippen", "bruecke", "beine-seitlich-kippen"]);
-    expect(reihenfolge(uebungVerschieben(d, "ruecken", 0, 1))).toEqual(["bruecke", "becken-kippen", "beine-seitlich-kippen"]);
+    const d = uebungVerschieben(d0, "erstes", 2, -1);
+    expect(reihenfolge(d)).toEqual(["katze-kuh", "bruecke", "vogel-hund"]);
+    expect(reihenfolge(uebungVerschieben(d, "erstes", 0, 1))).toEqual(["bruecke", "katze-kuh", "vogel-hund"]);
   });
 
   it("verschiebt nicht über den Rand hinaus", () => {
-    expect(reihenfolge(uebungVerschieben(d0, "ruecken", 0, -1))).toEqual(reihenfolge(d0));
-    expect(reihenfolge(uebungVerschieben(d0, "ruecken", 2, 1))).toEqual(reihenfolge(d0));
+    expect(reihenfolge(uebungVerschieben(d0, "erstes", 0, -1))).toEqual(reihenfolge(d0));
+    expect(reihenfolge(uebungVerschieben(d0, "erstes", 2, 1))).toEqual(reihenfolge(d0));
   });
 
   it("entfernt eine Übung aus dem Programm, aber nicht aus der Bibliothek", () => {
-    const d = uebungEntfernen(d0, "ruecken", 1);
-    expect(reihenfolge(d)).toEqual(["becken-kippen", "bruecke"]);
-    expect(findeUebung(d, "beine-seitlich-kippen")).toBeDefined();
+    const d = uebungEntfernen(d0, "erstes", 1);
+    expect(reihenfolge(d)).toEqual(["katze-kuh", "bruecke"]);
+    expect(findeUebung(d, "vogel-hund")).toBeDefined();
   });
 
   it("erlaubt dieselbe Übung mehrmals", () => {
-    const d = uebungHinzufuegen(d0, "ruecken", "becken-kippen");
-    expect(reihenfolge(d)).toEqual(["becken-kippen", "beine-seitlich-kippen", "bruecke", "becken-kippen"]);
-    expect(trainingsplan(d, "ruecken")!.exercises).toHaveLength(4);
+    const d = uebungHinzufuegen(d0, "erstes", "katze-kuh");
+    expect(reihenfolge(d)).toEqual(["katze-kuh", "vogel-hund", "bruecke", "katze-kuh"]);
+    expect(trainingsplan(d, "erstes")!.exercises).toHaveLength(4);
     // Entfernen trifft nur die eine Stelle
-    expect(reihenfolge(uebungEntfernen(d, "ruecken", 3))).toEqual(reihenfolge(d0));
+    expect(reihenfolge(uebungEntfernen(d, "erstes", 3))).toEqual(reihenfolge(d0));
   });
 
   it("legt ein Programm an, benennt es und löscht es wieder", () => {
@@ -85,7 +85,7 @@ describe("Neues Programm aufräumen", () => {
   });
 
   it("lässt Programme mit Namen unverändert", () => {
-    expect(programmAufraeumen(d0, "arme")).toBe(d0);
+    expect(programmAufraeumen(d0, "erstes")).toBe(d0);
   });
 });
 
@@ -96,10 +96,11 @@ describe("Übungen bearbeiten", () => {
   });
 
   it("Änderungen an einer Übung gelten in allen Programmen", () => {
-    const d = uebungHinzufuegen(d0, "arme", "bruecke");
+    const neu = programmAnlegen(d0, "Dehnen");
+    const d = uebungHinzufuegen(neu.daten, neu.id, "bruecke");
     const d2 = uebungAendern(d, "bruecke", { reps: 8 });
-    expect(trainingsplan(d2, "ruecken")!.exercises[2].reps).toBe(8);
-    expect(trainingsplan(d2, "arme")!.exercises[0].reps).toBe(8);
+    expect(trainingsplan(d2, "erstes")!.exercises[2].reps).toBe(8);
+    expect(trainingsplan(d2, neu.id)!.exercises[0].reps).toBe(8);
   });
 
   it("entfernt eine eigene Zeit beim Zurücksetzen", () => {
@@ -118,8 +119,8 @@ describe("Übungen bearbeiten", () => {
 
   it("löscht nur Übungen, die in keinem Programm vorkommen", () => {
     expect(uebungLoeschen(d0, "bruecke")).toBeNull();
-    expect(verwendetIn(d0, "bruecke").map((p) => p.name)).toEqual(["Rücken"]);
-    const ohne = uebungEntfernen(d0, "ruecken", 2);
+    expect(verwendetIn(d0, "bruecke").map((p) => p.name)).toEqual(["Mein erstes Programm"]);
+    const ohne = uebungEntfernen(d0, "erstes", 2);
     const d = uebungLoeschen(ohne, "bruecke")!;
     expect(findeUebung(d, "bruecke")).toBeUndefined();
   });
@@ -128,10 +129,10 @@ describe("Übungen bearbeiten", () => {
 describe("Rückgängig", () => {
   it("die vorige Fassung bleibt unverändert erhalten", () => {
     const vorher = structuredClone(d0);
-    uebungEntfernen(d0, "ruecken", 0);
-    uebungVerschieben(d0, "ruecken", 1, 1);
+    uebungEntfernen(d0, "erstes", 0);
+    uebungVerschieben(d0, "erstes", 1, 1);
     uebungAendern(d0, "bruecke", { name: "X" });
-    programmLoeschen(d0, "ruecken");
+    programmLoeschen(d0, "erstes");
     expect(d0).toEqual(vorher);
   });
 });
