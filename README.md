@@ -5,7 +5,7 @@
 - **Problem:** feste Übungs-Abfolge von der Physio, kein Video dafür, und mitzählen während der Übung klappt nicht.
 - **Lösung:** eine App, die ansagt, mitzählt und von selbst weitergeht, mit Tönen oder Sprache, offline und installierbar.
 - **Schwierig war** nicht der Code, sondern welches Signal wann hilft und welches stört.
-- **Mein Anteil:** entscheiden, spezifizieren, (mit)designen ,testen. Programmiert hat Claude Code.
+- **Mein Anteil:** entscheiden, spezifizieren, (mit)designen, testen. Programmiert hat Claude Code.
 
 **[Ausprobieren: uebungscoach.vercel.app](https://uebungscoach.vercel.app)** · Auf dem Handy öffnen und über das Browser-Menü zum Startbildschirm hinzufügen.
 
