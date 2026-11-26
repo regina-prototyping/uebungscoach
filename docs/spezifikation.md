@@ -1,6 +1,6 @@
 # Übungscoach – Spezifikation
 
-Stand: 16. November 2026 · Version 1 und Version 2 (Übungen und Programme bearbeiten) sind umgesetzt, dazu Signaltöne, Sicherung und Trainingsverlauf.
+Stand: 26. November 2026 · Version 1 und Version 2 (Übungen und Programme bearbeiten) sind umgesetzt, dazu Signaltöne, Sicherung, Trainingsverlauf und Statistik „Trainings pro Woche“.
 
 ## Ziel
 
@@ -61,7 +61,7 @@ Das Training läuft ohne Antippen durch; Eingreifen ist nur zum Pausieren oder S
 ## Bewusst später
 
 - Spracheingabe von Übungen
-- Weitere Statistik, z. B. ein Diagramm „Trainings pro Woche“ (geht auch rückwirkend, weil jedes Training mit Zeitpunkt gespeichert ist)
+- Ziele und Erinnerungen (z. B. „3× pro Woche“)
 - Bilder oder Videos zu den Übungen
 - Synchronisation zwischen Geräten (Konto mit automatischer Speicherung, siehe Issue #15)
 - Dunkles Farbschema
@@ -222,7 +222,8 @@ Ziel: sehen, an welchen Tagen welches Programm trainiert wurde – auf der Start
 2. **Zwei Programmkarten nebeneinander:** die erste mit Indigo-Verlauf, die zweite zart (`primary-soft`), beide mit Name, „3 Übungen · 8 Min“, rundem ▶ (startet sofort) und Listen-Knopf (öffnet die Programm-Ansicht). Gibt es nur ein Programm mit Übungen, nimmt seine Karte die ganze Breite ein.
 3. **Verlauf „Letzte 2 Wochen“:** rechts die Zahl der Trainings. Darunter einmal die Wochentage (heute in Indigo), dann je Programm der Name mit „· 9 ד und eine Reihe aus 14 abgerundeten Kästchen (ältester Tag links, heute rechts, kleine Lücke zwischen den Wochen). Trainiert = Indigo-Verlauf, nicht trainiert = zartgrau, heute ohne Training = Indigo-Rand. Zwei Trainings am selben Tag sind ein Kästchen. Alle Kästchen in derselben Farbe; welches Programm es ist, steht im Namen darüber.
    - Zeilen gibt es für die zwei Programme oben (auch ohne Training) und für jedes weitere, das in den 2 Wochen trainiert wurde.
-4. **Weitere Programme** schmal: Name und Anzahl der Übungen; leere Programme führen zum Bearbeiten. Am Ende „Neues Programm“.
+4. **Pro Woche:** Trainings pro Woche aller Programme zusammen, flach (siehe „Statistik“). Antippen öffnet die Statistik.
+5. Feine Linie, darunter **Weitere Programme** schmal: Name und Anzahl der Übungen; leere Programme führen zum Bearbeiten. Am Ende „Neues Programm“.
 
 **Welche zwei Programme oben stehen:** zuerst die angehefteten, dann die zuletzt trainierten, dann die ersten der Liste – nur Programme mit Übungen. Die Reihenfolge der Karten folgt der Programmliste, damit sie nicht täglich die Plätze tauschen.
 
@@ -234,6 +235,25 @@ Ziel: sehen, an welchen Tagen welches Programm trainiert wurde – auf der Start
 - Trainingstage als Kacheln mit Indigo-Verlauf, andere zartgrau, künftige ohne Fläche, heute umrandet. Zwei oder mehr Trainings an einem Tag: kleine Zahl („2“) an der Ecke.
 - Darunter: „11 Trainings an 10 Tagen · zuletzt heute“ (bzw. „zuletzt gestern“, „zuletzt vor 3 Tagen“, „zuletzt am 2.10.2026“, „Noch nicht trainiert“).
 - Barrierefreiheit: jede Kachel hat einen Text wie „Donnerstag, 12. November: 2 Trainings“; die Reihen der Startseite einen wie „Dehnen: an 9 von 14 Tagen trainiert“.
+
+## Statistik: Trainings pro Woche
+
+Ziel: sehen, wie oft pro Woche trainiert wurde – alle Programme zusammen und je Programm. Berechnet aus dem gespeicherten Trainingsverlauf, also auch rückwirkend.
+
+- **Woche** = Montag bis Sonntag (Zeitzone des Handys). Gezeigt werden immer die **letzten 12 Wochen** einschließlich der laufenden.
+- **Liniendiagramm** mit einem Punkt je Woche, einfarbig Indigo. Die **laufende Woche** ist ein offener Punkt mit gestricheltem Stück, weil sie noch nicht vorbei ist (sonst sähe es jeden Montag nach einem Einbruch aus).
+- **Durchschnitt** („Ø 2,5 pro Woche“): nur über abgeschlossene Wochen und erst ab der Woche des ersten Trainings, damit Wochen vor Beginn den Wert nicht drücken. Eine Nachkommastelle, ganze Zahlen ohne „,0“.
+- Gelöschte Programme zählen nicht mit (wie im Verlauf der Startseite).
+
+### Wo zu sehen
+
+- **Startseite** unter „Letzte 2 Wochen“: „Pro Woche“, rechts „Ø 4,6 · diese Woche 1“, darunter eine flache Linie ohne Achsen; Zahlen nur an der letzten fertigen und der laufenden Woche. Antippen öffnet die Statistik. Fehlt, solange es in den 12 Wochen kein Training gibt.
+- **Menü → „Statistik“** (eigener Bildschirm, zwischen „Übungen“ und „Einstellungen“):
+  - „Trainings pro Woche“, rechts „47 in 12 Wochen“; Diagramm mit y-Achse (0, Mitte, Maximum), Zahl über jedem Punkt mit Training, Datum (Montag) an jeder dritten Woche, rechts „jetzt“. Darunter „Ø 4,6 pro Woche · diese Woche bisher 1“.
+  - „Nach Programm“: je Programm mit Training in den 12 Wochen eine Zeile mit Name, „25 Trainings · Ø 2,5 pro Woche“ und einer kleinen Linie; alle kleinen Linien im selben Maßstab, damit sie vergleichbar sind. Sortiert nach Anzahl; Antippen öffnet die Programm-Ansicht.
+  - Ohne Trainings: kurzer Hinweis statt Diagramm.
+- **Programm-Ansicht** unter dem Kalender (mit Abstand und Linie): „Trainings pro Woche“ für dieses Programm, darunter „25 Trainings in 12 Wochen · Ø 2,5 pro Woche“. Erscheint erst, wenn das Programm schon einmal trainiert wurde.
+- **Barrierefreiheit:** Das Diagramm ist für Screenreader ausgeblendet; stattdessen eine unsichtbare Liste „Woche ab 16. November: 3 Trainings“ … „Diese Woche: 1 Training“.
 
 ## Programme
 

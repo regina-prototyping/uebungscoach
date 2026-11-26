@@ -757,3 +757,26 @@ button:focus-visible, a:focus-visible, [role="switch"]:focus-visible, [role="rad
 .sicherung-karte button { margin-top: var(--space-2); }
 .meldung { margin: 0; font-weight: var(--weight-medium); color: var(--ink); }
 .meldung.fehler { color: var(--primary-dark); }
+
+/* ---------- Trainings pro Woche (Statistik und Programm-Ansicht) ---------- */
+.wochen-diagramm { display: block; width: 100%; height: auto; overflow: visible; }
+.wd-gitter { stroke: var(--line); stroke-width: 1; }
+.wd-achse { font-size: 12px; fill: var(--muted); font-variant-numeric: tabular-nums; }
+.wd-zahl { font-size: 13px; font-weight: var(--weight-medium); fill: var(--primary-dark); font-variant-numeric: tabular-nums; }
+.wd-flaeche { fill: url(#wd-verlauf); }
+.wd-linie { fill: none; stroke: var(--primary); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.wd-linie.laufend { stroke-dasharray: 2 5; }
+.wd-punkt { fill: var(--primary); }
+.wd-punkt.laufend { fill: var(--surface); stroke: var(--primary); stroke-width: 2.5; }
+.wochen-linie { flex: none; width: 88px; height: 32px; overflow: visible; }
+.wochen-linie .wd-linie { stroke-width: 2; }
+.st-text { margin: 0; }
+.st-zeile { gap: var(--space-3); }
+.st-zeile > svg:last-child { flex: none; color: var(--muted); }
+.wochen { margin: var(--space-10) var(--space-5) 0; padding-top: var(--space-8); border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: var(--space-3); }
+/* Startseite: Trainings pro Woche, flach und antippbar */
+.pro-woche { width: 100%; border: 0; background: none; padding: 0; text-align: left; color: inherit; font: inherit; gap: var(--space-2); }
+.pro-woche .vl-summe { display: flex; align-items: center; gap: var(--space-1); }
+.pro-woche .vl-summe svg { width: 16px; height: 16px; }
+/* Feine Linie zwischen Verlauf und „Weitere Programme“ */
+.weitere.mit-trenner { border-top: 1px solid var(--line); padding-top: var(--space-6); }
