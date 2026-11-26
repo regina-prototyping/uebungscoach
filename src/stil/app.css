@@ -778,3 +778,5 @@ button:focus-visible, a:focus-visible, [role="switch"]:focus-visible, [role="rad
 .pro-woche { width: 100%; border: 0; background: none; padding: 0; text-align: left; color: inherit; font: inherit; gap: var(--space-2); }
 .pro-woche .vl-summe { display: flex; align-items: center; gap: var(--space-1); }
 .pro-woche .vl-summe svg { width: 16px; height: 16px; }
+/* Feine Linie zwischen Verlauf und „Weitere Programme“ */
+.weitere.mit-trenner { border-top: 1px solid var(--line); padding-top: var(--space-6); }

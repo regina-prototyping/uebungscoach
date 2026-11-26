@@ -35,7 +35,7 @@ export function zeigeStart(root: HTMLElement, opt: StartOptionen): void {
       ${oben.length ? `<div class="karten${oben.length === 1 ? " karten-eins" : ""}">${oben.map((p, i) => karte(p, i, opt.einstellungen)).join("")}</div>` : ""}
       ${oben.length ? verlauf(opt.raster) : ""}
       ${opt.wochen.gesamt ? proWoche(opt.wochen) : ""}
-      <div class="gruppe weitere">
+      <div class="gruppe weitere${oben.length ? " mit-trenner" : ""}">
         <h2 class="abschnitt">${oben.length ? "Weitere Programme" : "Programme"}</h2>
         <div class="prog-liste">
           ${weitere.map(zeile).join("")}
