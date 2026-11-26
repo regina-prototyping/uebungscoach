@@ -1,7 +1,8 @@
 import { programmInfo } from "../logik/plan";
 import type { Einstellungen, Trainingsplan } from "../logik/typen";
-import type { Raster } from "../logik/verlauf";
+import { schnittText, type Raster, type Wochenreihe } from "../logik/verlauf";
 import { esc, ICON, MENU_ICON } from "./hilfen";
+import { wochenKompakt } from "./wochen-diagramm";
 
 interface StartOptionen {
   programme: Trainingsplan[];
@@ -9,12 +10,15 @@ interface StartOptionen {
   oben: string[];
   /** Verlauf der letzten 2 Wochen. */
   raster: Raster;
+  /** Trainings pro Woche, alle Programme zusammen. */
+  wochen: Wochenreihe;
   einstellungen: Einstellungen;
   onStart: (prog: Trainingsplan) => void;
   onOeffnen: (programmId: string) => void;
   onBearbeiten: (programmId: string) => void;
   onNeuesProgramm: () => void;
   onMenue: () => void;
+  onStatistik: () => void;
 }
 
 /** Startbildschirm: zwei Programme als Karten, darunter Verlauf und die übrigen Programme. */
@@ -30,6 +34,7 @@ export function zeigeStart(root: HTMLElement, opt: StartOptionen): void {
       <h1 class="display">Was trainierst du heute?</h1>
       ${oben.length ? `<div class="karten${oben.length === 1 ? " karten-eins" : ""}">${oben.map((p, i) => karte(p, i, opt.einstellungen)).join("")}</div>` : ""}
       ${oben.length ? verlauf(opt.raster) : ""}
+      ${opt.wochen.gesamt ? proWoche(opt.wochen) : ""}
       <div class="gruppe weitere">
         <h2 class="abschnitt">${oben.length ? "Weitere Programme" : "Programme"}</h2>
         <div class="prog-liste">
@@ -43,6 +48,7 @@ export function zeigeStart(root: HTMLElement, opt: StartOptionen): void {
     </section>`;
 
   root.querySelector("[data-aktion=menue]")!.addEventListener("click", opt.onMenue);
+  root.querySelector("[data-aktion=statistik]")?.addEventListener("click", opt.onStatistik);
   root.querySelector("[data-aktion=neu]")!.addEventListener("click", opt.onNeuesProgramm);
   root.querySelectorAll<HTMLButtonElement>("[data-start]").forEach((btn) => {
     // Wichtig: onStart läuft direkt im Klick, damit die erste Ansage sofort kommt
@@ -100,6 +106,20 @@ function verlauf(r: Raster): string {
       ${kopf}
       ${zeilen}
     </section>`;
+}
+
+/** Trainings pro Woche aller Programme zusammen, flach; Antippen öffnet die Statistik. */
+function proWoche(r: Wochenreihe): string {
+  const diese = r.wochen[r.wochen.length - 1].anzahl;
+  const text = [schnittText(r).replace(" pro Woche", ""), `diese Woche ${diese}`].filter(Boolean).join(" · ");
+  return `
+    <button type="button" class="gruppe pro-woche" data-aktion="statistik" aria-label="Trainings pro Woche, letzte 12 Wochen: ${[schnittText(r), `diese Woche ${diese}`].filter(Boolean).join(", ")}. Statistik öffnen">
+      <span class="vl-kopf">
+        <span class="abschnitt">Pro Woche</span>
+        <span class="vl-summe zahl">${text}${MENU_ICON.rechts}</span>
+      </span>
+      ${wochenKompakt(r)}
+    </button>`;
 }
 
 /** Schmale Listenzeile: Programme mit Übungen öffnen die Ansicht, leere führen zum Bearbeiten. */

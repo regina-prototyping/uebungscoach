@@ -2,7 +2,7 @@ import "./stil/theme.css";
 import "./stil/app.css";
 import { ladeAnsageModus, ladeEinstellungen, speichereAnsageModus, speichereEinstellungen } from "./einstellungen";
 import { datenDauerhaftAufheben, ladeDaten, ladeVerlauf, speichereDaten, speichereVerlauf } from "./daten-speicher";
-import { anheftenUmschalten, istAngeheftet, obenProgramme, raster, trainingEintragen } from "./logik/verlauf";
+import { anheftenUmschalten, istAngeheftet, obenProgramme, raster, trainingEintragen, trainingsProWoche } from "./logik/verlauf";
 import {
   findeProgramm,
   programmAendern,
@@ -240,9 +240,11 @@ function startseite(): void {
     programme: daten.programme.map((p) => trainingsplan(daten, p.id)!),
     oben,
     raster: raster(daten, verlauf, oben, new Date()),
+    wochen: trainingsProWoche(verlauf, new Date(), daten.programme.map((p) => p.id)),
     einstellungen,
     onStart: trainingStarten,
     onOeffnen: (id) => geheZu({ name: "ansicht", id }),
+    onStatistik: () => geheZu({ name: "statistik" }),
     onBearbeiten: (id) => geheZu({ name: "programm", id }),
     onNeuesProgramm: () => {
       const { daten: neu, id } = programmAnlegen(daten);

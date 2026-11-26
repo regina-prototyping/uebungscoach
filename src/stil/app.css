@@ -774,3 +774,7 @@ button:focus-visible, a:focus-visible, [role="switch"]:focus-visible, [role="rad
 .st-zeile { gap: var(--space-3); }
 .st-zeile > svg:last-child { flex: none; color: var(--muted); }
 .wochen { margin: var(--space-10) var(--space-5) 0; padding-top: var(--space-8); border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: var(--space-3); }
+/* Startseite: Trainings pro Woche, flach und antippbar */
+.pro-woche { width: 100%; border: 0; background: none; padding: 0; text-align: left; color: inherit; font: inherit; gap: var(--space-2); }
+.pro-woche .vl-summe { display: flex; align-items: center; gap: var(--space-1); }
+.pro-woche .vl-summe svg { width: 16px; height: 16px; }

@@ -66,3 +66,28 @@ export function wochenLinie(r: Wochenreihe, max: number): string {
       <circle class="wd-punkt" cx="${ps[ps.length - 1].x}" cy="${ps[ps.length - 1].y}" r="2.5"/>
     </svg>`;
 }
+
+/**
+ * Flache Fassung für die Startseite: Linie mit Punkten über die ganze Breite,
+ * ohne Achsen; nur die Zahl der letzten fertigen Woche und der laufenden steht dabei.
+ */
+export function wochenKompakt(r: Wochenreihe): string {
+  const B = 360, H = 64;
+  const ps = punkte(r, 6, 20, B - 12, H - 26);
+  const n = ps.length;
+  const zahlen = ps
+    .slice(-2)
+    .map((p, i) => `<text class="wd-zahl" x="${p.x}" y="${p.y - 9}" text-anchor="${i ? "end" : "middle"}">${p.w.anzahl}</text>`)
+    .join("");
+  const flaeche = `${pfad(ps)} L${ps[n - 1].x.toFixed(1)} ${H - 6} L${ps[0].x.toFixed(1)} ${H - 6} Z`;
+  return `
+    <svg class="wochen-diagramm" viewBox="0 0 ${B} ${H}" aria-hidden="true">
+      <line class="wd-gitter" x1="0" x2="${B}" y1="${H - 6}" y2="${H - 6}"/>
+      <path d="${flaeche}" fill="url(#wd-verlauf-k)"/>
+      <defs><linearGradient id="wd-verlauf-k" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#4A44C2" stop-opacity="0.16"/><stop offset="1" stop-color="#4A44C2" stop-opacity="0"/></linearGradient></defs>
+      <path class="wd-linie" d="${pfad(ps.slice(0, -1))}"/>
+      <path class="wd-linie laufend" d="${pfad(ps.slice(-2))}"/>
+      ${ps.map((p) => `<circle class="wd-punkt${p.w.laufend ? " laufend" : ""}" cx="${p.x}" cy="${p.y}" r="${p.w.laufend ? 3.5 : 3}"/>`).join("")}
+      ${zahlen}
+    </svg>`;
+}
