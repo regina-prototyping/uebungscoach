@@ -30,6 +30,7 @@ import { zeigeBibliothek } from "./ansichten/bibliothek";
 import { schliesseRueckgaengig, zeigeRueckgaengig } from "./ansichten/rueckgaengig";
 import { zeigeEinstellungen } from "./ansichten/einstellungen";
 import { zeigeSicherung } from "./ansichten/sicherung";
+import { zeigeStatistik } from "./ansichten/statistik";
 import { dateiname, sicherungErstellen, type Sicherung } from "./logik/sicherung";
 import { dateiWeitergeben } from "./geraet/datei";
 import { TrainingAnsicht } from "./ansichten/training";
@@ -135,6 +136,7 @@ function anzeigen(ziel: Ziel): void {
         onSchliessen: zurueck,
         // ersetzen statt öffnen: Zurück führt dann zur Startseite, nicht ins Menü
         onUebungen: () => ersetze({ name: "uebungen" }),
+        onStatistik: () => ersetze({ name: "statistik" }),
         onEinstellungen: () => ersetze({ name: "einstellungen" }),
         onSicherung: () => ersetze({ name: "sicherung" }),
       });
@@ -144,6 +146,10 @@ function anzeigen(ziel: Ziel): void {
       break;
     case "sicherung":
       sicherungsSeite();
+      break;
+    case "statistik":
+      zeigeStatistik(app, { daten, verlauf, onOeffnen: (id) => geheZu({ name: "ansicht", id }), onFertig: zurueck });
+      window.scrollTo(0, 0);
       break;
     case "uebungen":
       zeigeBibliothek(app, {

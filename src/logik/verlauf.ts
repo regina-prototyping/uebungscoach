@@ -229,3 +229,74 @@ export function kalenderZusammenfassung(k: Kalender, zuletzt: string): string {
   const tg = k.trainingsTage === 1 ? "1 Tag" : `${k.trainingsTage} Tagen`;
   return `${tr} an ${tg} · ${zuletzt}`;
 }
+
+/* ---------- Trainings pro Woche (Statistik) ---------- */
+
+export interface Woche {
+  /** Montag der Woche, z. B. „2026-11-23“. */
+  montag: string;
+  /** Kurz für die Achse, z. B. „23.11.“. */
+  kurz: string;
+  /** Trainings in dieser Woche. */
+  anzahl: number;
+  /** Die aktuelle Woche läuft noch. */
+  laufend: boolean;
+  /** Für Screenreader, z. B. „Woche ab 23. November: 3 Trainings“. */
+  label: string;
+}
+
+export interface Wochenreihe {
+  wochen: Woche[];
+  /** Alle Trainings im Zeitraum. */
+  gesamt: number;
+  /** Durchschnitt je abgeschlossener Woche (ab der ersten Woche mit Training); `null`, wenn es keine gibt. */
+  schnitt: number | null;
+}
+
+/** Montag der Woche von `d` (ohne Uhrzeit). */
+function montagVon(d: Date): Date {
+  return tagPlus(d, -((d.getDay() + 6) % 7));
+}
+
+/**
+ * Trainings je Woche (Montag bis Sonntag) für die letzten `anzahl` Wochen bis
+ * einschließlich der laufenden, ältester zuerst. `programmIds` begrenzt auf
+ * diese Programme (z. B. nur noch vorhandene), sonst zählen alle.
+ */
+export function trainingsProWoche(v: Verlauf, heute: Date, programmIds?: string[], anzahl = 12): Wochenreihe {
+  const diese = montagVon(heute);
+  const montage = Array.from({ length: anzahl }, (_, i) => tagPlus(diese, (i - anzahl + 1) * 7));
+  const zaehler = new Map(montage.map((m) => [tagSchluessel(m), 0]));
+  const trainings = v.trainings.filter((t) => !programmIds || programmIds.includes(t.programmId));
+  for (const t of trainings) {
+    const k = tagSchluessel(montagVon(new Date(t.zeit)));
+    if (zaehler.has(k)) zaehler.set(k, zaehler.get(k)! + 1);
+  }
+  const wochen = montage.map((m, i): Woche => {
+    const k = tagSchluessel(m);
+    const n = zaehler.get(k)!;
+    const laufend = i === anzahl - 1;
+    return {
+      montag: k,
+      kurz: `${m.getDate()}.${m.getMonth() + 1}.`,
+      anzahl: n,
+      laufend,
+      label: `${laufend ? "Diese Woche" : `Woche ab ${m.getDate()}. ${MONAT[m.getMonth()]}`}: ${n === 1 ? "1 Training" : `${n} Trainings`}`,
+    };
+  });
+  // Schnitt nur über abgeschlossene Wochen – und erst ab der Woche des ersten Trainings,
+  // damit Wochen vor Beginn der App den Wert nicht drücken
+  const erstes = trainings.length ? tagSchluessel(montagVon(new Date(Math.min(...trainings.map((t) => Date.parse(t.zeit)))))) : null;
+  const fertige = wochen.filter((w) => !w.laufend && erstes !== null && w.montag >= erstes);
+  return {
+    wochen,
+    gesamt: wochen.reduce((a, w) => a + w.anzahl, 0),
+    schnitt: fertige.length ? fertige.reduce((a, w) => a + w.anzahl, 0) / fertige.length : null,
+  };
+}
+
+/** „Ø 2,5 pro Woche“ (eine Nachkommastelle, ohne „,0“) – oder leer. */
+export function schnittText(r: Wochenreihe): string {
+  if (r.schnitt === null) return "";
+  return `Ø ${r.schnitt.toLocaleString("de-DE", { maximumFractionDigits: 1 })} pro Woche`;
+}

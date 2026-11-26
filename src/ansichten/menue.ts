@@ -2,10 +2,14 @@ import { esc, ICON, MENU_ICON, SICHERUNG_ICON } from "./hilfen";
 
 interface MenueOptionen {
   onUebungen: () => void;
+  onStatistik: () => void;
   onEinstellungen: () => void;
   onSicherung: () => void;
   onSchliessen: () => void;
 }
+
+/** Liniendiagramm – Menüeintrag „Statistik“ */
+const STATISTIK_ICON = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4v16h16"/><path d="M7 15l4-5 3 3 5-6"/></svg>`;
 
 /** Menü-Panel über der aktuellen Seite (fast bildschirmfüllend, links ein Streifen frei). */
 export function zeigeMenue(root: HTMLElement, opt: MenueOptionen): void {
@@ -26,6 +30,7 @@ export function zeigeMenue(root: HTMLElement, opt: MenueOptionen): void {
       </div>
       <div class="menue-liste">
         ${eintrag("uebungen", MENU_ICON.liste, "Übungen", "Alle Übungen anlegen und bearbeiten")}
+        ${eintrag("statistik", STATISTIK_ICON, "Statistik", "Trainings pro Woche")}
         ${eintrag("einstellungen", ICON.regler, "Einstellungen", "Tempo, Pausen, Stimme")}
         ${eintrag("sicherung", SICHERUNG_ICON.menue, "Sicherung", "Daten speichern und laden")}
       </div>
@@ -33,6 +38,7 @@ export function zeigeMenue(root: HTMLElement, opt: MenueOptionen): void {
   root.appendChild(overlay);
   overlay.querySelectorAll("[data-aktion=schliessen]").forEach((n) => n.addEventListener("click", opt.onSchliessen));
   overlay.querySelector("[data-aktion=uebungen]")!.addEventListener("click", opt.onUebungen);
+  overlay.querySelector("[data-aktion=statistik]")!.addEventListener("click", opt.onStatistik);
   overlay.querySelector("[data-aktion=einstellungen]")!.addEventListener("click", opt.onEinstellungen);
   overlay.querySelector("[data-aktion=sicherung]")!.addEventListener("click", opt.onSicherung);
   overlay.querySelector<HTMLButtonElement>(".menue-panel .icon-btn")!.focus();

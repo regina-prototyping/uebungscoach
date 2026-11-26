@@ -1,8 +1,9 @@
 import { dose } from "../logik/format";
 import { programmInfo } from "../logik/plan";
 import type { Einstellungen, Trainingsplan } from "../logik/typen";
-import { ersterMonat, kalender, kalenderZusammenfassung, zuletztText, type Verlauf } from "../logik/verlauf";
+import { ersterMonat, kalender, kalenderZusammenfassung, schnittText, trainingsProWoche, zuletztText, type Verlauf } from "../logik/verlauf";
 import { esc, ICON, MENU_ICON } from "./hilfen";
+import { wochenDiagramm } from "./wochen-diagramm";
 
 interface ProgrammAnsichtOptionen {
   plan: Trainingsplan;
@@ -65,6 +66,7 @@ export function zeigeProgrammAnsicht(root: HTMLElement, opt: ProgrammAnsichtOpti
       </header>
       <ol class="zeitstrahl">${zeilen}</ol>
       <section class="kalender" aria-label="Trainings im Kalender"></section>
+      ${wochenAbschnitt(opt.verlauf, p.id)}
     </section>`;
   root.querySelector("[data-a=zurueck]")!.addEventListener("click", opt.onZurueck);
   root.querySelector("[data-a=bearbeiten]")!.addEventListener("click", opt.onBearbeiten);
@@ -116,4 +118,17 @@ export function zeigeProgrammAnsicht(root: HTMLElement, opt: ProgrammAnsichtOpti
     }
   };
   zeichne();
+}
+
+/** „Trainings pro Woche“ unter dem Kalender – nur, wenn das Programm schon einmal trainiert wurde. */
+function wochenAbschnitt(v: Verlauf, programmId: string): string {
+  if (!v.trainings.some((t) => t.programmId === programmId)) return "";
+  const r = trainingsProWoche(v, new Date(), [programmId]);
+  const text = [`${r.gesamt === 1 ? "1 Training" : `${r.gesamt} Trainings`} in 12 Wochen`, schnittText(r)].filter(Boolean).join(" · ");
+  return `
+    <section class="wochen" aria-labelledby="wochen-titel">
+      <h2 class="kal-titel" id="wochen-titel">Trainings pro Woche</h2>
+      ${wochenDiagramm(r)}
+      <p class="kal-summe zahl">${text}</p>
+    </section>`;
 }
