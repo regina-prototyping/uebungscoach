@@ -241,7 +241,7 @@ Ziel: sehen, an welchen Tagen welches Programm trainiert wurde – auf der Start
 Ziel: sehen, wie oft pro Woche trainiert wurde – alle Programme zusammen und je Programm. Berechnet aus dem gespeicherten Trainingsverlauf, also auch rückwirkend.
 
 - **Woche** = Montag bis Sonntag (Zeitzone des Handys). Gezeigt werden immer die **letzten 12 Wochen** einschließlich der laufenden.
-- **Liniendiagramm** mit einem Punkt je Woche, einfarbig Indigo. Die **laufende Woche** ist ein offener Punkt mit gestricheltem Stück, weil sie noch nicht vorbei ist (sonst sähe es jeden Montag nach einem Einbruch aus).
+- **Liniendiagramm** mit einem Punkt je Woche, einfarbig Indigo. Die Linie ist **rund** (wirkt freundlicher, das Ganze soll motivieren), aber so gerundet, dass sie nie über einen Punkt hinaus- oder unter 0 schwingt – keine Gipfel, die es nicht gab. Die **laufende Woche** ist ein offener Punkt mit gestricheltem Stück, weil sie noch nicht vorbei ist (sonst sähe es jeden Montag nach einem Einbruch aus).
 - **Durchschnitt** („Ø 2,5 pro Woche“): nur über abgeschlossene Wochen und erst ab der Woche des ersten Trainings, damit Wochen vor Beginn den Wert nicht drücken. Eine Nachkommastelle, ganze Zahlen ohne „,0“.
 - Gelöschte Programme zählen nicht mit (wie im Verlauf der Startseite).
 
